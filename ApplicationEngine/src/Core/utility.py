@@ -1,5 +1,7 @@
 
-
+# used as default for some functions that take in lambdas / function ptrs
+def nullFunc() -> None:
+    return
 
 def FindLowestAvailableFreeInt(data : dict , start : int = 0) -> int:
     """Gets the next free integer value in a dictionary,
