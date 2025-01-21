@@ -9,5 +9,21 @@
 #
 
 
+import os, sys
+EngineRoot : os.path = os.path.abspath( os.path.abspath( __file__ ) )
+sys.path.append(EngineRoot)
 
-import ApplicationEngine.src.Core.Core
+
+from src.Core.Core import *
+
+EngineFileManager.SetEnginePath("EngineRoot" , EngineRoot)
+
+
+
+
+
+
+# for testing
+if __name__ == "__main__":
+    gameInst = Game()
+    gameInst.Run()

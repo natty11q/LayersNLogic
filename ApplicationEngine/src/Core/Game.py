@@ -1,22 +1,33 @@
-import ApplicationEngine.include.Common
-
 # imports
-import ApplicationEngine.src.Core.Temporal
+from include.Common import *
+import src.Core.Temporal as Temporal
 
 
 class Game:
     def __init__(self):
-        pass
+        self.IsRunning = True
+        
 
-# public :
-
+    def Run(self):
+        self.__Update()
 # protected :
-    def _OnUpdate(self):
+    def _OnUpdate(self) -> None:
         pass
 
-    def _OnEvent(self , event):
+    def _OnEvent(self , event) -> None:
         pass
 
 # private :
     def __Update(self):
-        pass
+        x = 9000000
+        while self.IsRunning:
+            Temporal.Time.Update()
+            # print(f"dt  : {Temporal.Time.DeltaTime()}")
+            # print(f"tet : {Temporal.Time.Time()}\n")
+            if x == 0:
+                self.IsRunning = False
+            x -= 1
+            
+            self._OnUpdate()
+        print(f"fps : {Temporal.Time.FPS()}\n")
+
