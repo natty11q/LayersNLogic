@@ -1,3 +1,4 @@
+from include.Common import *
 
 # used as default for some functions that take in lambdas / function ptrs
 def nullFunc() -> None:
@@ -15,3 +16,26 @@ def FindLowestAvailableFreeInt(data : dict , start : int = 0) -> int:
     """
     
     pass
+
+
+
+
+
+
+## filehandling wrappers and utiliity
+
+def LoadJson(pathToJson):
+    """loads a json file into mem as a dictionary
+
+    Args:
+        pathToJson String / pathlike: path to destination json
+
+    Returns:
+        dict : json data
+    """
+    JsOut = None # init as none instead of an empty json for external error handling
+
+    with open(pathToJson , "r") as jsonFile:
+        JsOut = json.load(jsonFile)
+
+    return JsOut

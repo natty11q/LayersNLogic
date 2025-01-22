@@ -1,6 +1,6 @@
 # imports
 from include.Common import *
-import src.Core.Temporal as Temporal
+import src.Core.Utility.Temporal as Temporal
 
 
 class Game:
@@ -19,7 +19,7 @@ class Game:
 
 # private :
     def __Update(self):
-        x = 9000000
+        x = 2400
         while self.IsRunning:
             Temporal.Time.Update()
             # print(f"dt  : {Temporal.Time.DeltaTime()}")

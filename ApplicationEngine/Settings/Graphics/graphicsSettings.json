@@ -2,5 +2,8 @@
     "StartingWindowResolution" : {
         "width"  : 900,
         "height" : 500
-    }
+    },
+
+    "BASE_TICK_RATE" : 1
+    
 }

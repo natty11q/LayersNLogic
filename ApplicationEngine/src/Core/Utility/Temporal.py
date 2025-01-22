@@ -1,9 +1,11 @@
 import include.Common as Common
-import src.Core.utility as Utility
+import src.Core.Utility.CoreUtility as Utility
+
+
+from src.Core.Utility.Filemanager import * 
+
 
 import time
-
-
 
 
 class Time:
@@ -76,8 +78,10 @@ class Time:
 
 
 #==================================================
+    __TimeSettings = Utility.LoadJson( os.path.join( EngineFileManager.GetEnginePath("EngineSettingsRoot") , "Graphics/graphicsSettings.json") ) 
     
-    __BASE_TIME_SCALE : float = 1.0
+    
+    __BASE_TIME_SCALE : float = __TimeSettings.get("BASE_TIME_SCALE",1)
     __TimeScale : float = __BASE_TIME_SCALE
     
     __Deltatime : float = 0
@@ -87,8 +91,8 @@ class Time:
     __ScaledElapsedTime : float  = 0
     
     
-    __BASE_TICK_RATE : float = 60
-    __TickRate : int = 60
+    __BASE_TICK_RATE : float = __TimeSettings.get("BASE_TICK_RATE",60)
+    __TickRate : int = __BASE_TICK_RATE
     
     
     
@@ -108,13 +112,12 @@ class Time:
     __MIN_TICK_RATE : float = 0.0
     
     
-    __TARGET_FRAME_RATE : float = 120
+    __TARGET_FRAME_RATE : float = 240
     __V_SYNC : bool = False
 
 # init as this so that the first frame has a deltatime of 0 instead of a large number (due to time.time() - 0 on frame 1)
-    __frameStart    : float  = time.time()
-    __frameEnd      : float  = time.time()
-    
+    __frameStart    : float  = time.process_time()
+    __frameEnd      : float  = time.process_time()
     
     # timers are handled with ids
     # Note :: Ids should never change until the function is complete
@@ -123,6 +126,10 @@ class Time:
 
     
     def __UpdateTimers():
+        """
+            Update all the timers that arent bound to a physics thread
+            IE : called every render frame
+        """
         for timer in Time.__Timers.values():
             if not timer.IsPhysTimer():
                 timer.Update(Time.__Deltatime)
@@ -163,14 +170,15 @@ class Time:
         return Time.__TimeScale
     
     
+    ## TODO : add error handling or when an invalid value is input for the rates
     def SetTimeScale(scale : float) -> None:
-        Time.__TimeScale = scale
+        if scale < Time.__MAX_TIME_SCALE and scale > Time.__MIN_TIME_SCALE:
+            Time.__TimeScale = scale
+    
     def SetPhysicsTickRate(newRate : float) -> None:
         if newRate > Time.__MIN_TICK_RATE and newRate < Time.__MAX_TICK_RATE:
             Time.__TickRate = newRate
-            return
         
-        Time.__TickRate = Time.__BASE_TICK_RATE
     def SetVSync(VS):
         Time.__V_SYNC = VS
     
@@ -178,15 +186,29 @@ class Time:
 
 
     def Update() -> None:
-        Time.__frameEnd = time.time()
+        
+        
+        # restrict the frame rate
+        Time.__frameEnd = time.process_time()
+        
+        frameTime = Time.__frameEnd - Time.__frameStart
+        remainingTime = (1/Time.__TARGET_FRAME_RATE)
+        
+        print("rem : " , remainingTime )
+        print("FTime : " , frameTime)
+        if frameTime < remainingTime:
+            time.sleep( remainingTime - frameTime)
+        
 
-        Time.__Deltatime        = Time.__frameEnd - Time.__frameStart
+        Time.__Deltatime        = Time.__frameEnd + remainingTime - Time.__frameStart
         Time.__ScaledDeltatime  = Time.__Deltatime * Time.__TimeScale
         Time.__TotalElapsedTime     += Time.__Deltatime
         Time.__ScaledElapsedTime    += Time.__ScaledDeltatime
 
+        print("1/dt : " , ( 1 / Time.__Deltatime) , "\n")
+        print("")
 
-        Time.__frameStart = time.time()
+        Time.__frameStart = time.process_time()
 
         
         
