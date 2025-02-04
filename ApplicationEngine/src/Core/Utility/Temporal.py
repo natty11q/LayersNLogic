@@ -112,7 +112,8 @@ class Time:
     __MIN_TICK_RATE : float = 0.0
     
     
-    __TARGET_FRAME_RATE : float = 240
+    __FRAMERATE_UNCAPPED = True
+    __TARGET_FRAME_RATE : float = __TimeSettings.get("STARTING_TARGET_FRAMERATEE",120)
     __V_SYNC : bool = False
 
 # init as this so that the first frame has a deltatime of 0 instead of a large number (due to time.time() - 0 on frame 1)
@@ -166,8 +167,8 @@ class Time:
         return Time.__TickCount
     def IsVsync() -> bool:
         return Time.__V_SYNC
-    def TimeScale() -> float:
-        return Time.__TimeScale
+    def TargetFrameRate() -> float:
+        return Time.__TARGET_FRAME_RATE
     
     
     ## TODO : add error handling or when an invalid value is input for the rates
@@ -194,19 +195,19 @@ class Time:
         frameTime = Time.__frameEnd - Time.__frameStart
         remainingTime = (1/Time.__TARGET_FRAME_RATE)
         
-        print("rem : " , remainingTime )
-        print("FTime : " , frameTime)
-        if frameTime < remainingTime:
+        # print("rem : " , remainingTime )
+        # print("FTime : " , frameTime)
+        if frameTime < remainingTime and not Time.__FRAMERATE_UNCAPPED:
             time.sleep( remainingTime - frameTime)
         
 
-        Time.__Deltatime        = Time.__frameEnd + remainingTime - Time.__frameStart
+        Time.__Deltatime        = Time.__frameEnd + (remainingTime * (not Time.__FRAMERATE_UNCAPPED)) - Time.__frameStart
         Time.__ScaledDeltatime  = Time.__Deltatime * Time.__TimeScale
         Time.__TotalElapsedTime     += Time.__Deltatime
         Time.__ScaledElapsedTime    += Time.__ScaledDeltatime
 
-        print("1/dt : " , ( 1 / Time.__Deltatime) , "\n")
-        print("")
+        # print("1/dt : " , ( 1 / Time.__Deltatime) , "\n")
+        # print("")
 
         Time.__frameStart = time.process_time()
 

@@ -1,8 +1,9 @@
 from include.Common import *
 
 # used as default for some functions that take in lambdas / function ptrs
-def nullFunc() -> None:
+def nullFunc(*eatArgs , **eatKewargs) -> None:
     return
+
 
 def FindLowestAvailableFreeInt(data : dict , start : int = 0) -> int:
     """Gets the next free integer value in a dictionary,
@@ -25,7 +26,7 @@ def FindLowestAvailableFreeInt(data : dict , start : int = 0) -> int:
 ## filehandling wrappers and utiliity
 
 def LoadJson(pathToJson):
-    """loads a json file into mem as a dictionary
+    """Loads a json file into mem as a dictionary
 
     Args:
         pathToJson String / pathlike: path to destination json
