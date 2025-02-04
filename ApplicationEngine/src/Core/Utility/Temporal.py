@@ -124,8 +124,10 @@ class Time:
     # Note :: Ids should never change until the function is complete
     __Timers : dict = {}
 
+    __FRAME_SLEEP_ALLOWANCE = 0.0005 / 1000  # slight reduction in waiting time to get as close to target framerate as possible
 
-    
+#========================================================================
+   
     def __UpdateTimers():
         """
             Update all the timers that arent bound to a physics thread
@@ -146,6 +148,7 @@ class Time:
         else:
             Time.__FPS = 1 / (sum(Time.__FPS_CACHE) / Time.__FPS_CACHE_SIZE) # caclulate average frames per second
             Time.__FPS_CACHE = []
+            print(f"fps : {Time.FPS()}\n")
         
 #--------------- public
 
@@ -165,11 +168,18 @@ class Time:
         return Time.__FrameCount
     def TickCount() -> int:
         return Time.__TickCount
+    def TickRate() -> float:
+        return Time.__BASE_TICK_RATE 
+    
     def IsVsync() -> bool:
         return Time.__V_SYNC
     def TargetFrameRate() -> float:
         return Time.__TARGET_FRAME_RATE
     
+    
+    def SetTargetFramerate(framerate : float):
+        if framerate > 0 + Time.__FRAME_SLEEP_ALLOWANCE:
+            Time.__TARGET_FRAME_RATE = framerate
     
     ## TODO : add error handling or when an invalid value is input for the rates
     def SetTimeScale(scale : float) -> None:
@@ -183,8 +193,16 @@ class Time:
     def SetVSync(VS):
         Time.__V_SYNC = VS
     
+    def UnCapFramerate():
+        Time.__FRAMERATE_UNCAPPED = True
     
+    def CapFramerate():
+        Time.__FRAMERATE_UNCAPPED = False
 
+    def CustomSleep() -> bool:
+        """custom sleep funciton to ensure that the program can be quit safley even if sleeping"""
+        #TODO : impl
+        return False
 
     def Update() -> None:
         
@@ -193,15 +211,16 @@ class Time:
         Time.__frameEnd = time.process_time()
         
         frameTime = Time.__frameEnd - Time.__frameStart
-        remainingTime = (1/Time.__TARGET_FRAME_RATE)
-        
-        # print("rem : " , remainingTime )
-        # print("FTime : " , frameTime)
-        if frameTime < remainingTime and not Time.__FRAMERATE_UNCAPPED:
-            time.sleep( remainingTime - frameTime)
-        
+        if not Time.__FRAMERATE_UNCAPPED:
+            TargetFrameTime = (1/Time.__TARGET_FRAME_RATE)
 
-        Time.__Deltatime        = Time.__frameEnd + (remainingTime * (not Time.__FRAMERATE_UNCAPPED)) - Time.__frameStart
+    
+            WaitExit = False
+            while time.process_time() - Time.__frameStart < (TargetFrameTime - Time.__FRAME_SLEEP_ALLOWANCE) and not WaitExit:
+                WaitExit = Time.CustomSleep()
+
+        Time.__frameEnd = time.process_time()
+        Time.__Deltatime        = Time.__frameEnd - Time.__frameStart
         Time.__ScaledDeltatime  = Time.__Deltatime * Time.__TimeScale
         Time.__TotalElapsedTime     += Time.__Deltatime
         Time.__ScaledElapsedTime    += Time.__ScaledDeltatime
@@ -209,12 +228,13 @@ class Time:
         # print("1/dt : " , ( 1 / Time.__Deltatime) , "\n")
         # print("")
 
-        Time.__frameStart = time.process_time()
 
         
         
         Time.__UpdateFPS()
         Time.__UpdateTimers()
+        
+        Time.__frameStart = time.process_time()
     
     def PhysicsUpdate() -> None:
         Time.__UpdatePhysicsTimers()

@@ -19,7 +19,8 @@ import PySimpleGUI as simplegui
 
 class TestCube(GameObject):
     def __init__(self):
-        pass
+        self.Vertices = []
+        self.indices = []
     
     def Draw(self):
         pass
@@ -31,6 +32,9 @@ class TestCube(GameObject):
 
 WINDOW_SIZE = (900, 600)
 PLAYER_SIZE = (20, 20)
+player_x = 50
+player_y = 300
+
 
 class Game:
     def __init__(self):
@@ -47,8 +51,11 @@ class Game:
         self.__window.set_size(WINDOW_SIZE)
         
         
-        self.__PhysicsThread = None
+        self.__PhysicsThread : threading.Thread  = threading.Thread(target = self.__PhysicsMainloop, args=(), daemon=True)
+        self.__InputThread : threading.Thread = threading.Thread(target=self.input_listener, args=(self.__window,), daemon=True)
         
+        
+        self.__col = "blue"
         # Create a frame called "A canvas " with dimensions 400 x200
         # self.frame = simplegui.create_frame("A canvas ", 400, 200)
 
@@ -56,7 +63,7 @@ class Game:
         self.__StartPhysicsThread()
         
         
-        self.__Update()
+        self.__MainLoop()
     
     def Save():
         pass
@@ -82,16 +89,22 @@ class Game:
         pass
     
     def _OnPhysicsUpdate(self) -> None:
-        pass
+        print("Physics update called")
 
     def _OnEvent(self , event, values) -> None:
         pass
     
     def __StartPhysicsThread(self):
-        pass
+        self.__PhysicsThread.start()
 
 
-
+    def input_listener(self, window : simplegui.Window):
+        while True:
+            # print("listening")
+            
+            event, values = window.read(timeout= 8)
+            self.__HandleEvents(event , values)
+            window.write_event_value("-INPUT-", event)  # Send event to main loop
 
 
 
@@ -99,25 +112,38 @@ class Game:
 
 
 # private :
-    def __PhysicsUpdate(self):
-        self._OnPhysicsUpdate()
+    def __PhysicsMainloop(self):
+        while True:
+            self._OnPhysicsUpdate()
+            Temporal.time.sleep(1 / Temporal.Time.TickRate())
 
-
-    def __HandleEvents(self, event, values = 0):
+    def __HandleEvents(self, event, values = {}):
+        # print("called")
 
         if event == simplegui.WIN_CLOSED or event == 'Exit':	# if user closes window or clicks cancel
             self.__IsRunning = False
+            
+        if event == 'a':
+            self.__col = "green"
 
         self._OnEvent(event , values)
         
         
 
-    def __Update(self):
+    def __MainLoop(self):
         # x = 2400
+        
+        
+        Temporal.Time.CapFramerate()
+        
+        Temporal.Time.SetTargetFramerate(120)
+        
+        
+        
         while self.__IsRunning:
             Temporal.Time.Update()
         
-            event, values = self.__window.Read(timeout=0)
+            event, values = self.__window.Read(timeout=8)
             self.__HandleEvents(event , values)
             if (not self.__IsRunning): break
             
@@ -131,12 +157,13 @@ class Game:
             # print(f"tet : {Temporal.Time.Time()}\n")
             # self.__window.TKroot.configure(bg=f'rgb(math.sin(Temporal.Time.Time()) * 30,20,30)')
             # self.__window['-BACKGROUND-'].update(background_color= f'rgb({int(math.sin(Temporal.Time.Time())) * 30},20,30)')
-            print(f"fps : {Temporal.Time.FPS()}\n")
+
             
 
             self._OnUpdate()
             self.__window['-GRAPH-'].erase()
-            self.__window['-GRAPH-'].draw_rectangle((WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2), ((WINDOW_SIZE[0] / 2) + PLAYER_SIZE[0], (WINDOW_SIZE[1] / 2) + PLAYER_SIZE[1]) , fill_color='blue')
+            self.__window['-GRAPH-'].TKCanvas.create_rectangle(player_x, player_y, player_x + PLAYER_SIZE[0], player_y + PLAYER_SIZE[1], fill=self.__col)
+            # self.__window['-GRAPH-'].draw_rectangle((WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2), ((WINDOW_SIZE[0] / 2) + PLAYER_SIZE[0], (WINDOW_SIZE[1] / 2) + PLAYER_SIZE[1]) , fill_color='blue')
             self.__window.refresh()
 
             # self.frame.start()
