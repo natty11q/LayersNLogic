@@ -21,7 +21,9 @@ class TestCube(GameObject):
     def __init__(self):
         self.Vertices = []
         self.indices = []
-    
+
+        self.position : vec3 = Vec3()
+
     def Draw(self):
         pass
     
