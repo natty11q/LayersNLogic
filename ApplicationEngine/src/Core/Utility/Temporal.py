@@ -1,8 +1,8 @@
-import include.Common as Common # type: ignore noqa
-import src.Core.Utility.CoreUtility as Utility
+import ApplicationEngine.include.Common as Common # type: ignore noqa
+import ApplicationEngine.src.Core.Utility.CoreUtility as Utility
 
 
-from src.Core.Utility.Filemanager import * 
+from ApplicationEngine.src.Core.Utility.Filemanager import * 
 
 
 import time

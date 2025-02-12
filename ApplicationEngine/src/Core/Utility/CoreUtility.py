@@ -1,4 +1,4 @@
-from include.Common import *
+from ApplicationEngine.include.Common import *
 
 # class __Timer : ...
 
@@ -27,7 +27,7 @@ def FindLowestAvailableFreeInt(data : dict [int , object], start : int = 0) -> i
 
 ## filehandling wrappers and utiliity
 
-def LoadJson(pathToJson : str) -> dict [str, object]:
+def LoadJson(pathToJson : str) -> dict [str, object] | None:
     """Loads a json file into mem as a dictionary
 
     Args:
@@ -36,8 +36,10 @@ def LoadJson(pathToJson : str) -> dict [str, object]:
     Returns:
         dict : json data
     """
-    JsOut = None # init as none instead of an empty json for external error handling
-
+    if (not os.path.exists(pathToJson)):
+        print("Failed to load json from path : ", pathToJson , "  |  " ,os.path.abspath(pathToJson))
+        return {}
+    
     with open(pathToJson , "r") as jsonFile:
         JsOut = json.load(jsonFile)
 

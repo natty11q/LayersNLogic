@@ -1,9 +1,9 @@
-from include.Common import *
+from ApplicationEngine.include.Common import *
 
 
 
 
-import src.Core.Utility.CoreUtility as Utility  # type: ignore
-from src.Core.Utility.Temporal import *
-from src.Core.Utility.Filemanager import *
-from src.Core.Game import *
+import ApplicationEngine.src.Core.Utility.CoreUtility as Utility  # type: ignore
+from ApplicationEngine.src.Core.Utility.Temporal import *
+from ApplicationEngine.src.Core.Utility.Filemanager import *
+from ApplicationEngine.src.Core.Game import *

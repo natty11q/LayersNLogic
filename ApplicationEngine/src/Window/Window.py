@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.Graphics.Renderer import *
+from ApplicationEngine.src.Graphics.Renderer import *
 
 
 class WindowProperties:

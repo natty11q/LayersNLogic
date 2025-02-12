@@ -1,6 +1,6 @@
-from include.Common import *
-from include.Window.Window import *
-from src.Graphics.Renderer.RendererAPI import *
+from ApplicationEngine.include.Common import *
+from ApplicationEngine.include.Window.Window import *
+from ApplicationEngine.src.Graphics.Renderer.RendererAPI import *
 
 class Renderer:
     

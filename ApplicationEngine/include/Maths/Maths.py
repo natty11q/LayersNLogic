@@ -1,5 +1,6 @@
-from include.Maths.Base.MathBase import *
+# type: ignore
+from ApplicationEngine.include.Maths.Base.MathBase import *
 
 
-import include.Maths.Vector.Vector as Vector
-import include.Maths.Matrix.Matrix as Matrix
+import ApplicationEngine.include.Maths.Vector.Vector as Vector
+import ApplicationEngine.include.Maths.Matrix.Matrix as Matrix

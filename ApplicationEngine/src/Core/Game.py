@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 # imports
-from include.Common import *
-from include.Maths.Maths import *
-from include.Window.Window import *
+from ApplicationEngine.include.Common import *
+from ApplicationEngine.include.Maths.Maths import *
+from ApplicationEngine.include.Window.Window import *
 from ApplicationEngine.src.Object.Object import *
-import src.Core.Utility.Temporal as Temporal
+import ApplicationEngine.src.Core.Utility.Temporal as Temporal
 
 
 

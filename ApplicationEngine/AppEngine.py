@@ -11,10 +11,13 @@
 
 import os, sys
 EngineRoot : str = os.path.dirname( os.path.dirname( __file__ ) )
-sys.path.append(EngineRoot)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# sys.path.append(EngineRoot)
 
-import src.Core.Utility.CoreUtility as Utility # type: ignore
-from src.Core.Utility.Filemanager import *
+
+import ApplicationEngine.src.Core.Utility.CoreUtility as Utility # type: ignore
+from ApplicationEngine.src.Core.Utility.Filemanager import *
+# import Appl.src.Core.Utility.CoreUtility as Utility # type: ignore
 
 EngineFileManager.SetEnginePath("EngineRoot" , EngineRoot)
 EngineFileManager.SetEnginePath("EngineBase" , os.path.join( str(EngineFileManager.GetEnginePath("EngineRoot")), "ApplicationEngine") )
@@ -22,7 +25,9 @@ EngineFileManager.SetEnginePath("EngineSettingsRoot" , os.path.join( str(EngineF
 
 print ("ESR : ", EngineFileManager.GetEnginePath("EngineSettingsRoot"))
 
-from src.Core.Core import *
+from ApplicationEngine.src.Core.Core import *
+
+
 
 
 # for testing
