@@ -1,7 +1,7 @@
+from __future__ import annotations
 import math
 
 ## TODO: Extend
-
 
 
 
@@ -10,82 +10,92 @@ import math
 class Vector:
 
     # Initialiser
-    def __init__(self, x=0, y=0):
-        self.x = x
-        self.y = y
+    def __init__(self, x : float = 0, y : float = 0):
+        self.x : float = x
+        self.y : float = y
+
+    def _OnUpdate(self): ...
 
     # Returns a string representation of the vector
     def __str__(self):
         return "(" + str(self.x) + "," + str(self.y) + ")"
 
     # Tests the equality of this vector and another
-    def __eq__(self, other):
+    def __eq__(self, other : Vector) -> bool:  # type: ignore
         return self.x == other.x and self.y == other.y
 
     # Tests the inequality of this vector and another
-    def __ne__(self, other):
+    def __ne__(self, other : Vector) -> bool:  # type: ignore
         return not self.__eq__(other)
 
     # Returns a tuple with the point corresponding to the vector
-    def get_p(self):
+    def get_p(self) -> tuple [float, ...]:
         return (self.x, self.y)
 
     # Returns a copy of the vector
-    def copy(self):
+    def copy(self) -> Vector:
         return Vector(self.x, self.y)
 
     # Adds another vector to this vector
-    def add(self, other):
+    def add(self, other : Vector) -> Vector:
         self.x += other.x
         self.y += other.y
+        
+        self._OnUpdate()
         return self
 
-    def __add__(self, other):
+    def __add__(self, other : Vector) -> Vector:
         return self.copy().add(other)
+    
+        self._OnUpdate()
 
     # Negates the vector (makes it point in the opposite direction)
-    def negate(self):
-        return self.multiply(-1)
+    def negate(self) -> Vector:
+        
+        self.multiply(-1)
+        self._OnUpdate()
+        return self
 
-    def __neg__(self):
+    def __neg__(self) -> Vector:
         return self.copy().negate()
 
     # Subtracts another vector from this vector
-    def subtract(self, other):
+    def subtract(self, other : Vector):
         return self.add(-other)
 
-    def __sub__(self, other):
+    def __sub__(self, other : Vector) -> Vector:
         return self.copy().subtract(other)
 
     # Multiplies the vector by a scalar
-    def multiply(self, k):
+    def multiply(self, k : float) -> Vector:
         self.x *= k
         self.y *= k
+        self._OnUpdate()
         return self
 
-    def __mul__(self, k):
+    def __mul__(self, k : float) -> Vector:
         return self.copy().multiply(k)
 
-    def __rmul__(self, k):
+    def __rmul__(self, k : float) -> Vector:
         return self.copy().multiply(k)
 
     # Divides the vector by a scalar
-    def divide(self, k):
+    def divide(self, k : float) -> Vector:
         return self.multiply(1/k)
 
-    def __truediv__(self, k):
+    def __truediv__(self, k : float) -> Vector:
         return self.copy().divide(k)
 
     # Normalizes the vector
-    def normalize(self):
+    def normalize(self) -> Vector:
         return self.divide(self.length())
 
     # Returns a normalized version of the vector
-    def get_normalized(self):
+    def get_normalized(self) -> Vector:
         return self.copy().normalize()
 
     # Returns the dot product of this vector with another one
-    def dot(self, other):
+    def dot(self, other : Vector) -> float:
         return self.x * other.x + self.y * other.y
 
     # Returns the length of the vector
@@ -97,35 +107,35 @@ class Vector:
         return self.x**2 + self.y**2
 
     # Reflect this vector on a normal
-    def reflect(self, normal):
+    def reflect(self, normal : Vector) -> Vector:
         n = normal.copy()
         n.multiply(2*self.dot(normal))
         self.subtract(n)
         return self
 
     # Returns the angle between this vector and another one
-    def angle(self, other):
+    def angle(self, other : Vector) -> float | None:
         return math.acos(self.dot(other) / (self.length() * other.length()))
 
     # Rotates the vector 90 degrees anticlockwise
-    def rotate_anti(self):
+    def rotate_anti(self) -> Vector | None:
         self.x, self.y = -self.y, self.x
         return self
 
     # Rotates the vector according to an angle theta given in radians
-    def rotate_rad(self, theta):
+    def rotate_rad(self, theta : float) -> Vector | None:
         rx = self.x * math.cos(theta) - self.y * math.sin(theta)
         ry = self.x * math.sin(theta) + self.y * math.cos(theta)
         self.x, self.y = rx, ry
         return self
 
     # Rotates the vector according to an angle theta given in degrees
-    def rotate(self, theta):
+    def rotate(self, theta : float) -> Vector | None:
         theta_rad = theta / 180 * math.pi
         return self.rotate_rad(theta_rad)
     
     # project the vector onto a given vector
-    def get_proj(self, vec):
+    def get_proj(self, vec : Vector)-> Vector | None:
         unit = vec.get_normalized()
         return unit.multiply(self.dot(unit))
 
@@ -133,78 +143,80 @@ class Vector:
 # Modified Vector class
 class __Vector(Vector):
 
-    # Initialiser
-    def __init__(self, *args : list [float]):
-        self.__m_vec = []
-        self.__m_size = len(self.__m_vec)
+    def __init__(self, *args : float):
+        self._m_vec : list [float] = []
+        self._m_size = len(self._m_vec)
         for arg in args:
-            self.__m_vec.append(arg)
+            self._m_vec.append(arg)
 
     # Returns a string representation of the vector
     def __str__(self):
         out = "("
-        for value in self.__m_vec:
-            out += value
+        for value in self._m_vec:
+            out += str(value)
             out += ", "
         out += ")"
         
         return out
 
     # Tests the equality of this vector and another
-    def __eq__(self, other):
-        if self.__m_size != other.size(): return False
+    def __eq__(self, other : __Vector) -> bool: # type: ignore
+        if self._m_size != other.size(): return False
         
-        equal = True
-        for i in range(self.__m_size):
-            equal *= (self.__m_vec[i] == other[i])
+        equal : bool = True
+        for i in range(self._m_size):
+            equal = equal & (self._m_vec[i] == other[i])
         return equal
 
     # Tests the inequality of this vector and another
-    def __ne__(self, other):
+    def __ne__(self, other : __Vector): # type: ignore
         return not self.__eq__(other)
 
     # Returns a tuple with the point corresponding to the vector
-    def get_p(self):
-        return tuple(self.__m_vec)
+    def get_p(self) -> tuple [float , ...]:
+        return tuple(self._m_vec)
 
     # Returns a copy of the vector
-    def copy(self):
-        return __Vector(*self.__m_vec)
+    def copy(self) -> Vector:
+        return __Vector(*self._m_vec)
 
     # Adds another vector to this vector
-    def add(self, other):
-        assert (self.__m_size != other.size()), f"Attempted to add two incompatable vector types sizes: {self.__m_size} {other.size()}"
+    def add(self, other : __Vector): # type: ignore
+        assert (self._m_size != other.size()), f"Attempted to add two incompatable vector types sizes: {self._m_size} {other.size()}"
         
-        for i in range(self.__m_size):
-            self.__m_vec[i] += other[i]
+        for i in range(self._m_size):
+            self._m_vec[i] += other[i]
         
+        self._OnUpdate()
         return self
     
     def size(self):
-        return self.__m_size
+        return self._m_size
 
     # Multiplies the vector by a scalar
-    def multiply(self, other):
-        assert (self.__m_size != other.size()), f"Attempted to multiply two incompatable vector types sizes: {self.__m_size} {other.size()}"
-        
-        for i in range(self.__m_size):
-            self.__m_vec[i] *= other[i]
+    def multiply(self, k : float) -> Vector:
+        for i in range(self._m_size):
+            self._m_vec[i] *= k
+        self._OnUpdate()
         return self
 
 
-    def __getitem__(self, index):
-        assert ( index > 0 and index < self.__m_size ), f"list index out of range for vector of size {self.__m_size}"
-        return self.__m_vec[index]  
+    def __getitem__(self, index : int):
+        assert ( index > 0 and index < self._m_size ), f"list index out of range for vector of size {self._m_size}"
+        return self._m_vec[index]  
 
-    def __setitem__(self, index, value):
-        self.data[index] = value
+    def __setitem__(self, index : int, value : float):
+        self._m_vec[index] = value
+        self._OnUpdate()
 
     # Returns the dot product of this vector with another one
-    def dot(self, other):
-        assert (self.__m_size != other.size()), f"Attempted to multiply two incompatable vector types sizes: {self.__m_size} {other.size()}"
+    def dot(self, other : __Vector): # type: ignore
+        assert (self._m_size != other.size()), f"Attempted to multiply two incompatable vector types sizes: {self._m_size} {other.size()}"
         dotP = 0
-        for i in range(self.__m_size):
-            dotP += self.__m_vec[i] * other[i]
+        for i in range(self._m_size):
+            dotP += self._m_vec[i] * other[i]
+        
+        self._OnUpdate()
         return dotP
         
 
@@ -216,14 +228,14 @@ class __Vector(Vector):
     # Returns the squared length of the vector
     def length_squared(self):
         SquareSum = 0
-        for value in self.__m_vec:
+        for value in self._m_vec:
             SquareSum += value**2
         return SquareSum
 
     
 
     # Returns the angle between this vector and another one
-    def angle(self, other):
+    def angle(self, other : Vector) -> None:
         print("not applicabe to this vector impl")
 
     # Rotates the vector 90 degrees anticlockwise
@@ -231,15 +243,58 @@ class __Vector(Vector):
         print("not applicabe to this vector impl")
 
     # Rotates the vector according to an angle theta given in radians
-    def rotate_rad(self, theta):
+    def rotate_rad(self, theta : float):
         print("not applicabe to this vector impl")
 
     # Rotates the vector according to an angle theta given in degrees
-    def rotate(self, theta):
+    def rotate(self, theta : float):
         print("not applicabe to this vector impl")
     
     # project the vector onto a given vector
-    def get_proj(self, vec):
+    def get_proj(self, vec : Vector):
         print("not applicabe to this vector impl")
         
 
+
+class Vec2(__Vector):
+    def __init__(self, x:float=0, y:float=0):
+        super().__init__(x, y)
+        
+    def _OnUpdate(self) -> None:
+        self.x : float = self._m_vec[0]
+        self.y : float = self._m_vec[1]
+        
+        self.re : float = self._m_vec[0]
+        self.im : float = self._m_vec[1]
+
+
+
+class Vec3(__Vector):
+    def __init__(self, x:float=0 , y:float=0, z:float=0):
+        super().__init__(x , y , z)
+    
+    def _OnUpdate(self) -> None:
+        self.x : float = self._m_vec[0]
+        self.y : float = self._m_vec[1]
+        self.z : float = self._m_vec[2]
+        
+        
+        self.r : float = self._m_vec[0]
+        self.g : float = self._m_vec[1]
+        self.b : float = self._m_vec[2]
+
+class Vec4(__Vector):
+    def __init__(self, x:float = 0, y:float = 0, z:float = 0, w:float = 0):
+        super().__init__(x, y, z, w)
+    
+    def _OnUpdate(self) -> None:
+        self.x : float = self._m_vec[0]
+        self.y : float = self._m_vec[1]
+        self.z : float = self._m_vec[2]
+        self.w : float = self._m_vec[3]
+
+
+        self.r : float = self._m_vec[0]
+        self.g : float = self._m_vec[1]
+        self.b : float = self._m_vec[2]
+        self.a : float = self._m_vec[3]

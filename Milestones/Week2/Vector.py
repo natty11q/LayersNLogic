@@ -4,7 +4,7 @@ import math
 class Vector:
 
     # Initialiser
-    def __init__(self, x=0, y=0):
+    def __init__(self, x:float=0.0, y:float=0.0):
         self.x = x
         self.y = y
 
@@ -59,6 +59,9 @@ class Vector:
 
     def __mul__(self, k):
         return self.copy().multiply(k)
+    
+    # def __pow__(self, k, modulus=None):
+    #     return self.copy()
 
     def __rmul__(self, k):
         return self.copy().multiply(k)

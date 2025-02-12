@@ -8,3 +8,6 @@ import threading
 import queue
 
 import random
+
+from enum import Enum, auto
+from abc  import ABC, abstractmethod  # enforce overriding

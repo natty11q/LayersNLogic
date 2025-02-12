@@ -1,4 +1,4 @@
-import include.Common as Common
+import include.Common as Common # type: ignore noqa
 import src.Core.Utility.CoreUtility as Utility
 
 
@@ -6,6 +6,7 @@ from src.Core.Utility.Filemanager import *
 
 
 import time
+from typing import Callable
 
 
 class Time:
@@ -14,7 +15,7 @@ class Time:
 
     # inner class for timer
     class __Timer:
-        def __init__(self, Duration, usesScaledTime, endCall, endArgs, frameCall, frameArgs, callOnPhysicsThread):
+        def __init__(self, Duration : float, usesScaledTime : bool, endCall : Callable[[list [object]], None], endArgs : list [object], frameCall : Callable[[list [object]], None], frameArgs : list [object], callOnPhysicsThread : bool):
             self.__paused   : bool  = False
             self.__time     : float = 0
             self.__hasEnd   : bool  = (Duration != -1)
@@ -24,15 +25,15 @@ class Time:
             
             self.__usesScaledTime : bool = usesScaledTime
             
-            self.__endCall : function = endCall
-            self.__endArgs : list = endArgs
+            self.__endCall : Callable[[list], None] = endCall       # type: ignore
+            self.__endArgs : list = endArgs                         # type: ignore
             
-            self.__frameCall : function = frameCall
-            self.__frameCall : list = frameArgs
+            self.__frameCall : Callable[[list], None] = frameCall   # type: ignore
+            self.__frameArgs : list = frameArgs                     # type: ignore
             
             self.__isPhysTimer : bool = callOnPhysicsThread
         
-        def Update(self, dt):
+        def Update(self, dt : float):
             self.__time += dt
             if self.__time > self.__Duration:
                 self.__time = self.__Duration
@@ -40,13 +41,13 @@ class Time:
             self.__OnUpdate()
         
         def __OnUpdate(self):
-            self.__frameCall(*self.__frameArgs)
+            self.__frameCall(*self.__frameArgs)       # type: ignore
         
         def __OnTermination(self):
-            self.__endCall(*self.__endArgs)
+            self.__endCall(*self.__endArgs)           # type: ignore
 
         def IsComplete(self):
-            self.__Finished = (self.__Duration < self.__time) * self.__hasEnd
+            self.__Finished = bool((self.__Duration < self.__time) * self.__hasEnd) # unnecessary conversion , i know dw
             return self.__Finished
 
 
@@ -54,13 +55,13 @@ class Time:
         def Terminate(self):
             self.__OnTermination
         
-        def Increment(self, Deltatime, timeScale):
+        def Increment(self, Deltatime : float, timeScale : float):
             if self.__usesScaledTime:
                 self.__time += Deltatime
             else:
                 self.__time += Deltatime * timeScale
             
-            self.__Finished = (self.__Duration < self.__time) * self.__hasEnd
+            self.__Finished = bool((self.__Duration < self.__time) * self.__hasEnd)
 
         
         def Pause(self):
@@ -78,10 +79,10 @@ class Time:
 
 
 #==================================================
-    __TimeSettings = Utility.LoadJson( os.path.join( EngineFileManager.GetEnginePath("EngineSettingsRoot") , "Graphics/graphicsSettings.json") ) 
+    __TimeSettings = Utility.LoadJson( os.path.join( str(EngineFileManager.GetEnginePath("EngineSettingsRoot")) , "Graphics/graphicsSettings.json") ) 
     
     
-    __BASE_TIME_SCALE : float = __TimeSettings.get("BASE_TIME_SCALE",1)
+    __BASE_TIME_SCALE : float = __TimeSettings.get("BASE_TIME_SCALE",1)         # type: ignore
     __TimeScale : float = __BASE_TIME_SCALE
     
     __Deltatime : float = 0
@@ -91,8 +92,8 @@ class Time:
     __ScaledElapsedTime : float  = 0
     
     
-    __BASE_TICK_RATE : float = __TimeSettings.get("BASE_TICK_RATE",60)
-    __TickRate : int = __BASE_TICK_RATE
+    __BASE_TICK_RATE : float = __TimeSettings.get("BASE_TICK_RATE",60)          # type: ignore
+    __TickRate : float = __BASE_TICK_RATE
     
     
     
@@ -112,9 +113,9 @@ class Time:
     __MIN_TICK_RATE : float = 0.0
     
     
-    __FRAMERATE_UNCAPPED = True
-    __TARGET_FRAME_RATE : float = __TimeSettings.get("STARTING_TARGET_FRAMERATEE",120)
-    __V_SYNC : bool = False
+    __b_FRAMERATE_UNCAPPED = True
+    __f_TARGET_FRAME_RATE : float = __TimeSettings.get("STARTING_TARGET_FRAMERATEE",120) # type: ignore
+    __b_V_SYNC : bool = False
 
 # init as this so that the first frame has a deltatime of 0 instead of a large number (due to time.time() - 0 on frame 1)
     __frameStart    : float  = time.process_time()
@@ -122,12 +123,13 @@ class Time:
     
     # timers are handled with ids
     # Note :: Ids should never change until the function is complete
-    __Timers : dict = {}
+    __Timers : dict [int , __Timer] = {}
 
     __FRAME_SLEEP_ALLOWANCE = 0.0005 / 1000  # slight reduction in waiting time to get as close to target framerate as possible
 
 #========================================================================
    
+    @staticmethod
     def __UpdateTimers():
         """
             Update all the timers that arent bound to a physics thread
@@ -136,12 +138,12 @@ class Time:
         for timer in Time.__Timers.values():
             if not timer.IsPhysTimer():
                 timer.Update(Time.__Deltatime)
-
+    @staticmethod
     def __UpdatePhysicsTimers():
         for timer in Time.__Timers.values():
             if timer.IsPhysTimer():
                 timer.Update(Time.__Deltatime)
-    
+    @staticmethod
     def __UpdateFPS():
         if len(Time.__FPS_CACHE) < Time.__FPS_CACHE_SIZE:
             Time.__FPS_CACHE.append(Time.__Deltatime)
@@ -151,68 +153,94 @@ class Time:
             print(f"fps : {Time.FPS()}\n")
         
 #--------------- public
-
+    @staticmethod
     def TimeScale() -> float:
         return Time.__TimeScale
+    
+    @staticmethod
     def ScaledDeltaTime() -> float:
         return Time.__ScaledDeltatime
+    
+    @staticmethod
     def DeltaTime() -> float:
         return Time.__Deltatime
+    
+    @staticmethod
     def Time() -> float:
         return Time.__TotalElapsedTime
+    
+    @staticmethod
     def ScaledTime() -> float:
         return Time.__ScaledElapsedTime
+    
+    @staticmethod
     def FPS() -> float:
         return Time.__FPS
+    
+    @staticmethod
     def FrameCount() -> int:
         return Time.__FrameCount
+    
+    @staticmethod
     def TickCount() -> int:
         return Time.__TickCount
+    
+    @staticmethod
     def TickRate() -> float:
         return Time.__BASE_TICK_RATE 
     
+    @staticmethod
     def IsVsync() -> bool:
-        return Time.__V_SYNC
+        return Time.__b_V_SYNC
+    
+    @staticmethod
     def TargetFrameRate() -> float:
-        return Time.__TARGET_FRAME_RATE
+        return Time.__f_TARGET_FRAME_RATE
     
-    
+    @staticmethod
     def SetTargetFramerate(framerate : float):
         if framerate > 0 + Time.__FRAME_SLEEP_ALLOWANCE:
-            Time.__TARGET_FRAME_RATE = framerate
+            Time.__f_TARGET_FRAME_RATE = framerate
     
     ## TODO : add error handling or when an invalid value is input for the rates
+    @staticmethod
     def SetTimeScale(scale : float) -> None:
         if scale < Time.__MAX_TIME_SCALE and scale > Time.__MIN_TIME_SCALE:
             Time.__TimeScale = scale
     
+    @staticmethod
     def SetPhysicsTickRate(newRate : float) -> None:
         if newRate > Time.__MIN_TICK_RATE and newRate < Time.__MAX_TICK_RATE:
             Time.__TickRate = newRate
-        
-    def SetVSync(VS):
-        Time.__V_SYNC = VS
     
+    @staticmethod    
+    def SetVSync(VS : bool):
+        Time.__b_V_SYNC = VS
+    
+    @staticmethod
     def UnCapFramerate():
-        Time.__FRAMERATE_UNCAPPED = True
+        Time.__b_FRAMERATE_UNCAPPED = True
     
+    @staticmethod
     def CapFramerate():
-        Time.__FRAMERATE_UNCAPPED = False
+        Time.__b_FRAMERATE_UNCAPPED = False
 
+    @staticmethod
     def CustomSleep() -> bool:
         """custom sleep funciton to ensure that the program can be quit safley even if sleeping"""
         #TODO : impl
         return False
 
+    @staticmethod
     def Update() -> None:
         
         
         # restrict the frame rate
         Time.__frameEnd = time.process_time()
         
-        frameTime = Time.__frameEnd - Time.__frameStart
-        if not Time.__FRAMERATE_UNCAPPED:
-            TargetFrameTime = (1/Time.__TARGET_FRAME_RATE)
+        # frameTime = Time.__frameEnd - Time.__frameStart
+        if not Time.__b_FRAMERATE_UNCAPPED:
+            TargetFrameTime = (1/Time.__f_TARGET_FRAME_RATE)
 
     
             WaitExit = False
@@ -236,11 +264,13 @@ class Time:
         
         Time.__frameStart = time.process_time()
     
+    @staticmethod
     def PhysicsUpdate() -> None:
         Time.__UpdatePhysicsTimers()
     
     
-    def StartTimerMs(duration = -1, usesScaledTime = False, endCall =  Utility.nullFunc, endArgs = [], frameCall = Utility.nullFunc, frameArgs = [], callOnPhysicsThread = False) -> int:
+    @staticmethod
+    def StartTimerMs(duration : float = -1.0, usesScaledTime : bool = False, endCall : Callable[[list [object]], None] =  Utility.nullFunc, endArgs : list [object]= [], frameCall : Callable[[list[object]], None] = Utility.nullFunc, frameArgs : list[object]= [], callOnPhysicsThread : bool= False) -> int:
         """Creates a timer in milliseconds
 
         Args:
@@ -256,13 +286,14 @@ class Time:
             str: returns the id for the timer in the dictionary
         """
         
-        TimerID = Utility.FindLowestAvailableFreeInt(Time.__Timers)
+        TimerID = Utility.FindLowestAvailableFreeInt(Time.__Timers) # type: ignore
         Time.__Timers[TimerID] = Time.__Timer(Duration= (duration / 1000), usesScaledTime= usesScaledTime, endCall= endCall, endArgs= endArgs, frameCall= frameCall, frameArgs= frameArgs, callOnPhysicsThread= callOnPhysicsThread)
         
         return TimerID
 
 
-    def StartTimerS(duration = -1, usesScaledTime = False, endCall =  Utility.nullFunc, endArgs = [], frameCall = Utility.nullFunc, frameArgs = [], callOnPhysicsThread = False) -> int:
+    @staticmethod
+    def StartTimerS(duration : float = -1.0, usesScaledTime : bool = False, endCall : Callable[[list [object]], None] =  Utility.nullFunc, endArgs : list [object]= [], frameCall : Callable[[list[object]], None] = Utility.nullFunc, frameArgs : list[object]= [], callOnPhysicsThread : bool= False) -> int:
         """Creates a timer in seconds
 
         Args:
@@ -278,7 +309,7 @@ class Time:
             str: returns the id for the timer in the dictionary
         """
         
-        TimerID = Utility.FindLowestAvailableFreeInt(Time.__Timers)
+        TimerID = Utility.FindLowestAvailableFreeInt(Time.__Timers) # type: ignore
         Time.__Timers[TimerID] = Time.__Timer(Duration= duration, usesScaledTime= usesScaledTime, endCall= endCall, endArgs= endArgs, frameCall= frameCall, frameArgs= frameArgs, callOnPhysicsThread= callOnPhysicsThread)
         
         return TimerID
@@ -286,24 +317,27 @@ class Time:
 
 #provide an interface for the timers
     
-    def EndTimer(ID : str) -> None:
+    @staticmethod
+    def EndTimer(ID : int) -> None:
         if ID not in Time.__Timers.keys():
             return
         Time.__Timers[ID].Terminate()
         del Time.__Timers[ID]
     
-    
-    def PauseTimer(ID : str) -> None:
+    @staticmethod
+    def PauseTimer(ID : int) -> None:
         if ID not in Time.__Timers.keys():
             return
         Time.__Timers[ID].Pause()
     
-    def UnPauseTimer(ID : str) -> None:
+    @staticmethod
+    def UnPauseTimer(ID : int) -> None:
         if ID not in Time.__Timers.keys():
             return
         Time.__Timers[ID].UnPause()
-    
-    def IsTimerPaused(ID : str) -> None:
+
+    @staticmethod    
+    def IsTimerPaused(ID : int) -> None:
         if ID not in Time.__Timers.keys():
             return
         Time.__Timers[ID].IsPaused()

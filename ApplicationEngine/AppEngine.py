@@ -10,15 +10,15 @@
 
 
 import os, sys
-EngineRoot : os.path = os.path.dirname( os.path.dirname( __file__ ) )
+EngineRoot : str = os.path.dirname( os.path.dirname( __file__ ) )
 sys.path.append(EngineRoot)
 
-import src.Core.Utility.CoreUtility as Utility
+import src.Core.Utility.CoreUtility as Utility # type: ignore
 from src.Core.Utility.Filemanager import *
 
 EngineFileManager.SetEnginePath("EngineRoot" , EngineRoot)
-EngineFileManager.SetEnginePath("EngineBase" , os.path.join( EngineFileManager.GetEnginePath("EngineRoot"), "ApplicationEngine") )
-EngineFileManager.SetEnginePath("EngineSettingsRoot" , os.path.join( EngineFileManager.GetEnginePath("EngineBase") , "Settings"))
+EngineFileManager.SetEnginePath("EngineBase" , os.path.join( str(EngineFileManager.GetEnginePath("EngineRoot")), "ApplicationEngine") )
+EngineFileManager.SetEnginePath("EngineSettingsRoot" , os.path.join( str(EngineFileManager.GetEnginePath("EngineBase")) , "Settings"))
 
 print ("ESR : ", EngineFileManager.GetEnginePath("EngineSettingsRoot"))
 

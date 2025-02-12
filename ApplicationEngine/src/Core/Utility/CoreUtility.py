@@ -1,11 +1,13 @@
 from include.Common import *
 
+# class __Timer : ...
+
 # used as default for some functions that take in lambdas / function ptrs
-def nullFunc(*eatArgs , **eatKewargs) -> None:
+def nullFunc(*eatArgs : ..., **eatKewargs : ...) -> None: # type: ignore noqa
     return
 
 
-def FindLowestAvailableFreeInt(data : dict , start : int = 0) -> int:
+def FindLowestAvailableFreeInt(data : dict [int , object], start : int = 0) -> int:
     """Gets the next free integer value in a dictionary,
     used to check a dictionary for the lowest available free integer
 
@@ -16,7 +18,7 @@ def FindLowestAvailableFreeInt(data : dict , start : int = 0) -> int:
         int: lowest free integer found
     """
     
-    pass
+    return 0
 
 
 
@@ -25,7 +27,7 @@ def FindLowestAvailableFreeInt(data : dict , start : int = 0) -> int:
 
 ## filehandling wrappers and utiliity
 
-def LoadJson(pathToJson):
+def LoadJson(pathToJson : str) -> dict [str, object]:
     """Loads a json file into mem as a dictionary
 
     Args:

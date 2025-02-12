@@ -1,38 +1,55 @@
-class Window:
-    def __init__(self):
-        self.__window = None
+from __future__ import annotations
 
-class SGWindow(Window):
-    def __init__(self , layout):
-        super().__init__()
-        
-        self.__windowLayout = [].append(layout)
-        self.__window = None
+from src.Graphics.Renderer import *
+
+
+class WindowProperties:
+    def __init__(self, title : str, width : int , height : int):
+        self.__Title  : str  = title
+        self.__Width  : int  = width
+        self.__Height : int  = height
+        self.__Aspectratio : float = (width / height)
     
-    def GetWidth(self) -> float:
-        pass
+    def AspectRatio(self):
+        return self.__Aspectratio
     
-    def GetHeight(self) -> float:
-        pass
+    def Width(self):
+        return self.__Width
+
+    def Height(self):
+        return self.__Height
     
-    def GetAspectRatio(self) -> float:
-        pass
+    def Title(self):
+        return self.__Title
+
+    def __RecalculateAspectRatio(self):
+        self.__Aspectratio = (self.__Width / self.__Height)
+
+    def SetWidth(self, newW : int):
+        self.__Width = newW
+        self.__RecalculateAspectRatio()
     
-    def SetVsync(self, vsync) -> None:
-        pass
+    def SetHeight(self, newH : int):
+        self.__Height = newH
+        self.__RecalculateAspectRatio()
     
-    def IsVsync(self, vsync) -> None:
-        pass
-    
-    def GetNative(self) -> Window:
-        return self.__window
-    
-    
+    def SetTitle(self, newT : str):
+        self.__Title = newT
+
+class Window:
     
     
-    
-    def _OnUpdate(self) -> None:
-        pass
+    def CreateWindow(self, Props : WindowProperties) ->  Window: ...
     
     
-    def __sub_init(xself) -> None: ... 
+    def OnUpdate(self) -> None: ...
+
+    def GetWidth(self) -> float: ...
+    def GetHeight(self) -> float: ...
+    def GetAspectRatio(self) -> float: ...
+    
+    
+    def SetVsync(self) -> None: ...
+    def ISVsync(self) -> bool: ...
+    
+    def GetNativeWindow(self) -> None: ...

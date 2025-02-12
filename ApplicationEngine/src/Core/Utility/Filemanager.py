@@ -4,19 +4,20 @@ from include.Common import *
 
 
 class EngineFileManager:
-    __EnginePaths : {str , os.path} = {
+    __EnginePaths : dict [str , str] = {
         "EngineRoot" : "./",
         "EngineSettingsRoot" : "./"
     }
+    GamePaths : dict [str , str] = {}
+
     
-    def SetEnginePath(pathName, pathDir):
+    @staticmethod
+    def SetEnginePath(pathName : str, pathDir : str):
         EngineFileManager.__EnginePaths[pathName] = pathDir
 
-    def GetEnginePath(pathName , default = None):
+    @staticmethod
+    def GetEnginePath(pathName : str , default : str | None = None):
         if pathName in EngineFileManager.__EnginePaths:
             return EngineFileManager.__EnginePaths[pathName]
         return default
     
-
-
-    GamePaths : {str , os.path} = {}

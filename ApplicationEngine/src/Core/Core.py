@@ -3,7 +3,7 @@ from include.Common import *
 
 
 
-import src.Core.Utility.CoreUtility as Utility
+import src.Core.Utility.CoreUtility as Utility  # type: ignore
 from src.Core.Utility.Temporal import *
 from src.Core.Utility.Filemanager import *
 from src.Core.Game import *
