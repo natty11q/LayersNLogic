@@ -5,6 +5,7 @@ from ApplicationEngine.include.Common import *
 from ApplicationEngine.include.Maths.Maths import *
 from ApplicationEngine.include.Window.Window import *
 from ApplicationEngine.src.Object.Object import *
+from ApplicationEngine.src.Graphics.Renderer.Renderer import *
 import ApplicationEngine.src.Core.Utility.Temporal as Temporal
 
 
@@ -53,8 +54,8 @@ class Game:
     
     
     def __init__(self):
-        self.__IsRunning = True
-        self._window = None
+        self.__IsRunning : bool = False
+        self._window : Window
         
         # layout = [[]] # clear layout
         # # layout = [[simplegui.Frame("Game", [[simplegui.Graph((900, 600), (0, 0), (900, 600), background_color='white', key='-GRAPH-')]], key='-FRAME-')]] # clear layout
@@ -66,14 +67,21 @@ class Game:
         # self.__window.set_size(WINDOW_SIZE)
         
         
-        self.__PhysicsThread : threading.Thread  = threading.Thread(target = self.__PhysicsMainloop, args=(), daemon=True)
-        self.__InputThread : threading.Thread = threading.Thread(target=self.input_listener, args=(self._window,), daemon=True)
+        self.__PhysicsThread : threading.Thread
+        self.__InputThread : threading.Thread
     
 
     def Run(self):
+        self.__PhysicsThread : threading.Thread  = threading.Thread(target = self.__PhysicsMainloop, args=(), daemon=True)
+        self.__InputThread : threading.Thread = threading.Thread(target=self.input_listener, args=(self._window,), daemon=True)
+        
         self.__StartPhysicsThread()
         
         
+        if Renderer.GetAPI() != RendererAPI.API.SimpleGui:
+            self.__IsRunning = True
+        
+        self._window.Run()
         self.__MainLoop()
     
     def Save(self):

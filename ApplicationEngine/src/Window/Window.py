@@ -1,6 +1,8 @@
 from __future__ import annotations
+from dataclasses import dataclass
 
-from ApplicationEngine.src.Graphics.Renderer import *
+from ApplicationEngine.src.Graphics.Renderer.RendererAPI import *
+from ApplicationEngine.src.Graphics.Renderer.RenderCommand import *
 
 
 class WindowProperties:
@@ -36,10 +38,43 @@ class WindowProperties:
     def SetTitle(self, newT : str):
         self.__Title = newT
 
-class Window:
+class Window(ABC):
     
+    @dataclass
+    class WindowData:
+        Title   : str = ""
+        Width   : float = 0
+        Height  : float = 0
+        AspectRatio : float = False
+        VSync   : bool = False
+        # Keys    : dict [int , bool] = {}
     
-    def CreateWindow(self, Props : WindowProperties) ->  Window: ...
+    def __init__(self, props : WindowProperties):
+        self._Data : Window.WindowData = Window.WindowData()
+        
+        self._Data.Title   = props.Title()
+        self._Data.Width   = props.Width()
+        self._Data.Height  = props.Height()
+        self._Data.AspectRatio = props.AspectRatio()
+        self._Data.VSync
+        
+        self.__m_Window = None
+    
+    @abstractmethod
+    def Run(self):
+        pass
+        
+    
+    @staticmethod
+    def CreateWindow(Props : WindowProperties) -> Window:
+        if RendererAPI.GetAPI() == RendererAPI.API.SimpleGui:
+            from ApplicationEngine.Platform.Simplegui.Window.SimpleGuiWindow import SimpleGUIWindow
+            RenderCommand.s_RendererAPI = SimpleGUiRendererAPI()
+            return SimpleGUIWindow(Props)
+        else:
+            print("RENDERING API NOT SUPPORTED YET")
+            raise Exception()
+        
     
     
     def OnUpdate(self) -> None: ...

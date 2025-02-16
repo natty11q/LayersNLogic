@@ -1,6 +1,23 @@
 from ApplicationEngine.include.Common import *
 from ApplicationEngine.include.Maths.Maths import *
 
+from ApplicationEngine.src.LayerSystem.LayerSystem import *
+class CommandType(Enum):
+    SetClearColour  = auto()
+    Clear           = auto()
+    Enable          = auto()
+    Disable         = auto()
+    DrawIndexed     = auto()
+    GetUniformLocation = auto()
+    SetUniformInt   = auto()
+    SetUniformVec2  = auto()
+    SetUniformVec3  = auto()
+    SetUniformVec4  = auto()
+    SetUniformMat2  = auto()
+    SetUniformMat3  = auto()
+    SetUniformMat4  = auto()
+    DrawTriangle    = auto()
+    DrawCircle      = auto()
 
 class RendererAPI(ABC): ## abstract class only
     
@@ -13,77 +30,76 @@ class RendererAPI(ABC): ## abstract class only
         SimpleGui   = auto()
         PySimpleGui = auto()
         
+    _LayerStack : LayerStack = LayerStack()
     
     @staticmethod
-    @abstractmethod
-    def SetClearColour( col : Vector.Vec4 ) -> None:
-        pass
+    def PushLayer(layer : Layer):
+        RendererAPI._LayerStack.PushLayer(layer)
+        layer.OnAttach()
     
     @staticmethod
-    @abstractmethod
-    def Clear( value : int = 0) -> None:
-        pass
+    def PopLayer(layer : Layer):
+        RendererAPI._LayerStack.PopLayer()
+        layer.OnDetach()
     
     @staticmethod
-    @abstractmethod
-    def Enable( value : int = 0) -> None:
-        pass
+    def PushOverlay(layer : Layer):
+        RendererAPI._LayerStack.PushOverlay(layer)
+        layer.OnAttach()
     
     @staticmethod
+    def PopOverlay(layer : Layer):
+        RendererAPI._LayerStack.PopOverlay()
+        layer.OnDetach()
+    
+
     @abstractmethod
-    def DrawIndexed(VertexArray) -> None:
-        pass
-    
-    @staticmethod
+    def SetClearColour(self, col : Vector.Vec4 ) -> None: ...
+
     @abstractmethod
-    def GetUniformLocation(ID : int, UniformName : str) -> None:
-        pass
+    def Clear(self, value : int = 0) -> None: ...
     
-    
-    @staticmethod
     @abstractmethod
-    def SetUniformInt(UniformLocation : int, value : int) -> None:
-        pass
+    def Enable(self, value : int = 0) -> None: ...
     
-    
-    @staticmethod
     @abstractmethod
-    def SetUniformVec2(UniformLocation : int, value : Vector.Vec2) -> None:
-        pass
+    def Disable(self, value : int = 0) -> None: ...
     
-    
-    @staticmethod
     @abstractmethod
-    def SetUniformVec3(UniformLocation : int, value : Vector.Vec3) -> None:
-        pass
+    def DrawIndexed(self, VertexArray) -> None: ...
     
-    
-    @staticmethod
     @abstractmethod
-    def SetUniformVec4(UniformLocation : int, value : Vector.Vec4) -> None:
-        pass
+    def GetUniformLocation(self, ID : int, UniformName : str) -> None: ...
     
-    
-    @staticmethod
     @abstractmethod
-    def SetUniformMat2(UniformLocation : int, value : Matrix.Mat2) -> None:
-        pass
+    def SetUniformInt(self, UniformLocation : int, value : int) -> None: ...
     
-    
-    @staticmethod
     @abstractmethod
-    def SetUniformMat3(UniformLocation : int, value : Matrix.Mat3) -> None:
-        pass
+    def SetUniformVec2(self, UniformLocation : int, value : Vector.Vec2) -> None: ...
     
-    
-    @staticmethod
     @abstractmethod
-    def SetUniformMat4(UniformLocation : int, value : Matrix.Mat4) -> None:
-        pass
+    def SetUniformVec3(self, UniformLocation : int, value : Vector.Vec3) -> None: ...
     
+    @abstractmethod
+    def SetUniformVec4(self, UniformLocation : int, value : Vector.Vec4) -> None: ...
     
+    @abstractmethod
+    def SetUniformMat2(self, UniformLocation : int, value : Matrix.Mat2) -> None: ...
     
+    @abstractmethod
+    def SetUniformMat3(self, UniformLocation : int, value : Matrix.Mat3) -> None: ...
     
+    @abstractmethod
+    def SetUniformMat4(self, UniformLocation : int, value : Matrix.Mat4) -> None: ...
+    
+    @abstractmethod
+    def DrawTriangle(self, VertexPositions : list [Vector.Vec2], colour : Vector.Vec4): ...
+    
+    @abstractmethod
+    def DrawCircle(self, Position : Vector.Vec2, colour : Vector.Vec4): ...
+    
+    @abstractmethod
+    def Draw(self, *args): ...
     
     @staticmethod
     def GetAPI() -> API:

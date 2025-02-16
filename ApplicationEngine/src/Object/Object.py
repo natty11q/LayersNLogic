@@ -25,7 +25,7 @@ class GameObject:
         pass
     
     
-    def Draw(self, window : Window): ... 
+    def Draw(self): ... 
     
     
     def _OnUpdate(self): ...
@@ -36,11 +36,19 @@ class GameObject:
 
 
 
+class Triangle(GameObject):
+    def __init__(self, positions : list[Vector.Vec2], colour : Vector.Vec4):
+        super().__init__()
+        self.positions = []
+        self.colour = colour
+        
+    def Draw(self): ...
+
 class CircleObject(GameObject):
     def __init__(self, position : Vector.Vec3 = Vector.Vec3()):
         self.__Position : Vector.Vec3 = position
 
-    def Draw(self, window : Window):
+    def Draw(self):
         pass
     
     def Update(self):

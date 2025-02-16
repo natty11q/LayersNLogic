@@ -259,6 +259,7 @@ class __Vector(Vector):
 class Vec2(__Vector):
     def __init__(self, x:float=0, y:float=0):
         super().__init__(x, y)
+        self._OnUpdate()
         
     def _OnUpdate(self) -> None:
         self.x : float = self._m_vec[0]
@@ -272,6 +273,7 @@ class Vec2(__Vector):
 class Vec3(__Vector):
     def __init__(self, x:float=0 , y:float=0, z:float=0):
         super().__init__(x , y , z)
+        self._OnUpdate()
     
     def _OnUpdate(self) -> None:
         self.x : float = self._m_vec[0]
@@ -283,9 +285,13 @@ class Vec3(__Vector):
         self.g : float = self._m_vec[1]
         self.b : float = self._m_vec[2]
 
+    def toVec2(self):
+        return Vec3(self.x, self.y)
+
 class Vec4(__Vector):
     def __init__(self, x:float = 0, y:float = 0, z:float = 0, w:float = 0):
         super().__init__(x, y, z, w)
+        self._OnUpdate()
     
     def _OnUpdate(self) -> None:
         self.x : float = self._m_vec[0]
@@ -298,3 +304,6 @@ class Vec4(__Vector):
         self.g : float = self._m_vec[1]
         self.b : float = self._m_vec[2]
         self.a : float = self._m_vec[3]
+    
+    def toVec3(self):
+        return Vec3(self.x, self.y, self.z)

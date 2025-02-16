@@ -19,6 +19,8 @@ def rand_col():
     return rgb_to_hex((random.randint(0,255), random.randint(0,255), random.randint(0,255)))
 
 
+DRAG_COEF = 0.001
+
 class GameTime:
     DeltaTime : float = 1/60
 
@@ -40,6 +42,9 @@ class Ball:
     
     def Update(self):
         self._velocity.add( self._acceleration.multiply(GameTime.DeltaTime) )
+        # dragDirection : Vector = self._velocity.get_normalized() * -1
+        # dragStrength : float  = self._velocity.length_squared() * DRAG_COEF
+        # self._velocity.subtract( dragDirection * dragStrength )
         self._position.add( self._velocity )
         
         if self._radius > 1:
@@ -47,7 +52,7 @@ class Ball:
     
     
             
-    def Draw(self, canvas : simplegui.Canvas): 
+    def Draw(self, canvas : simplegui.Canvas):
         canvas.draw_circle((self._position.x, self._position.y), self._radius, 2, self._colour, self._colour)
         
     

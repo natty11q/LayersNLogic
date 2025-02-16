@@ -1,0 +1,99 @@
+from ApplicationEngine.src.Graphics.Renderer.RendererAPI import *
+
+
+from ApplicationEngine.Platform.Simplegui.Renderer.SimpleGuiRendererAPI import SimpleGUiRendererAPI
+from ApplicationEngine.Platform.Pygame.Renderer.PygameRendererAPI import PygameRendererAPI
+
+class RenderCommand():
+    
+    # TODO : change api settings to be in 1 location only.
+    s_RendererAPI : RendererAPI = SimpleGUiRendererAPI()
+    
+    @staticmethod
+    def PushLayer(layer : Layer):
+        RenderCommand.s_RendererAPI.PushLayer(layer)
+        
+    @staticmethod
+    def PopLayer():
+        RenderCommand.s_RendererAPI.__LayerStack.PopLayer()
+    
+    @staticmethod
+    def PushOverlay(layer : Layer):
+        RenderCommand.s_RendererAPI.__LayerStack.PushOverlay(layer)
+    
+    @staticmethod
+    def PopOverlay():
+        RenderCommand.s_RendererAPI.__LayerStack.PopOverlay()
+    
+    
+    @staticmethod
+    def SetClearColour( col : Vector.Vec4 ) -> None:
+        RenderCommand.s_RendererAPI.SetClearColour(col)
+    
+    @staticmethod
+    def Clear( value : int = 0) -> None:
+        RenderCommand.s_RendererAPI.Clear(value)
+    
+    @staticmethod
+    def Enable( value : int = 0) -> None:
+        RenderCommand.s_RendererAPI.Enable(value)
+    
+    @staticmethod
+    def Disable( value : int = 0) -> None:
+        RenderCommand.s_RendererAPI.Disable(value)
+    
+    @staticmethod
+    def DrawIndexed(VertexArray) -> None:
+        RenderCommand.s_RendererAPI.DrawIndexed(VertexArray)
+    
+    @staticmethod
+    def GetUniformLocation(ID : int, UniformName : str) -> None:
+        RenderCommand.s_RendererAPI.GetUniformLocation(ID, UniformName)
+    
+    
+    @staticmethod
+    def SetUniformInt(UniformLocation : int, value : int) -> None:
+        RenderCommand.s_RendererAPI.SetUniformInt(UniformLocation, value)
+    
+    
+    @staticmethod
+    def SetUniformVec2(UniformLocation : int, value : Vector.Vec2) -> None:
+        RenderCommand.s_RendererAPI.SetUniformVec2(UniformLocation, value)
+    
+    
+    @staticmethod
+    def SetUniformVec3(UniformLocation : int, value : Vector.Vec3) -> None:
+        RenderCommand.s_RendererAPI.SetUniformVec3(UniformLocation, value)
+    
+    
+    @staticmethod
+    def SetUniformVec4(UniformLocation : int, value : Vector.Vec4) -> None:
+        RenderCommand.s_RendererAPI.SetUniformVec4(UniformLocation, value)
+    
+    
+    @staticmethod
+    def SetUniformMat2(UniformLocation : int, value : Matrix.Mat2) -> None:
+        RenderCommand.s_RendererAPI.SetUniformMat2(UniformLocation, value)
+    
+    
+    @staticmethod
+    def SetUniformMat3(UniformLocation : int, value : Matrix.Mat3) -> None:
+        RenderCommand.s_RendererAPI.SetUniformMat3(UniformLocation, value)
+    
+    
+    @staticmethod
+    def SetUniformMat4(UniformLocation : int, value : Matrix.Mat4) -> None:
+        RenderCommand.s_RendererAPI.SetUniformMat4(UniformLocation, value)
+    
+    
+    @staticmethod
+    def DrawTriangle(VertexPositions : list [Vector.Vec2], colour : Vector.Vec4):
+        RenderCommand.s_RendererAPI.DrawTriangle(VertexPositions, colour)
+    
+    @staticmethod
+    def DrawCircle(Position : Vector.Vec2, colour : Vector.Vec4):
+        RenderCommand.s_RendererAPI.DrawCircle(Position, colour)
+        
+    @staticmethod
+    def Draw(*args):
+        RenderCommand.s_RendererAPI.Draw(*args)

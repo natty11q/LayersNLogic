@@ -44,3 +44,7 @@ def LoadJson(pathToJson : str) -> dict [str, object] | None:
         JsOut = json.load(jsonFile)
 
     return JsOut
+
+
+def rgb_to_hex(rgb):
+    return '#%02x%02x%02x' % rgb
