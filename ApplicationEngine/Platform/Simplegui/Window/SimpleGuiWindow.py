@@ -23,3 +23,19 @@ class SimpleGUIWindow(Window):
         
     def Run(self):
         self.frame.start()
+    
+    def _OnUpdate(self) -> None: ...
+
+    def GetWidth(self) -> float:    return self._Data.Width
+    def GetHeight(self) -> float:   return self._Data.Height
+    def GetAspectRatio(self) -> float:  return self._Data.AspectRatio
+    
+    
+    def SetVsync(self, state :  bool) -> None:
+        self._Data.VSync = state
+
+    def ISVsync(self) -> bool:
+        return self._Data.VSync
+    
+    def GetNativeWindow(self) -> object:
+        return self.frame

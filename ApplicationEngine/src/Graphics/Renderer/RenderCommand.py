@@ -4,6 +4,7 @@ from ApplicationEngine.src.Graphics.Renderer.RendererAPI import *
 from ApplicationEngine.Platform.Simplegui.Renderer.SimpleGuiRendererAPI import SimpleGUiRendererAPI
 from ApplicationEngine.Platform.Pygame.Renderer.PygameRendererAPI import PygameRendererAPI
 
+
 class RenderCommand():
     
     # TODO : change api settings to be in 1 location only.
@@ -15,15 +16,15 @@ class RenderCommand():
         
     @staticmethod
     def PopLayer():
-        RenderCommand.s_RendererAPI.__LayerStack.PopLayer()
+        RenderCommand.s_RendererAPI.PopLayer()
     
     @staticmethod
     def PushOverlay(layer : Layer):
-        RenderCommand.s_RendererAPI.__LayerStack.PushOverlay(layer)
+        RenderCommand.s_RendererAPI.PushOverlay(layer)
     
     @staticmethod
     def PopOverlay():
-        RenderCommand.s_RendererAPI.__LayerStack.PopOverlay()
+        RenderCommand.s_RendererAPI.PopOverlay()
     
     
     @staticmethod
@@ -43,7 +44,7 @@ class RenderCommand():
         RenderCommand.s_RendererAPI.Disable(value)
     
     @staticmethod
-    def DrawIndexed(VertexArray) -> None:
+    def DrawIndexed(VertexArray : VertexArray) -> None:
         RenderCommand.s_RendererAPI.DrawIndexed(VertexArray)
     
     @staticmethod

@@ -4,7 +4,7 @@ from __future__ import annotations
 from ApplicationEngine.include.Common import *
 from ApplicationEngine.include.Maths.Maths import *
 from ApplicationEngine.include.Window.Window import *
-from ApplicationEngine.src.Object.Object import *
+from ApplicationEngine.src.Object.ObjectClass import *
 from ApplicationEngine.src.Graphics.Renderer.Renderer import *
 import ApplicationEngine.src.Core.Utility.Temporal as Temporal
 
@@ -42,13 +42,15 @@ player_y = 300
 
 class Game:
     
-    __s_Instance : Game | None = None
+    __s_Instance : Game
     
     @staticmethod
-    def CreateGame() -> Game:
+    def CreateGame(gameclass) -> Game:
+        if not issubclass(gameclass, Game):
+            print(f"GAME PROVIDIED : {gameclass} , IS NOT A SUBCLASS OF THE GAME CLASS")
+            raise Exception()
         
-        if Game.__s_Instance == None:
-            Game.__s_Instance = Game()
+        Game.__s_Instance = gameclass()
         return Game.__s_Instance
     
     
@@ -69,6 +71,16 @@ class Game:
         
         self.__PhysicsThread : threading.Thread
         self.__InputThread : threading.Thread
+        
+        Game.__s_Instance = self
+    
+    
+    @staticmethod
+    def Get() -> Game:
+        return Game.__s_Instance
+    
+    def GetWindow(self) -> Window:
+        return self._window
     
 
     def Run(self):
@@ -77,6 +89,8 @@ class Game:
         
         self.__StartPhysicsThread()
         
+        Temporal.LLEngineTime.CapFramerate()
+        Temporal.LLEngineTime.SetTargetFramerate(120)
         
         if Renderer.GetAPI() != RendererAPI.API.SimpleGui:
             self.__IsRunning = True
@@ -130,7 +144,7 @@ class Game:
     def __PhysicsMainloop(self):
         while True:
             self._OnPhysicsUpdate()
-            Temporal.time.sleep(1 / Temporal.Time.TickRate())
+            Temporal.time.sleep(1 / Temporal.LLEngineTime.TickRate())
 
     def __HandleEvents(self, event : object, values : dict [int, int] = {}):  # type: ignore
         # print("called")
@@ -149,14 +163,12 @@ class Game:
         # x = 2400
         
         
-        Temporal.Time.CapFramerate()
         
-        Temporal.Time.SetTargetFramerate(120)
         
         
         
         while self.__IsRunning:
-            Temporal.Time.Update()
+            Temporal.LLEngineTime.Update()
         
             # event, values = self._window.Read(timeout=8)
             # self.__HandleEvents(event , values)

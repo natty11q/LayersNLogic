@@ -1,17 +1,19 @@
 from ApplicationEngine.include.Common import *
-from ApplicationEngine.include.Window.Window import *
 from ApplicationEngine.src.Graphics.Renderer.RenderCommand import *
+from ApplicationEngine.src.Graphics.Renderer.VertexArray import *
+
+
 
 class Renderer:
     
     __Objects = []
     
     @staticmethod
-    def Submit(renderWindow : Window):
+    def Submit():
         pass
     
     @staticmethod
-    def BeginScene(renderWindow : Window, camera):
+    def BeginScene(camera):
         pass
    
     @staticmethod
@@ -55,7 +57,7 @@ class Renderer:
         RenderCommand.Disable(value)
     
     @staticmethod
-    def DrawIndexed(VertexArray) -> None:
+    def DrawIndexed(VertexArray : VertexArray) -> None:
         RenderCommand.DrawIndexed(VertexArray)
     
     @staticmethod

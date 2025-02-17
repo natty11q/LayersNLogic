@@ -13,3 +13,5 @@ import random
 
 from enum import Enum, auto
 from abc  import ABC, abstractmethod  # enforce overriding
+
+from ctypes import *

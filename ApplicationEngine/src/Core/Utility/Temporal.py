@@ -9,7 +9,7 @@ import time
 from typing import Callable
 
 
-class Time:
+class LLEngineTime:
 
 #------------- private:
 
@@ -135,95 +135,95 @@ class Time:
             Update all the timers that arent bound to a physics thread
             IE : called every render frame
         """
-        for timer in Time.__Timers.values():
+        for timer in LLEngineTime.__Timers.values():
             if not timer.IsPhysTimer():
-                timer.Update(Time.__Deltatime)
+                timer.Update(LLEngineTime.__Deltatime)
     @staticmethod
     def __UpdatePhysicsTimers():
-        for timer in Time.__Timers.values():
+        for timer in LLEngineTime.__Timers.values():
             if timer.IsPhysTimer():
-                timer.Update(Time.__Deltatime)
+                timer.Update(LLEngineTime.__Deltatime)
     @staticmethod
     def __UpdateFPS():
-        if len(Time.__FPS_CACHE) < Time.__FPS_CACHE_SIZE:
-            Time.__FPS_CACHE.append(Time.__Deltatime)
+        if len(LLEngineTime.__FPS_CACHE) < LLEngineTime.__FPS_CACHE_SIZE:
+            LLEngineTime.__FPS_CACHE.append(LLEngineTime.__Deltatime)
         else:
-            Time.__FPS = 1 / (sum(Time.__FPS_CACHE) / Time.__FPS_CACHE_SIZE) # caclulate average frames per second
-            Time.__FPS_CACHE = []
-            print(f"fps : {Time.FPS()}\n")
+            LLEngineTime.__FPS = 1 / (sum(LLEngineTime.__FPS_CACHE) / LLEngineTime.__FPS_CACHE_SIZE) # caclulate average frames per second
+            LLEngineTime.__FPS_CACHE = []
+            print(f"fps : {LLEngineTime.FPS()}\n")
         
 #--------------- public
     @staticmethod
     def TimeScale() -> float:
-        return Time.__TimeScale
+        return LLEngineTime.__TimeScale
     
     @staticmethod
     def ScaledDeltaTime() -> float:
-        return Time.__ScaledDeltatime
+        return LLEngineTime.__ScaledDeltatime
     
     @staticmethod
     def DeltaTime() -> float:
-        return Time.__Deltatime
+        return LLEngineTime.__Deltatime
     
     @staticmethod
     def Time() -> float:
-        return Time.__TotalElapsedTime
+        return LLEngineTime.__TotalElapsedTime
     
     @staticmethod
     def ScaledTime() -> float:
-        return Time.__ScaledElapsedTime
+        return LLEngineTime.__ScaledElapsedTime
     
     @staticmethod
     def FPS() -> float:
-        return Time.__FPS
+        return LLEngineTime.__FPS
     
     @staticmethod
     def FrameCount() -> int:
-        return Time.__FrameCount
+        return LLEngineTime.__FrameCount
     
     @staticmethod
     def TickCount() -> int:
-        return Time.__TickCount
+        return LLEngineTime.__TickCount
     
     @staticmethod
     def TickRate() -> float:
-        return Time.__BASE_TICK_RATE 
+        return LLEngineTime.__BASE_TICK_RATE 
     
     @staticmethod
     def IsVsync() -> bool:
-        return Time.__b_V_SYNC
+        return LLEngineTime.__b_V_SYNC
     
     @staticmethod
     def TargetFrameRate() -> float:
-        return Time.__f_TARGET_FRAME_RATE
+        return LLEngineTime.__f_TARGET_FRAME_RATE
     
     @staticmethod
     def SetTargetFramerate(framerate : float):
-        if framerate > 0 + Time.__FRAME_SLEEP_ALLOWANCE:
-            Time.__f_TARGET_FRAME_RATE = framerate
+        if framerate > 0 + LLEngineTime.__FRAME_SLEEP_ALLOWANCE:
+            LLEngineTime.__f_TARGET_FRAME_RATE = framerate
     
     ## TODO : add error handling or when an invalid value is input for the rates
     @staticmethod
     def SetTimeScale(scale : float) -> None:
-        if scale < Time.__MAX_TIME_SCALE and scale > Time.__MIN_TIME_SCALE:
-            Time.__TimeScale = scale
+        if scale < LLEngineTime.__MAX_TIME_SCALE and scale > LLEngineTime.__MIN_TIME_SCALE:
+            LLEngineTime.__TimeScale = scale
     
     @staticmethod
     def SetPhysicsTickRate(newRate : float) -> None:
-        if newRate > Time.__MIN_TICK_RATE and newRate < Time.__MAX_TICK_RATE:
-            Time.__TickRate = newRate
+        if newRate > LLEngineTime.__MIN_TICK_RATE and newRate < LLEngineTime.__MAX_TICK_RATE:
+            LLEngineTime.__TickRate = newRate
     
     @staticmethod    
     def SetVSync(VS : bool):
-        Time.__b_V_SYNC = VS
+        LLEngineTime.__b_V_SYNC = VS
     
     @staticmethod
     def UnCapFramerate():
-        Time.__b_FRAMERATE_UNCAPPED = True
+        LLEngineTime.__b_FRAMERATE_UNCAPPED = True
     
     @staticmethod
     def CapFramerate():
-        Time.__b_FRAMERATE_UNCAPPED = False
+        LLEngineTime.__b_FRAMERATE_UNCAPPED = False
 
     @staticmethod
     def CustomSleep() -> bool:
@@ -236,22 +236,22 @@ class Time:
         
         
         # restrict the frame rate
-        Time.__frameEnd = time.process_time()
+        LLEngineTime.__frameEnd = time.process_time()
         
         # frameTime = Time.__frameEnd - Time.__frameStart
-        if not Time.__b_FRAMERATE_UNCAPPED:
-            TargetFrameTime = (1/Time.__f_TARGET_FRAME_RATE)
+        if not LLEngineTime.__b_FRAMERATE_UNCAPPED:
+            TargetFrameTime = (1/LLEngineTime.__f_TARGET_FRAME_RATE)
 
     
             WaitExit = False
-            while time.process_time() - Time.__frameStart < (TargetFrameTime - Time.__FRAME_SLEEP_ALLOWANCE) and not WaitExit:
-                WaitExit = Time.CustomSleep()
+            while time.process_time() - LLEngineTime.__frameStart < (TargetFrameTime - LLEngineTime.__FRAME_SLEEP_ALLOWANCE) and not WaitExit:
+                WaitExit = LLEngineTime.CustomSleep()
 
-        Time.__frameEnd = time.process_time()
-        Time.__Deltatime        = Time.__frameEnd - Time.__frameStart
-        Time.__ScaledDeltatime  = Time.__Deltatime * Time.__TimeScale
-        Time.__TotalElapsedTime     += Time.__Deltatime
-        Time.__ScaledElapsedTime    += Time.__ScaledDeltatime
+        LLEngineTime.__frameEnd = time.process_time()
+        LLEngineTime.__Deltatime        = LLEngineTime.__frameEnd - LLEngineTime.__frameStart
+        LLEngineTime.__ScaledDeltatime  = LLEngineTime.__Deltatime * LLEngineTime.__TimeScale
+        LLEngineTime.__TotalElapsedTime     += LLEngineTime.__Deltatime
+        LLEngineTime.__ScaledElapsedTime    += LLEngineTime.__ScaledDeltatime
 
         # print("1/dt : " , ( 1 / Time.__Deltatime) , "\n")
         # print("")
@@ -259,14 +259,14 @@ class Time:
 
         
         
-        Time.__UpdateFPS()
-        Time.__UpdateTimers()
+        LLEngineTime.__UpdateFPS()
+        LLEngineTime.__UpdateTimers()
         
-        Time.__frameStart = time.process_time()
+        LLEngineTime.__frameStart = time.process_time()
     
     @staticmethod
     def PhysicsUpdate() -> None:
-        Time.__UpdatePhysicsTimers()
+        LLEngineTime.__UpdatePhysicsTimers()
     
     
     @staticmethod
@@ -286,8 +286,8 @@ class Time:
             str: returns the id for the timer in the dictionary
         """
         
-        TimerID = Utility.FindLowestAvailableFreeInt(Time.__Timers) # type: ignore
-        Time.__Timers[TimerID] = Time.__Timer(Duration= (duration / 1000), usesScaledTime= usesScaledTime, endCall= endCall, endArgs= endArgs, frameCall= frameCall, frameArgs= frameArgs, callOnPhysicsThread= callOnPhysicsThread)
+        TimerID = Utility.FindLowestAvailableFreeInt(LLEngineTime.__Timers) # type: ignore
+        LLEngineTime.__Timers[TimerID] = LLEngineTime.__Timer(Duration= (duration / 1000), usesScaledTime= usesScaledTime, endCall= endCall, endArgs= endArgs, frameCall= frameCall, frameArgs= frameArgs, callOnPhysicsThread= callOnPhysicsThread)
         
         return TimerID
 
@@ -309,8 +309,8 @@ class Time:
             str: returns the id for the timer in the dictionary
         """
         
-        TimerID = Utility.FindLowestAvailableFreeInt(Time.__Timers) # type: ignore
-        Time.__Timers[TimerID] = Time.__Timer(Duration= duration, usesScaledTime= usesScaledTime, endCall= endCall, endArgs= endArgs, frameCall= frameCall, frameArgs= frameArgs, callOnPhysicsThread= callOnPhysicsThread)
+        TimerID = Utility.FindLowestAvailableFreeInt(LLEngineTime.__Timers) # type: ignore
+        LLEngineTime.__Timers[TimerID] = LLEngineTime.__Timer(Duration= duration, usesScaledTime= usesScaledTime, endCall= endCall, endArgs= endArgs, frameCall= frameCall, frameArgs= frameArgs, callOnPhysicsThread= callOnPhysicsThread)
         
         return TimerID
 
@@ -319,26 +319,26 @@ class Time:
     
     @staticmethod
     def EndTimer(ID : int) -> None:
-        if ID not in Time.__Timers.keys():
+        if ID not in LLEngineTime.__Timers.keys():
             return
-        Time.__Timers[ID].Terminate()
-        del Time.__Timers[ID]
+        LLEngineTime.__Timers[ID].Terminate()
+        del LLEngineTime.__Timers[ID]
     
     @staticmethod
     def PauseTimer(ID : int) -> None:
-        if ID not in Time.__Timers.keys():
+        if ID not in LLEngineTime.__Timers.keys():
             return
-        Time.__Timers[ID].Pause()
+        LLEngineTime.__Timers[ID].Pause()
     
     @staticmethod
     def UnPauseTimer(ID : int) -> None:
-        if ID not in Time.__Timers.keys():
+        if ID not in LLEngineTime.__Timers.keys():
             return
-        Time.__Timers[ID].UnPause()
+        LLEngineTime.__Timers[ID].UnPause()
 
     @staticmethod    
     def IsTimerPaused(ID : int) -> None:
-        if ID not in Time.__Timers.keys():
+        if ID not in LLEngineTime.__Timers.keys():
             return
-        Time.__Timers[ID].IsPaused()
+        LLEngineTime.__Timers[ID].IsPaused()
 

@@ -1,7 +1,6 @@
 from ApplicationEngine.src.Graphics.Renderer.RendererAPI import *
-from ApplicationEngine.src.Object.Object import *
-
 from ApplicationEngine.src.Core.Utility.CoreUtility import *
+from ApplicationEngine.src.Core.Utility.Temporal import LLEngineTime
 
 try:
     import simplegui # type: ignore
@@ -23,11 +22,11 @@ class SimpleGUiRendererAPI(RendererAPI):
         self.wfMode = self.__RenderSettings & SimpleGUiRendererAPI.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED
     
     def SetClearColour(self, col : Vector.Vec4) -> None:
-        pass
+        ...
     
     
     def Clear(self, value : int = 0) -> None:
-        pass
+        self.__DrawQueue.clear()
     
     def Enable(self, value : int = 0) -> None:
         self.__RenderSettings |= value
@@ -40,10 +39,18 @@ class SimpleGUiRendererAPI(RendererAPI):
         pass
     
     
-    ## TODO : change vertex argument to be a proper Vertex array instead.
-    #TODO : finish the VA class alongside SHADER CLASSES
-    def DrawIndexed(self,VertexArray) -> None: ...
-
+    ## TODO : change vertex argument to be a proper Vertex array instead. [ X ]
+    ## TODO : finish the VA class [X] alongside SHADER CLASSES [ ]
+    ## TODO : Add implementation that follows the buffer layout and draws triangles using the vertices
+    def DrawIndexed(self,VertexArray : VertexArray) -> None: ...
+        # self.__DrawQueue.append(
+        #     {
+        #         "type" : CommandType.DrawIndexed,
+        #         "vertices" : VertexPositions,
+        #         "indices" : [0 , 1 , 2],
+        #         "colour" : colour.toVec3().get_p()
+        #     }
+        # )
 
     # TODO : Change this to return int
     def GetUniformLocation(self, ID : int, UniformName : str) -> None:
@@ -95,6 +102,8 @@ class SimpleGUiRendererAPI(RendererAPI):
     def DrawCircle(self, Position : Vector.Vec2, colour : Vector.Vec4) -> None: ...
             
     def Draw(self, canvas : simplegui.Canvas):
+        LLEngineTime.Update()
+        
         for layer in RendererAPI._LayerStack:
             layer.OnUpdate()
         # input()
@@ -110,3 +119,4 @@ class SimpleGUiRendererAPI(RendererAPI):
                     canvas.draw_polygon(indexed_vertices, 1, rgb_to_hex(color),None)
                 else:
                     canvas.draw_polygon(indexed_vertices, 1, rgb_to_hex(color),rgb_to_hex(color))
+        

@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ApplicationEngine.src.Graphics.Renderer.RendererAPI import *
-from ApplicationEngine.src.Graphics.Renderer.RenderCommand import *
+from ApplicationEngine.src.Graphics.Renderer.Renderer import *
 
 
 class WindowProperties:
@@ -77,7 +77,9 @@ class Window(ABC):
         
     
     
-    def OnUpdate(self) -> None: ...
+    def _OnUpdate(self) -> None: ...
+    def Update(self) -> None:
+        self._OnUpdate()
 
     def GetWidth(self) -> float: ...
     def GetHeight(self) -> float: ...

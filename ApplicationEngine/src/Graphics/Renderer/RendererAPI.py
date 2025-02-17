@@ -2,6 +2,9 @@ from ApplicationEngine.include.Common import *
 from ApplicationEngine.include.Maths.Maths import *
 
 from ApplicationEngine.src.LayerSystem.LayerSystem import *
+
+from ApplicationEngine.src.Graphics.Renderer.VertexArray import *
+
 class CommandType(Enum):
     SetClearColour  = auto()
     Clear           = auto()
@@ -38,9 +41,9 @@ class RendererAPI(ABC): ## abstract class only
         layer.OnAttach()
     
     @staticmethod
-    def PopLayer(layer : Layer):
+    def PopLayer():
         RendererAPI._LayerStack.PopLayer()
-        layer.OnDetach()
+        # layer.OnDetach()
     
     @staticmethod
     def PushOverlay(layer : Layer):
@@ -48,9 +51,9 @@ class RendererAPI(ABC): ## abstract class only
         layer.OnAttach()
     
     @staticmethod
-    def PopOverlay(layer : Layer):
+    def PopOverlay():
         RendererAPI._LayerStack.PopOverlay()
-        layer.OnDetach()
+        # layer.OnDetach()
     
 
     @abstractmethod
@@ -66,7 +69,7 @@ class RendererAPI(ABC): ## abstract class only
     def Disable(self, value : int = 0) -> None: ...
     
     @abstractmethod
-    def DrawIndexed(self, VertexArray) -> None: ...
+    def DrawIndexed(self, VertexArray : VertexArray) -> None: ...
     
     @abstractmethod
     def GetUniformLocation(self, ID : int, UniformName : str) -> None: ...
