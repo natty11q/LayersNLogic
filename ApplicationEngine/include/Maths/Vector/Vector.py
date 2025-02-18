@@ -260,6 +260,8 @@ class Vec2(__Vector):
     def __init__(self, x:float=0, y:float=0):
         super().__init__(x, y)
         self._OnUpdate()
+    
+    
         
     def _OnUpdate(self) -> None:
         self.x : float = self._m_vec[0]
@@ -267,6 +269,19 @@ class Vec2(__Vector):
         
         self.re : float = self._m_vec[0]
         self.im : float = self._m_vec[1]
+        
+    def __sizeof__(self) -> int:
+        return super().__sizeof__()
+    
+    
+    def __getattr__(self, name):
+        """Allows swizzling (e.g., vec.xy, vec.yzx, etc.)"""
+        mapping = {'x': 0, 'y': 1, 'r': 0, 'i': 1}
+        if all(c in mapping for c in name):
+            indices = [mapping[c] for c in name]
+            values  = [self._m_vec[i] for i in indices if i < len(self._m_vec)]
+            return Vector(*values) if len(values) > 1 else values[0]
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
 
 
@@ -287,6 +302,16 @@ class Vec3(__Vector):
 
     def toVec2(self):
         return Vec3(self.x, self.y)
+    
+    def __getattr__(self, name):
+        """Allows swizzling (e.g., vec.xy, vec.yzx, etc.)"""
+        mapping = {'x': 0, 'y': 1, 'z': 2, 'r': 0, 'g': 1, 'b': 2}
+        if all(c in mapping for c in name):
+            indices = [mapping[c] for c in name]
+            values  = [self._m_vec[i] for i in indices if i < len(self._m_vec)]
+            return Vector(*values) if len(values) > 1 else values[0]
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
 
 class Vec4(__Vector):
     def __init__(self, x:float = 0, y:float = 0, z:float = 0, w:float = 0):
@@ -304,6 +329,20 @@ class Vec4(__Vector):
         self.g : float = self._m_vec[1]
         self.b : float = self._m_vec[2]
         self.a : float = self._m_vec[3]
+
+    def __getattr__(self, name):
+        """Allows swizzling (e.g., vec.xy, vec.yzx, etc.)"""
+        mapping = {'x': 0, 'y': 1, 'z': 2, 'w': 3, 'r': 0, 'g': 1, 'b': 2, 'a': 3}
+        if all(c in mapping for c in name):
+            indices = [mapping[c] for c in name]
+            values  = [self._m_vec[i] for i in indices if i < len(self._m_vec)]
+            return Vector(*values) if len(values) > 1 else values[0]
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
     
     def toVec3(self):
         return Vec3(self.x, self.y, self.z)
+
+class Color(Vec4):
+    def __init__(self, x:float = 255, y:float = 255, z:float = 255, w:float = 255):
+        super().__init__(x, y, z, w)
+        self._OnUpdate()
