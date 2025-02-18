@@ -17,7 +17,7 @@ class MovingSquare(LNLEngine.Quad):
         self.RestPos : LNLEngine.Vector.Vec2 = topLeft
         
     def _OnUpdate(self):
-        self._topLeft = LNLEngine.Vector.Vec2( self.RestPos.x + ( 300 * math.cos(LNLEngine.LLEngineTime.Time() * 2) ), self._topLeft.y)
+        self._topLeft = LNLEngine.Vector.Vec2( self.RestPos.x + ( 300 * math.cos(LNLEngine.LLEngineTime.Time() * 2) ), self.RestPos.y + ( 300 * math.sin(LNLEngine.LLEngineTime.Time() * 2) ))
 
 class TestLayer(LNLEngine.Layer):
     def __init__(self, name="TestLayer"):
@@ -26,7 +26,7 @@ class TestLayer(LNLEngine.Layer):
         
         # =================================
         testSquareWidth = 100
-        testSquareHeight = 300
+        testSquareHeight = 100
         
         self.TestSquare = MovingSquare(
             LNLEngine.Vector.Vec2(
