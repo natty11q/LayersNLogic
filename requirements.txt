@@ -1,2 +1,4 @@
 pyopengl
+pygame
+SimpleGUICS2Pygame
 # serial
