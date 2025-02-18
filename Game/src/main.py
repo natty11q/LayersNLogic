@@ -26,7 +26,7 @@ class TestLayer(LNLEngine.Layer):
         
         # =================================
         testSquareWidth = 100
-        testSquareHeight = 300
+        testSquareHeight = 100
         
         self.TestSquare = MovingSquare(
             LNLEngine.Vector.Vec2(
@@ -43,8 +43,9 @@ class TestLayer(LNLEngine.Layer):
         LNLEngine.Renderer.Clear()
         
         
-        LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(10,10),LNLEngine.Vector.Vec2(100,50) , LNLEngine.Vector.Vec2(200,400)], LNLEngine.Vector.Vec4(100, 200, 255, 0))
-        
+        LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(10,10),LNLEngine.Vector.Vec2(100,50) , LNLEngine.Vector.Vec2(200,400)], LNLEngine.Vector.Vec4(100, 200, 255, 255))
+        LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(200,10),LNLEngine.Vector.Vec2(100,800) , LNLEngine.Vector.Vec2(700,4)], LNLEngine.Vector.Vec4(100, 200, 80, 255))
+
         # print(LNLEngine.LLEngineTime.Time())
         self.TestSquare.Update()
         self.TestSquare.Draw()
