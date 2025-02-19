@@ -53,7 +53,7 @@ class TestLayer(LNLEngine.Layer):
         
 
 
-class DoomExample(LNLEngine.Game):
+class PortalsDemo(LNLEngine.Game):
     def __init__(self):
         super().__init__()
         
@@ -61,6 +61,8 @@ class DoomExample(LNLEngine.Game):
         self._window = LNLEngine.Window.CreateWindow(props)
         
         LNLEngine.Renderer.PushLayer(TestLayer())
+        
+        
 
     def _OnUpdate(self):
         return super()._OnUpdate()
@@ -68,5 +70,5 @@ class DoomExample(LNLEngine.Game):
 
 
 if __name__ == "__main__":
-    gameInst = LNLEngine.Game.CreateGame(DoomExample)
+    gameInst = LNLEngine.Game.CreateGame(PortalsDemo)
     gameInst.Run()

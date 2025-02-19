@@ -19,18 +19,18 @@ import ApplicationEngine.src.Core.Utility.Temporal as Temporal
 
 
 
-class TestCube(GameObject):
-    def __init__(self):
-        self.Vertices = []
-        self.indices = []
+# class TestCube(GameObject):
+#     def __init__(self):
+#         self.Vertices = []
+#         self.indices = []
 
-        self.position : Vector.Vec3 = Vector.Vec3()
+#         self.position : Vector.Vec3 = Vector.Vec3()
 
-    def Draw(self, window : Window):
-        pass
+#     def Draw(self, window : Window):
+#         pass
     
-    def Update(self):
-        return super().Update()
+#     def Update(self):
+#         return super().Update()
 
 
 
@@ -72,6 +72,9 @@ class Game:
         self.__PhysicsThread : threading.Thread
         self.__InputThread : threading.Thread
         
+        Temporal.LLEngineTime.CapFramerate()
+        Temporal.LLEngineTime.SetTargetFramerate(120)
+        
         Game.__s_Instance = self
     
     
@@ -89,8 +92,6 @@ class Game:
         
         self.__StartPhysicsThread()
         
-        Temporal.LLEngineTime.CapFramerate()
-        Temporal.LLEngineTime.SetTargetFramerate(120)
         
         if Renderer.GetAPI() != RendererAPI.API.SimpleGui:
             self.__IsRunning = True
