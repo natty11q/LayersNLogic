@@ -77,9 +77,29 @@ class Matrix:
     def getData(self):
         return [row[:] for row in self._m_data]
 
+    def to(self, cls):
+        """Convert the matrix to a given subclass type."""
+        assert issubclass(cls, Mat2 | Mat3 | Mat4), "Can only convert to a subclass of Matrix"
+        return cls(self._m_data)
+
 class Mat2(Matrix):
     def __init__(self, values: list[list[float]] = [[]]):
         super().__init__(2, 2, values if (values != [[]]) else [[1, 0], [0, 1]])
+    
+    def __mul__(self, other: Matrix | Vec2 | Vec3 | Vec4 | float | int) -> Matrix | Vec2 | Vec3 | Vec4:
+        if isinstance(other, Mat2):
+            assert self.cols == other.rows, "Matrix multiplication dimension mismatch"
+            result = [
+                [sum(self[i, k] * other[k, j] for k in range(self.cols)) for j in range(other.cols)]
+                for i in range(self.rows)
+            ]
+            return Mat2(result)
+        else:
+            return super().__mul__(other)
+    
+    @classmethod
+    def FromMatrix(m : Matrix):
+        assert (m.rows == self.)
     
     def copy(self):
         return Mat2([row[:] for row in self._m_data])
@@ -88,12 +108,34 @@ class Mat3(Matrix):
     def __init__(self, values: list[list[float]] = [[]]):
         super().__init__(3, 3, values if (values != [[]]) else [[1 if i == j else 0 for j in range(3)] for i in range(3)])
     
+    def __mul__(self, other: Matrix | Vec2 | Vec3 | Vec4 | float | int) -> Matrix | Vec2 | Vec3 | Vec4:
+        if isinstance(other, Mat2):
+            assert self.cols == other.rows, "Matrix multiplication dimension mismatch"
+            result = [
+                [sum(self[i, k] * other[k, j] for k in range(self.cols)) for j in range(other.cols)]
+                for i in range(self.rows)
+            ]
+            return Mat3(result)
+        else:
+            return super().__mul__(other)
+        
     def copy(self):
         return Mat3([row[:] for row in self._m_data])
 
 class Mat4(Matrix):
     def __init__(self, values: list[list[float]] = [[]]):
         super().__init__(4, 4, values if (values != [[]]) else [[1 if i == j else 0 for j in range(4)] for i in range(4)])
+
+    def __mul__(self, other: Matrix | Vec2 | Vec3 | Vec4 | float | int) -> Matrix | Vec2 | Vec3 | Vec4:
+        if isinstance(other, Mat2):
+            assert self.cols == other.rows, "Matrix multiplication dimension mismatch"
+            result = [
+                [sum(self[i, k] * other[k, j] for k in range(self.cols)) for j in range(other.cols)]
+                for i in range(self.rows)
+            ]
+            return Mat4(result)
+        else:
+            return super().__mul__(other)
     
     def copy(self):
         return Mat4([row[:] for row in self._m_data])
@@ -104,7 +146,3 @@ class Mat4(Matrix):
 
 
 
-
-def translate(mat : Mat4 , vec : Vec3) -> Mat4:
-    retMatData = 
-    return retMat

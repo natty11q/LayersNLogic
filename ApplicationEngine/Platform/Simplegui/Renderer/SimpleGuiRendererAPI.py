@@ -100,7 +100,7 @@ class SimpleGUiRendererAPI(RendererAPI):
         )
     
     def DrawCircle(self, Position : Vector.Vec2, colour : Vector.Vec4) -> None: ...
-            
+    
     def Draw(self, canvas : simplegui.Canvas):
         LLEngineTime.Update()
         
