@@ -1,0 +1,29 @@
+{
+    "LNL_DEBUG" : true,
+    "LNL_LOG_COLOUR" : true,
+
+    "LNL_TO_FILE" : true,
+    "LOG_FILE_PATH" : "./Game/LogicEngineOut/LoggerOutput/log.txt",
+
+    "DEFAULT_PREFIX" : null,
+
+    "LNL_DEBUG_MINIMUM_LEVEL" : {
+        "Trace"     : 0,
+        "Info"      : 1,
+        "Warning"   : 2,
+        "Error"     : 3,
+        "Fatal"     : 4
+    },
+
+    "LNL_DEBUG_COLOUR" : { 
+        "Trace"     : "0;34m",
+        "Info"      : "0;32m",
+        "Warning"   : "1;33m",
+        "Error"     : "0;31m",
+        "Fatal"     : "91m" 
+    },
+
+    "LNL_CURRENT_DEBUG_MINIMUM_LEVEL" : 0
+
+    
+}

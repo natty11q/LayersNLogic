@@ -101,7 +101,8 @@ class SimpleGUiRendererAPI(RendererAPI):
     
     def DrawCircle(self, Position : Vector.Vec2, colour : Vector.Vec4) -> None: ...
             
-    def Draw(self, canvas : simplegui.Canvas):
+    def Draw(self, *args):
+        canvas : simplegui.Canvas = args[0]
         LLEngineTime.Update()
         
         for layer in RendererAPI._LayerStack:

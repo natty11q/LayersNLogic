@@ -4,7 +4,7 @@ from __future__ import annotations
 from ApplicationEngine.include.Common import *
 from ApplicationEngine.include.Maths.Maths import *
 from ApplicationEngine.include.Window.Window import *
-from ApplicationEngine.src.Object.ObjectClass import *
+from ApplicationEngine.src.Object.Object import *
 from ApplicationEngine.src.Graphics.Renderer.Renderer import *
 import ApplicationEngine.src.Core.Utility.Temporal as Temporal
 

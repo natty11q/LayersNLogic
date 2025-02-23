@@ -1,0 +1,1 @@
+In the egine each object can have a certain attribute associated with it.

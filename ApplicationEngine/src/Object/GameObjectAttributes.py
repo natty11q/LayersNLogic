@@ -1,0 +1,11 @@
+from __future__ import annotations 
+from abc import ABC
+
+
+from ApplicationEngine.src.Object.ObjectClass import GameObject
+
+class ObjectAttribute(ABC):
+
+    @staticmethod
+    def AttirbMethod(obj : GameObject):
+        ...
