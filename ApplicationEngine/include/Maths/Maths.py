@@ -26,7 +26,7 @@ import ApplicationEngine.include.Maths.Quaternion.Quaternion as Quat
 
     # def toMat4(m : Matrix) -> Matrix.Mat4: ...
 
-    def inverse(matrix : Matrix.Matrix) -> Matrix.Matrix:
+    def inverse(matrix : Matrix.Matrix) -> Union[Matrix, Vec2, Vec3, Vec4]:
         """Returns the inverse of the matrix if it exists, maintaining its type."""
         if matrix.rows_count != matrix.cols:
             raise ValueError("Only square matrices can be inverted")

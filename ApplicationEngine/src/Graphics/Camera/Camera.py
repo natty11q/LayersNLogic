@@ -60,13 +60,12 @@ class Camera:
     def SetFOV(self, fovDeg : float):
         self._m_FovDeg = fovDeg
         self._RecalculateProjectionMatrix()
-        
+
     def _RecalculateViewMatrix(self):
-        transform  : Matrix.Mat4 = toMat4(self._m_Rotation) * translate(Matrix.Mat4(), self._m_Position)
-        self._m_ViewMatrix = inverse(transform)
-        
-        self._m_ViewProjectionMatrix = self._m_ViewMatrix * self._m_ProjectionMatrix 
-        
+        transform : Matrix.Matrix = toMat4(self._m_Rotation) * translate(Matrix.Mat4(), self._m_Position)
+        self._m_ViewMatrix = inverse(transform.to(Matrix.Mat4))
+        self._m_ViewProjectionMatrix = self._m_ViewMatrix * self._m_ProjectionMatrix
+    
     
     def _RecalculateProjectionMatrix(self):
         pass
