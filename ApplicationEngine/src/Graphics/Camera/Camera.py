@@ -11,7 +11,4 @@ class Camera:
     
     
     def __UpdateViewMatrix(self):
-        pass\
-            
-            
-            TESt
+        pass
