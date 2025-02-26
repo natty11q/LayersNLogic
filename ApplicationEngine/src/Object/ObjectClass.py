@@ -2,6 +2,7 @@
 from ApplicationEngine.include.Maths.Maths import *
 from ApplicationEngine.src.Graphics.Renderer.Renderer import Renderer
 
+from ApplicationEngine.src.Object.ObjectBase import *
 from ApplicationEngine.src.Object.GameObjectAttributes import *
 
 SQUARE_VERTICES : list [float] = [
@@ -21,10 +22,10 @@ SQUARE_INDICES : list [int] = [
 
 
 
-class GameObject:
+class GameObject(GameObjectBase):
     
     def __init__(self):
-        # self._World_Position : Vector.Vec3 = Vector.Vec3()
+        self._World_Position : Vector.Vec3 = Vector.Vec3()
         self.__Attributes : list [ObjectAttribute.__class__] = []
         self.__Active : bool = True ## toggles wether an object is active in the editor and if physics is enabled for that object.
     
