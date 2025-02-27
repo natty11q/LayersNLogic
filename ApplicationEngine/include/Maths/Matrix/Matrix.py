@@ -144,8 +144,9 @@
 
 
 from __future__ import annotations
+from typing import overload
 from typing import TypeVar, Union, Self
-from ApplicationEngine.include.Maths.Vector.Vector import Vec2, Vec3, Vec4
+from ApplicationEngine.include.Maths.Vector.Vector import Vec2, Vec3, Vec4, Vector
 
 
 # Define a generic matrix type
@@ -172,7 +173,32 @@ class Matrix:
         row, col = index
         self._m_data[row][col] = float(value)
     
-    def __mul__(self, other: Union[Matrix, Vec2, Vec3, Vec4, float, int]):
+
+
+    @overload
+    def __mul__(self, other: Vec2) -> Vec2: ...
+
+    @overload
+    def __mul__(self, other: Vec3) -> Vec3: ...
+
+    @overload
+    def __mul__(self, other: Vec4) -> Vec4: ...
+
+
+    @overload
+    def __mul__(self, other: Mat2) -> Mat2: ...
+
+    @overload
+    def __mul__(self, other: Mat3) -> Mat3: ...
+    
+    @overload
+    def __mul__(self, other: Mat4) -> Mat4: ...
+
+    @overload
+    def __mul__(self, other: Matrix) -> Matrix: ...
+
+
+    def __mul__(self, other: object) -> Matrix | Mat2 | Mat3 | Mat4 | Vec2 | Vec3 | Vec4:
         if isinstance(other, Matrix):
             assert self.cols == other.rows, "Matrix multiplication dimension mismatch"
             result = [
@@ -183,14 +209,14 @@ class Matrix:
                 return type(self)(result)
             else:
                 return Matrix(self.rows, self.cols, result)
-  # Preserve matrix type
-        # elif isinstance(other, (Vec2, Vec3, Vec4)):
-        #     assert self.cols == other.size(), "Matrix-vector multiplication dimension mismatch"
-        #     values = [
-        #         sum(self[i, j] * other[j] for j in range(self.cols))
-        #         for i in range(self.rows)
-        #     ]
-        #     return type(other)(*values[:other.size()])  # Preserve vector type
+#   Preserve matrix type
+        elif isinstance(other, (Vec2, Vec3, Vec4)):
+            assert self.cols == other.size(), "Matrix-vector multiplication dimension mismatch"
+            values = [
+                sum(self[i, j] * other[j] for j in range(self.cols))
+                for i in range(self.rows)
+            ]
+            return type(other)(*values[:other.size()])  # Preserve vector type
         elif isinstance(other, (float, int)):
             if isinstance(self, (Mat2,Mat3,Mat4)):
                 return type(self)([[elem * other for elem in row] for row in self._m_data])
@@ -198,6 +224,10 @@ class Matrix:
                 return Matrix(self.rows, self.cols, [[elem * other for elem in row] for row in self._m_data])
         else:
             raise TypeError("Unsupported multiplication")
+
+
+    
+
 
     def transpose(self):
         transposed = [[self[j, i] for j in range(self.rows)] for i in range(self.cols)]
@@ -245,7 +275,6 @@ class Mat3(Matrix):
 class Mat4(Matrix):
     def __init__(self, values: list[list[float]] = [[]]):
         super().__init__(4, 4, values if values is not None else [[1 if i == j else 0 for j in range(4)] for i in range(4)])
-
 
 # # Example usage in the camera class
 
