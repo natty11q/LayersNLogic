@@ -3,6 +3,7 @@ from __future__ import annotations
 from ApplicationEngine.include.Common import *
 from ApplicationEngine.include.Maths.Maths import *
 
+
 import OpenGL.GL
 
 
@@ -150,23 +151,55 @@ class BufferLayout:
 
 
 class VertexBuffer(ABC):
-
+    def __init__(self):
+        self._vertices : list[float] = []
+        self._size = 0
+    
     def Bind(self): ...
     def UnBind(self): ...
 
     def SetLayout(self, layout : BufferLayout): ...
     def GetLayout(self) -> BufferLayout: ...
+    
+    
+    def GetVertices(self) -> list[float]: return self._vertices
+    def GetSize(self) -> int: return self._size
 
     @staticmethod
-    def Create(vertices : list [float] , size : int) -> VertexBuffer: ...
+    def Create(vertices : list [float] , size : int) -> VertexBuffer:
+        from ApplicationEngine.src.Graphics.Renderer.Renderer import Renderer, RendererAPI
+        match (Renderer.GetAPI()):
+            case RendererAPI.API.SimpleGui:
+                from ApplicationEngine.Platform.Simplegui.Renderer.SimpleGuiBuffer import SimpleGuiVertexBuffer
+                return SimpleGuiVertexBuffer(vertices, size)
+            
+            case _ :
+                raise NotImplemented      
+    
 
 
 class IndexBuffer(ABC):
+    def __init__(self):
+        self._indices : list[int] = []
+        self._size = 0
 
     def Bind(self): ...
     def UnBind(self): ...
 
     def GetCount(self) -> int: ...
 
+
+
+    def GetIndices(self) -> list[int]: return self._indices
+    def GetSize(self) -> int: return self._size
+
     @staticmethod
-    def Create(indices : list [float], size : int) -> VertexBuffer: ...
+    def Create(indices : list [int], size : int) -> VertexBuffer:
+        from ApplicationEngine.src.Graphics.Renderer.Renderer import Renderer, RendererAPI
+        match (Renderer.GetAPI()):
+            case RendererAPI.API.SimpleGui:
+                from ApplicationEngine.Platform.Simplegui.Renderer.SimpleGuiBuffer import SimpleGuiIndexBuffer
+                return SimpleGuiIndexBuffer(indices, size)
+            
+            case _ :
+                raise NotImplemented

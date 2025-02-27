@@ -1,9 +1,11 @@
 from ApplicationEngine.src.Graphics.Renderer.Buffer import *
 
 
-
 class SimpleGuiVertexBuffer(VertexBuffer):
     def __init__(self, vertices : list[float] , size : int):
+        self._vertices = vertices.copy() # avoids accidental post modification of the vertex array
+        self._size = size
+        
         self._m_RendererID = 0
         self._m_Layout : BufferLayout = BufferLayout()
     
@@ -14,6 +16,9 @@ class SimpleGuiVertexBuffer(VertexBuffer):
 
 class SimpleGuiIndexBuffer(VertexBuffer):
     def __init__(self, indices : list[int] , size : int):
+        self._indices : list[int] = indices.copy() # avoids accidental post modification of the index array
+        self._size = size
+        
         self._m_RendererID = 0
         self._m_Count = 0
     
