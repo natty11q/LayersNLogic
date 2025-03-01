@@ -285,3 +285,26 @@ class Mat4(Matrix):
 
 
 # Let me know if you want me to add helper functions like 'translate' and 'inverse'! 🚀
+
+
+def ortho(left: float, right: float, bottom: float, top: float, z_near: float = -1.0, z_far: float = 1.0) -> Mat4:
+    """
+    Creates an orthographic projection matrix.
+
+    :param left: Left vertical clipping plane.
+    :param right: Right vertical clipping plane.
+    :param bottom: Bottom horizontal clipping plane.
+    :param top: Top horizontal clipping plane.
+    :param z_near: Near depth clipping plane.
+    :param z_far: Far depth clipping plane.
+    :return: A 4x4 orthographic projection matrix.
+    """
+    
+    ortho_matrix = Mat4([
+        [2 / (right - left), 0, 0, -(right + left) / (right - left)],
+        [0, 2 / (top - bottom), 0, -(top + bottom) / (top - bottom)],
+        [0, 0, -2 / (z_far - z_near), -(z_far + z_near) / (z_far - z_near)],
+        [0, 0, 0, 1]
+    ])
+
+    return ortho_matrix

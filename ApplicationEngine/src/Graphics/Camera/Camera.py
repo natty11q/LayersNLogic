@@ -1,5 +1,7 @@
 
 from ApplicationEngine.include.Maths.Maths import *
+# from ApplicationEngine.include.Maths.Quaternion.Quaternion import Quat
+from ApplicationEngine.include.Maths.Vector.Vector import Vec3
 from ApplicationEngine.src.Window.Window import *
 
 
@@ -38,7 +40,7 @@ class Camera:
         self.height : int = height
         self.m_AspectRatio : float = (width / height)
         
-        
+        self._RecalculateViewMatrix()
         
     def Update(self, deltatime : float):
         self._OnUpdate(deltatime)
@@ -75,3 +77,16 @@ class Camera:
     def GetViewProjectionMatrix(self): return self._m_ViewProjectionMatrix
     def GetRotation(self): return self._m_Rotation
     def GetPosition(self): return self._m_Position
+
+
+
+
+class PesrpectiveCamera(Camera):
+    def __init__(self, width, height, position: Vec3 = Vector.Vec3(), rotation: Quat.Quat = Quat.Quat(), FOVdeg: float = 45, nearPlane: float = 0.1, farPlane: float = 100):
+        super().__init__(width, height, position, rotation, FOVdeg, nearPlane, farPlane)
+
+
+class OrthographicCamera(Camera):
+    def __init__(self, width : int, height : int, left : float, right : float, bottom : float, top : float):
+        self._m_ProjectionMatrix = Matrix.ortho(left,right,bottom,top,-1.0,1.0)
+        self._RecalculateViewMatrix()
