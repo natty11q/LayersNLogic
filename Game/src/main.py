@@ -73,7 +73,7 @@ class TestLayer(LNLEngine.Layer):
 
 
     def OnUpdate(self):
-        LNLEngine.Renderer.Clear()
+        LNLEngine.Renderer.Clear() ## important
         
         
         # LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(10,10),LNLEngine.Vector.Vec2(100,50) , LNLEngine.Vector.Vec2(200,400)], LNLEngine.Vector.Vec4(100, 200, 255, 255))

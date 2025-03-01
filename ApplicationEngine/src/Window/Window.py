@@ -2,8 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ApplicationEngine.src.Graphics.Renderer.RendererAPI import *
-from ApplicationEngine.src.Graphics.Renderer.Renderer import *
-
+# from ApplicationEngine.src.Graphics.Renderer.Renderer import *
 
 class WindowProperties:
     def __init__(self, title : str, width : int , height : int):
@@ -67,6 +66,9 @@ class Window(ABC):
     
     @staticmethod
     def CreateWindow(Props : WindowProperties) -> Window:
+        from ApplicationEngine.src.Graphics.Renderer.Renderer import RenderCommand
+        from ApplicationEngine.Platform.Simplegui.Renderer.SimpleGuiRendererAPI import SimpleGUiRendererAPI
+
         if RendererAPI.GetAPI() == RendererAPI.API.SimpleGui:
             from ApplicationEngine.Platform.Simplegui.Window.SimpleGuiWindow import SimpleGUIWindow
             RenderCommand.s_RendererAPI = SimpleGUiRendererAPI()

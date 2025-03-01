@@ -48,7 +48,7 @@ def SizeOfShaderDataType(type : ShaderDataType):
         case ShaderDataType.Bool:       return 1  * sizeof(c_bool);
         case _:
             # assert(false && "unknown ShaderType"); return 0;
-            assert(False , "unknown ShaderType") # type: ignore
+            assert False , "unknown ShaderType"  # type: ignore
             return 0
 
 
@@ -90,7 +90,7 @@ class BufferElement:
             case ShaderDataType.Bool:       return OpenGL.GL.GL_BOOL;
             case _:
                 # assert(false && "unknown ShaderType"); return 0;
-                assert(False , "unknown ShaderType") # type: ignore
+                assert False , "unknown ShaderType" # type: ignore
                 return 0
         
     def GetComponentCount(self) -> int:
@@ -116,7 +116,7 @@ class BufferElement:
             case ShaderDataType.Bool:       return 1;
             case _:
                 # assert(false && "unknown ShaderType"); return 0;
-                assert(False , "unknown ShaderType") # type: ignore
+                assert False , "unknown ShaderType" # type: ignore
                 return 0
 
 
