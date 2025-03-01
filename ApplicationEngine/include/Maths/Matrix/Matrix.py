@@ -259,22 +259,23 @@ class Matrix:
     def to(self, cls: type[M]) -> M:
         """Convert the matrix to a given subclass type."""
         assert issubclass(cls, Matrix), "Can only convert to a subclass of Matrix"
+       
         return cls(values = self._m_data, rows=self.rows, cols=self.cols)
 
 
 class Mat2(Matrix):
-    def __init__(self, values: list[list[float]] = [[]]):
-        super().__init__(2, 2, values if values is not None else [[1, 0], [0, 1]])
+    def __init__(self, values: list[list[float]] = [[]], cols = 2, rows = 2):
+        super().__init__(2, 2, values if (values != [[]]) else [[1, 0], [0, 1]])
 
 
 class Mat3(Matrix):
-    def __init__(self, values: list[list[float]] = [[]]):
-        super().__init__(3, 3, values if values is not None else [[1 if i == j else 0 for j in range(3)] for i in range(3)])
+    def __init__(self, values: list[list[float]] = [[]], cols = 3, rows = 3):
+        super().__init__(3, 3, values if (values != [[]]) else [[1 if i == j else 0 for j in range(3)] for i in range(3)])
 
 
 class Mat4(Matrix):
-    def __init__(self, values: list[list[float]] = [[]]):
-        super().__init__(4, 4, values if values is not None else [[1 if i == j else 0 for j in range(4)] for i in range(4)])
+    def __init__(self, values: list[list[float]] = [[]], cols = 4, rows = 4):
+        super().__init__(4, 4, values if (values != [[]]) else [[1 if i == j else 0 for j in range(4)] for i in range(4)])
 
 # # Example usage in the camera class
 

@@ -12,29 +12,31 @@ from typing import Union
 # class LNLMaths:
 def translate(mat : Matrix.Mat4 , vec : Matrix.Vec3) -> Matrix.Mat4:
     retMat = mat.copy()
-    for r in range(4):
-        retMat[r , 3] = vec[r] 
+    for r in range(3):
+        retMat[r , 3] = vec[r]
     return retMat
 
 def toMat4(q : Quat.Quat) -> Matrix.Mat4:
     x, y, z, w = q.x, q.y, q.z, q.w
     return Matrix.Mat4(
-        [1 - 2*y*y - 2*z*z, 2*x*y - 2*w*z, 2*x*z + 2*w*y, 0,
-        2*x*y + 2*w*z, 1 - 2*x*x - 2*z*z, 2*y*z - 2*w*x, 0,
-        2*x*z - 2*w*y, 2*y*z + 2*w*x, 1 - 2*x*x - 2*y*y, 0,
-        0, 0, 0, 1]
+        [
+            [1 - 2*y*y - 2*z*z, 2*x*y - 2*w*z, 2*x*z + 2*w*y, 0.0],
+            [2*x*y + 2*w*z, 1 - 2*x*x - 2*z*z, 2*y*z - 2*w*x, 0.0],
+            [2*x*z - 2*w*y, 2*y*z + 2*w*x, 1 - 2*x*x - 2*y*y, 0.0],
+            [0.0, 0.0, 0.0, 1.0]
+        ]
     )
 
 # def toMat4(m : Matrix) -> Matrix.Mat4: ...
 
 def inverse(matrix : Matrix.Matrix) -> Matrix.Matrix:
     """Returns the inverse of the matrix if it exists, maintaining its type."""
-    if matrix.rows_count != matrix.cols:
+    if matrix.rows != matrix.cols:
         raise ValueError("Only square matrices can be inverted")
     
-    size = matrix.rows_count
+    size = matrix.rows
     identity = [[1 if i == j else 0 for j in range(size)] for i in range(size)]
-    mat = [row[:] for row in matrix.rows]  # Copy matrix
+    mat = [row[:] for row in matrix.getData()]  # Copy matrix
     
     # Perform Gaussian elimination
     for i in range(size):
@@ -53,7 +55,7 @@ def inverse(matrix : Matrix.Matrix) -> Matrix.Matrix:
                 for j in range(size):
                     mat[k][j] -= factor * mat[i][j]
                     identity[k][j] -= factor * identity[i][j]
-    if isinstance(other, (Matrix.Mat2, Matrix.Mat3, Matrix.Mat4)):
-        return type(matrix)(sum(identity, []))
+    if isinstance(matrix, (Matrix.Mat2, Matrix.Mat3, Matrix.Mat4)):
+        return type(matrix)()
     else:
         return Matrix.Matrix(matrix.rows, matrix.cols, sum(identity, []))

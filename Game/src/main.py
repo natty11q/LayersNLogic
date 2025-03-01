@@ -72,6 +72,8 @@ class TestLayer(LNLEngine.Layer):
         self.m_vertexArray.SetIndexBuffer(IndexBuffer)
 
 
+        self.camera : LNLEngine.PesrpectiveCamera = LNLEngine.PesrpectiveCamera(self.gameWindow.GetWidth(),self.gameWindow.GetHeight())
+
     def OnUpdate(self):
         LNLEngine.Renderer.Clear() ## important
         
@@ -88,7 +90,7 @@ class TestLayer(LNLEngine.Layer):
 
 
 
-        # LNLEngine.Renderer.BeginScene()
+        LNLEngine.Renderer.BeginScene(self.camera)
 
         LNLEngine.Renderer.Submit(self.m_vertexArray) 
 
