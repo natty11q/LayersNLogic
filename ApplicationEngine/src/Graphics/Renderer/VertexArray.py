@@ -21,7 +21,7 @@ class VertexArray:
         from ApplicationEngine.src.Graphics.Renderer.Renderer import Renderer , RendererAPI
         api = Renderer.GetAPI()
         match api:
-            case RendererAPI.API.NoAPI:
+            case RendererAPI.API.SimpleGui:
                 from ApplicationEngine.Platform.Simplegui.Renderer.SimpleGuiVertexArray import SimpleGuiVertexArray
                 return SimpleGuiVertexArray()
             case _:

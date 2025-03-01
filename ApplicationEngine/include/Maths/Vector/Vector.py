@@ -1,4 +1,8 @@
 from __future__ import annotations
+from typing import override, overload
+
+from ApplicationEngine.Logger.LNLEngineLogger import *
+
 import math
 
 ## TODO: Extend
@@ -145,9 +149,9 @@ class __Vector(Vector):
 
     def __init__(self, *args : float):
         self._m_vec : list [float] = []
-        self._m_size = len(self._m_vec)
         for arg in args:
             self._m_vec.append(arg)
+        self._m_size = len(self._m_vec)
 
     # Returns a string representation of the vector
     def __str__(self):
@@ -193,16 +197,29 @@ class __Vector(Vector):
     def size(self):
         return self._m_size
 
+    @overload
+    def multiply(self : Vec4, k : float) -> Vec4: ...
+    
+    @overload
+    def multiply(self : Vec3, k : float) -> Vec3: ...
+    
+    @overload
+    def multiply(self : Vec2, k : float) -> Vec2: ...
+
+
     # Multiplies the vector by a scalar
     def multiply(self, k : float) -> Vector:
         for i in range(self._m_size):
             self._m_vec[i] *= k
         self._OnUpdate()
         return self
-
+    
 
     def __getitem__(self, index : int):
-        assert ( index > 0 and index < self._m_size ), f"list index out of range for vector of size {self._m_size}"
+        if not ( index >= 0 and index < self._m_size ):
+            LNL_LogEngineFatal(f"list index out of range for vector of size {self._m_size}")
+            assert False
+            
         return self._m_vec[index]  
 
     def __setitem__(self, index : int, value : float):
@@ -211,7 +228,9 @@ class __Vector(Vector):
 
     # Returns the dot product of this vector with another one
     def dot(self, other : __Vector): # type: ignore
-        assert (self._m_size != other.size()), f"Attempted to multiply two incompatable vector types sizes: {self._m_size} {other.size()}"
+        if not (self._m_size != other.size()):
+            LNL_LogEngineFatal(f"Attempted to multiply two incompatable vector types sizes: {self._m_size} {other.size()}")
+            assert False
         dotP = 0
         for i in range(self._m_size):
             dotP += self._m_vec[i] * other[i]

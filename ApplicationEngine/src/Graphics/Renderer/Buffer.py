@@ -56,11 +56,11 @@ class BufferElement:
     
     
     
-    def __init__(self , Name : str, Type : ShaderDataType, Offset : int, Size : int, Normalized : bool):
+    def __init__(self , Name : str, Type : ShaderDataType, Normalized : bool = False):
         self.Name : str = Name
         self.Type : ShaderDataType  = Type
-        self.Offset : int = Offset
-        self.Size : int = Size
+        self.Offset : int = 0
+        self.Size : int = SizeOfShaderDataType(Type)
         self.Normalized : bool = Normalized
         
     
@@ -122,10 +122,11 @@ class BufferElement:
 
 class BufferLayout:
     def __init__(self, elements : list [BufferElement] = []):
-        self.__CalculateOffsetAndStride()
-        
         self._m_Elements : list[BufferElement] = elements
         self._m_Stride  : int = 0
+
+        self.__CalculateOffsetAndStride()
+        
     
     def getElements(self) -> list[BufferElement]:
         return self._m_Elements
@@ -194,7 +195,7 @@ class IndexBuffer(ABC):
     def GetSize(self) -> int: return self._size
 
     @staticmethod
-    def Create(indices : list [int], size : int) -> VertexBuffer:
+    def Create(indices : list [int], size : int) -> IndexBuffer:
         from ApplicationEngine.src.Graphics.Renderer.Renderer import Renderer, RendererAPI
         match (Renderer.GetAPI()):
             case RendererAPI.API.SimpleGui:

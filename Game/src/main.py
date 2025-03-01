@@ -38,20 +38,61 @@ class TestLayer(LNLEngine.Layer):
         )
         
         LNLEngine.Renderer.SetClearColour(LNLEngine.Vector.Vec4(30,10,40))
-    
+
+
+        self.m_vertexArray = LNLEngine.VertexArray.Create()
+
+        vertices = [ 
+            # position          # colour        # normal
+            -0.5, -0.5, 0.0,    0.3, 0.2, 0.8,  0.0, 0.0, 1.0,
+             0.5, -0.5, 0.0,    0.8, 0.2, 0.3,  0.0, 0.0, 1.0,
+             0.5,  0.5, 0.0,    0.3, 0.8, 0.2,  0.0, 0.0, 1.0,
+            -0.5,  0.5, 0.0,    0.7, 0.4, 0.8,  0.0, 0.0, 1.0
+            ]
+        
+        VertexBuffer = LNLEngine.VertexBuffer.Create(vertices, len(vertices))
+
+        layout = LNLEngine.BufferLayout(
+            [
+                LNLEngine.BufferElement("a_pos", LNLEngine.ShaderDataType.Vec3),
+                LNLEngine.BufferElement("a_col", LNLEngine.ShaderDataType.Vec3),
+                LNLEngine.BufferElement("a_normal", LNLEngine.ShaderDataType.Vec3)
+            ]
+        )
+        VertexBuffer.SetLayout(layout)
+        self.m_vertexArray.AddVertexBuffer(VertexBuffer)
+
+
+
+        indices = [0 ,1 ,2, 
+                   2 ,3 ,0]
+        
+        IndexBuffer = LNLEngine.IndexBuffer.Create(indices , len(indices))
+
+        self.m_vertexArray.SetIndexBuffer(IndexBuffer)
+
+
     def OnUpdate(self):
         LNLEngine.Renderer.Clear()
         
         
-        LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(10,10),LNLEngine.Vector.Vec2(100,50) , LNLEngine.Vector.Vec2(200,400)], LNLEngine.Vector.Vec4(100, 200, 255, 255))
-        LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(200,10),LNLEngine.Vector.Vec2(100,800) , LNLEngine.Vector.Vec2(700,4)], LNLEngine.Vector.Vec4(100, 200, 80, 255))
+        # LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(10,10),LNLEngine.Vector.Vec2(100,50) , LNLEngine.Vector.Vec2(200,400)], LNLEngine.Vector.Vec4(100, 200, 255, 255))
+        # LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(200,10),LNLEngine.Vector.Vec2(100,800) , LNLEngine.Vector.Vec2(700,4)], LNLEngine.Vector.Vec4(100, 200, 80, 255))
 
         # print(LNLEngine.LLEngineTime.Time())
         self.TestSquare.Update()
-        self.TestSquare.Draw()
-        
+        # self.TestSquare.Draw()
         
 
+
+
+
+
+        # LNLEngine.Renderer.BeginScene()
+
+        LNLEngine.Renderer.Submit(self.m_vertexArray) 
+
+        LNLEngine.Renderer.EndScene()        
 
 class PortalsDemo(LNLEngine.Game):
     def __init__(self):

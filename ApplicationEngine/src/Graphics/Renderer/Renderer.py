@@ -1,6 +1,7 @@
 from ApplicationEngine.include.Common import *
 from ApplicationEngine.src.Graphics.Renderer.RenderCommand import *
 from ApplicationEngine.src.Graphics.Renderer.VertexArray import *
+from ApplicationEngine.src.Graphics.Camera.Camera import *
 
 
 
@@ -8,12 +9,9 @@ class Renderer:
     
     __Objects = []
     
+
     @staticmethod
-    def Submit():
-        pass
-    
-    @staticmethod
-    def BeginScene(camera):
+    def BeginScene(camera : Camera):
         pass
    
     @staticmethod
@@ -21,8 +19,16 @@ class Renderer:
         pass
     
     @staticmethod
-    def SubmitImidiate():
-        pass
+    def Submit(vertexArray: VertexArray):
+        #modify for defered rendering
+        vertexArray.Bind()
+        RenderCommand.DrawIndexed(vertexArray)
+    
+
+    @staticmethod
+    def SubmitImidiate(vertexArray: VertexArray):
+        vertexArray.Bind()
+        RenderCommand.DrawIndexed(vertexArray)
     
     @staticmethod
     def PushLayer(layer : Layer):

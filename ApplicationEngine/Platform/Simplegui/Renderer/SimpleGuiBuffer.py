@@ -14,7 +14,7 @@ class SimpleGuiVertexBuffer(VertexBuffer):
     def SetLayout(self, layout : BufferLayout):
         self._m_Layout = layout
 
-class SimpleGuiIndexBuffer(VertexBuffer):
+class SimpleGuiIndexBuffer(IndexBuffer):
     def __init__(self, indices : list[int] , size : int):
         self._indices : list[int] = indices.copy() # avoids accidental post modification of the index array
         self._size = size
