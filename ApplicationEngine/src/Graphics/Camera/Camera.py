@@ -64,11 +64,11 @@ class Camera:
         self._RecalculateProjectionMatrix()
 
     def _RecalculateViewMatrix(self):
-        print(toMat4(self._m_Rotation).getData())
-        print("===================")
-        print(Matrix.Mat4().getData())
-        print("===================")
-        print(translate(Matrix.Mat4(), self._m_Position).getData())
+        # print(toMat4(self._m_Rotation).getData())
+        # print("===================")
+        # print(Matrix.Mat4().getData())
+        # print("===================")
+        # print(translate(Matrix.Mat4(), self._m_Position).getData())
         
         transform : Matrix.Mat4 = toMat4(self._m_Rotation) * translate(Matrix.Mat4(), self._m_Position)
         self._m_ViewMatrix = inverse(transform.to(Matrix.Mat4)).to(Matrix.Mat4)
