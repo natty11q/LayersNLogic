@@ -17,7 +17,7 @@ class MovingSquare(LNLEngine.Quad):
         self.RestPos : LNLEngine.Vector.Vec2 = topLeft
         
     def _OnUpdate(self):
-        self._topLeft = LNLEngine.Vector.Vec2( self.RestPos.x + ( 300 * math.cos(LNLEngine.LLEngineTime.Time() * 2) ), self.RestPos.y + ( 300 * math.sin(LNLEngine.LLEngineTime.Time() * 2) ))
+        self._topLeft = LNLEngine.Vector.Vec2( self.RestPos.x + ( 300 * math.cos(LNLEngine.LLEngineTime.Time() * 2) ), self._topLeft.y)
 
 class TestLayer(LNLEngine.Layer):
     def __init__(self, name="TestLayer"):
@@ -38,65 +38,22 @@ class TestLayer(LNLEngine.Layer):
         )
         
         LNLEngine.Renderer.SetClearColour(LNLEngine.Vector.Vec4(30,10,40))
-
-
-        self.m_vertexArray = LNLEngine.VertexArray.Create()
-
-        vertices = [ 
-            # position          # colour        # normal
-            -0.5, -0.5, 0.0,    0.3, 0.2, 0.8,  0.0, 0.0, 1.0,
-             0.5, -0.5, 0.0,    0.8, 0.2, 0.3,  0.0, 0.0, 1.0,
-             0.5,  0.5, 0.0,    0.3, 0.8, 0.2,  0.0, 0.0, 1.0,
-            -0.5,  0.5, 0.0,    0.7, 0.4, 0.8,  0.0, 0.0, 1.0
-            ]
-        
-        VertexBuffer = LNLEngine.VertexBuffer.Create(vertices, len(vertices))
-
-        layout = LNLEngine.BufferLayout(
-            [
-                LNLEngine.BufferElement("a_pos", LNLEngine.ShaderDataType.Vec3),
-                LNLEngine.BufferElement("a_col", LNLEngine.ShaderDataType.Vec3),
-                LNLEngine.BufferElement("a_normal", LNLEngine.ShaderDataType.Vec3)
-            ]
-        )
-        VertexBuffer.SetLayout(layout)
-        self.m_vertexArray.AddVertexBuffer(VertexBuffer)
-
-
-
-        indices = [0 ,1 ,2, 
-                   2 ,3 ,0]
-        
-        IndexBuffer = LNLEngine.IndexBuffer.Create(indices , len(indices))
-
-        self.m_vertexArray.SetIndexBuffer(IndexBuffer)
-
-
-        self.camera : LNLEngine.PesrpectiveCamera = LNLEngine.PesrpectiveCamera(self.gameWindow.GetWidth(),self.gameWindow.GetHeight())
-
+    
     def OnUpdate(self):
-        LNLEngine.Renderer.Clear() ## important
+        LNLEngine.Renderer.Clear()
         
         
-        # LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(10,10),LNLEngine.Vector.Vec2(100,50) , LNLEngine.Vector.Vec2(200,400)], LNLEngine.Vector.Vec4(100, 200, 255, 255))
-        # LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(200,10),LNLEngine.Vector.Vec2(100,800) , LNLEngine.Vector.Vec2(700,4)], LNLEngine.Vector.Vec4(100, 200, 80, 255))
+        LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(10,10),LNLEngine.Vector.Vec2(100,50) , LNLEngine.Vector.Vec2(200,400)], LNLEngine.Vector.Vec4(100, 200, 255, 255))
+        LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(200,10),LNLEngine.Vector.Vec2(100,800) , LNLEngine.Vector.Vec2(700,4)], LNLEngine.Vector.Vec4(40, 150, 30, 255))
 
         # print(LNLEngine.LLEngineTime.Time())
         self.TestSquare.Update()
-        # self.TestSquare.Draw()
+        self.TestSquare.Draw()
+        
         
 
 
-
-
-
-        LNLEngine.Renderer.BeginScene(self.camera)
-
-        LNLEngine.Renderer.Submit(self.m_vertexArray) 
-
-        LNLEngine.Renderer.EndScene()        
-
-class PortalsDemo(LNLEngine.Game):
+class DoomExample(LNLEngine.Game):
     def __init__(self):
         super().__init__()
         
@@ -104,8 +61,6 @@ class PortalsDemo(LNLEngine.Game):
         self._window = LNLEngine.Window.CreateWindow(props)
         
         LNLEngine.Renderer.PushLayer(TestLayer())
-        
-        
 
     def _OnUpdate(self):
         return super()._OnUpdate()
@@ -113,5 +68,5 @@ class PortalsDemo(LNLEngine.Game):
 
 
 if __name__ == "__main__":
-    gameInst = LNLEngine.Game.CreateGame(PortalsDemo)
+    gameInst = LNLEngine.Game.CreateGame(DoomExample)
     gameInst.Run()
