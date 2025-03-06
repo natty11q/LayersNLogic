@@ -1,5 +1,6 @@
 try:
-    import simplegui
+    import simplegui # type: ignore
+    
 except ImportError :
     import SimpleGUICS2Pygame.simpleguics2pygame as simplegui
 
