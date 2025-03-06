@@ -249,16 +249,16 @@ class TestLayer(LNLEngine.Layer):
 
 
         LNLEngine.Renderer.Disable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
-        self.player.Update()
-        self.player.Draw()
+        # self.player.Update()
+        # self.player.Draw()
 
-        self.portal1.Draw()
-        self.portal2.Draw()
+        # self.portal1.Draw()
+        # self.portal2.Draw()
 
         
 
         LNLEngine.Renderer.Enable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
-        # self.Cube.Draw()
+        self.Cube.Draw()
         # self.Cube2.Draw()
 
         LNLEngine.Renderer.EndScene()
