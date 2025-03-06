@@ -23,13 +23,13 @@ class Portal(LNLEngine.GameObject):
 
         self.alongVec : Vec2 = Vertex2 - Vertex1
 
-        self.tangent = (self.alongVec).normalize()
+        self.tangent : Vec2 = (self.alongVec).get_normalized()
         
         tanr = self.tangent.copy()
         angleRot = math.radians(90)
         tanr = tanr  * Mat2([
-                            [math.cos(angleRot) , -math.sin(angleRot)],
-                            [math.sin(angleRot) , math.cos(angleRot)]
+                            [math.cos(angleRot) , math.sin(angleRot)],
+                            [-math.sin(angleRot) , math.cos(angleRot)]
                                 ])
         tanr = tanr.get_p()
         

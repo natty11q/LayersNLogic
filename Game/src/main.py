@@ -214,8 +214,8 @@ class TestLayer(LNLEngine.Layer):
         self.player = Player()
 
 
-        self.portal1 = Portal(Vec2(250, 500), Vec2(750, 500) , Vec4(255,150,20,255))
-        self.portal2 = Portal(Vec2(250, 20), Vec2(250, 500) , Vec4(20,150,255,255))
+        self.portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
+        self.portal2 = Portal(Vec2(0, 20), Vec2(200, 500) , Vec4(20,150,255,255))
 
         self.portal1.LinkPortal(self.portal2)
 
@@ -235,7 +235,7 @@ class TestLayer(LNLEngine.Layer):
         # print(LNLEngine.LLEngineTime.Time())
         
         # self.TestSquare.Update()
-        self.TestSquare.Draw()
+        # self.TestSquare.Draw()
         
 
 

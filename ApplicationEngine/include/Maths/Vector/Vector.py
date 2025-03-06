@@ -87,7 +87,7 @@ class Vector:
             LNL_LogEngineError(f"unknown error occured when multiplying vector {self} with {k}")
             return self
 
-    def __rmul__(self, k : float) -> Vector:
+    def __rmul__(self, k : float | int) -> Vector:
         return self.copy().multiply(k)
 
     # Divides the vector by a scalar
@@ -189,7 +189,7 @@ class _Vector(Vector):
 
     # Returns a copy of the vector
     def copy(self) -> Vector:
-        return _Vector(*self._m_vec)
+        return type(self)(*self._m_vec)
 
     @overload
     def add(self : Vec4, k : Vec4) -> Vec4: ...
@@ -290,6 +290,19 @@ class _Vector(Vector):
             return NotImplemented
     
 
+    @overload
+    def __rmul__(self : Vec2, k : int | float) -> Vec2: ...
+
+    @overload
+    def __rmul__(self : Vec3, k : int | float) -> Vec3: ...
+
+    @overload
+    def __rmul__(self : Vec4, k : int | float) -> Vec4: ...
+
+    def __rmul__(self, k : float | int):
+        return super().__rmul__(k)
+    
+
     # Multiplies the vector by a scalar
     def multiply(self, k : float ) -> Vector:
         for i in range(self._m_size):
@@ -297,6 +310,29 @@ class _Vector(Vector):
         self._OnUpdate()
         return self
     
+
+    @overload
+    def __truediv__(self : Vec2, k : int | float) -> Vec2: ...
+
+    @overload
+    def __truediv__(self : Vec3, k : int | float) -> Vec3: ...
+
+    @overload
+    def __truediv__(self : Vec4, k : int | float) -> Vec4: ...
+
+    @overload
+    def __truediv__(self, k : int) -> Vector: ...
+
+    @overload
+    def __truediv__(self, k : float) -> Vector: ...
+
+    def __truediv__(self, k : float) -> Vector:
+        if isinstance(k, (int, float)):
+            return super().__mul__(k)
+        else:
+            return NotImplemented
+
+
 
     def __getitem__(self, index : int):
         if not ( index >= 0 and index < self._m_size ):
@@ -334,7 +370,39 @@ class _Vector(Vector):
             SquareSum += value**2
         return SquareSum
 
+    @overload
+    def normalize(self : Vec4) -> Vec4: ...
+    @overload
+    def normalize(self : Vec3) -> Vec3: ...
+    @overload
+    def normalize(self : Vec2) -> Vec2: ...
+
+    def normalize(self) -> Vector:
+        return super().normalize()
+
+
+    @overload
+    def get_normalized(self : Vec2) -> Vec2: ...
     
+    @overload
+    def get_normalized(self : Vec3) -> Vec3: ...
+    
+    @overload
+    def get_normalized(self : Vec4) -> Vec4: ...
+    
+    
+    def get_normalized(self):
+        return super().get_normalized()
+
+    @overload
+    def divide(self : Vec4, k : float) -> Vec4: ...
+    @overload
+    def divide(self : Vec3, k : float) -> Vec3: ...
+    @overload
+    def divide(self : Vec2, k : float) -> Vector: ...
+
+    def divide(self, k : float) -> Vector:
+        return super().divide(k)
 
     # Returns the angle between this vector and another one
     def angle(self, other : Vector) -> None:

@@ -21,14 +21,14 @@ class PlayerInputHandlerAttribute(LNLEngine.ObjectAttribute):
         # print("newMeth")
 
 class AffectedByGravityAttribute(LNLEngine.ObjectAttribute):
-    GravitationalConstant = 9.81 / 2000
+    GravitationalConstant = 9.81
     Gravity = Vec3(0, GravitationalConstant, 0)
 
     @staticmethod
     def Attrib_OnUpdate(obj : Player): # type: ignore
         # obj._World_Position = Vec3(100 * math.sin(LNLEngine.LLEngineTime.Time()))
 
-        obj.Velocity += AffectedByGravityAttribute.Gravity
+        obj.Velocity += AffectedByGravityAttribute.Gravity * LNLEngine.LLEngineTime.DeltaTime()
         # print("did sth")
         # PlayerInputHandlerAttribute.newMethod()
 
@@ -64,11 +64,19 @@ class CanTravelThroughPortals(LNLEngine.ObjectAttribute):
                 LNLEngine.LNL_LogInfo("Portal collision ")
                 LNLEngine.LNL_LogInfo("lkinked? : ", portal.checkLink())
 
-                if portal.checkLink() and not obj.InPortalColision:                    
+                if portal.checkLink() and not obj.InPortalColision and not obj.InPortalColisionOnFrame:                    
                     LNLEngine.LNL_LogInfo("Portal teleportation ")
+
+                    offset : Vec2 = obj._World_Position.toVec2() - portal.vertices[0]
+
                     dest : Portal = portal.GetDestination()
-                    destCenter = dest.vertices[0] + (dest.vertices[1] - dest.vertices[0]).multiply(0.5)
-                    obj._World_Position = LNLEngine.Vector.Vec3(destCenter[0], destCenter[1])
+
+                    normalisedDistRationOut_y : float = (offset.dot(portal.tangent.get_normalized()) * portal.tangent).length() / portal.alongVec.length()
+                    normalisedDistRationOut_x : float = (offset.dot(portal.normal.get_normalized()) * portal.normal).length()  / portal.normal.length()
+
+                    destOffsetOut = (dest.alongVec * normalisedDistRationOut_y) + (dest.normal * normalisedDistRationOut_x)
+                    # destCenter = dest.vertices[0] + (dest.vertices[1] - dest.vertices[0]).multiply(0.5)
+                    obj._World_Position = LNLEngine.Vector.Vec3(destOffsetOut[0] - (obj.width/2), destOffsetOut[1] - (obj.height/2))
                     
 
                    # normal should be normalised but i am dividing jsut in case 
@@ -81,10 +89,8 @@ class CanTravelThroughPortals(LNLEngine.ObjectAttribute):
                     
                     obj.Velocity = Vec3(*oV.get_p())
 
-                    obj.InPortalColision = True
-                    
-            else:
-                obj.InPortalColision = False
+                obj.InPortalColisionOnFrame = True
+                
 
 
 
@@ -98,16 +104,19 @@ class Player(LNLEngine.GameObject):
         self.SetAttribure(CanTravelThroughPortals)
 
         self.Velocity = Vec3()
-        self._World_Position = Vec3(400, 0)
+        self._World_Position = Vec3(700, 50)
 
         self.width = 100
         self.height = 100
 
 
         self.InPortalColision = False
+        self.InPortalColisionOnFrame = False
 
     def _OnUpdate(self):
         # LNLEngine.LNL_LogEngineInfo(self._World_Position)
+        self.InPortalColision = self.InPortalColisionOnFrame
+        self.InPortalColisionOnFrame = False
         self._World_Position += self.Velocity
 
     
