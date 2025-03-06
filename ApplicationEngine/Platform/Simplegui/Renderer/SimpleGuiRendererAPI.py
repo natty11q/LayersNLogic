@@ -13,15 +13,11 @@ from ApplicationEngine.Logger.LNLEngineLogger import *
 
 class SimpleGUiRendererAPI(RendererAPI):
     
-    class RenderSettings:
-        LL_SG_TRANSPARENCY_ENABLLED     : int = 1
-        LL_SG_WIREFRAME_MODE_ENABLED    : int = 2
     
     def __init__(self) -> None:
         self.__DrawQueue : list [dict] = []
         self.__RenderSettings : int = 0
-        
-        self.wfMode = self.__RenderSettings & SimpleGUiRendererAPI.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED
+
     
     def SetClearColour(self, col : Vector.Vec4) -> None:
         ...
@@ -32,14 +28,23 @@ class SimpleGUiRendererAPI(RendererAPI):
     
     def Enable(self, value : int = 0) -> None:
         self.__RenderSettings |= value
+
+        self.__DrawQueue.append(
+            {
+                "type" : CommandType.Enable,
+                "value" : value
+            }
+        )
         
-        
-        
-        self.wfMode = self.__RenderSettings & SimpleGUiRendererAPI.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED
-    
     def Disable(self, value : int = 0) -> None:
-        pass
-    
+        self.__RenderSettings ^= value
+
+        self.__DrawQueue.append(
+            {
+                "type" : CommandType.Disable,
+                "value" : value
+            }
+        )    
     
     
     ## TODO : change vertex argument to be a proper Vertex array instead. [ X ]
@@ -174,6 +179,11 @@ class SimpleGUiRendererAPI(RendererAPI):
         # input()
         
         for element in self.__DrawQueue:
+            if element["type"] == CommandType.Enable:
+                self.__RenderSettings |= element["value"]
+            if element["type"] == CommandType.Disable:
+                self.__RenderSettings ^= element["value"]
+
             
             if element["type"] == CommandType.DrawTriangle:
                 vertices : list [Vector.Vec2 | Vector.Vec3 | Vector.Vec4] = element["vertices"]
@@ -181,7 +191,7 @@ class SimpleGUiRendererAPI(RendererAPI):
                 color = element["colour"]
                 indexed_vertices = [(vertices[i].get_p()[0], vertices[i].get_p()[1]) for i in indices]
                 
-                if self.wfMode:
+                if self.__RenderSettings & RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED:
                     canvas.draw_polygon(indexed_vertices, 1, rgb_to_hex(color),None)
                 else:
                     canvas.draw_polygon(indexed_vertices, 1, rgb_to_hex(color),rgb_to_hex(color))
@@ -214,12 +224,13 @@ class SimpleGUiRendererAPI(RendererAPI):
 
 
                     # LNL_LogEngineInfo("vertIndex : ", vertIndex_index)
-                    if self.wfMode:
-                        canvas.draw_polygon(triangle, 1, rgb_to_hex(colours[vertIndex_index - 3].toVec3().get_p()),None)
+                    if self.__RenderSettings & RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED:
+                        canvas.draw_polygon(triangle, 1, rgb_to_hex(colours[indices[vertIndex_index - 3]].toVec3().get_p()),None)
                     else: 
-                        canvas.draw_polygon(triangle, 1, rgb_to_hex(colours[vertIndex_index - 3].toVec3().get_p()),rgb_to_hex(colours[vertIndex_index - 3].toVec3().get_p()))
+                        canvas.draw_polygon(triangle, 1, rgb_to_hex(colours[indices[vertIndex_index - 3]].toVec3().get_p()),rgb_to_hex(colours[indices[vertIndex_index - 3]].toVec3().get_p()))
 
 
 # from normalised coord system to screenspace
 def denormalisePos(vertex : tuple[float, float], w , h) -> tuple[float, float]:
+    # LNL_LogEngineInfo(vertex)
     return ( ((vertex[0] + 1) / 2) * w,  h - ((vertex[1] + 1) / 2) * h )

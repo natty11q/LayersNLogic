@@ -45,7 +45,7 @@ class GameObject(GameObjectBase):
     
     def Update(self):
         for attribute in self.__Attributes:
-            attribute.AttirbMethod(self)
+            attribute.AttribMethod(self)
         self._OnUpdate()
 
 

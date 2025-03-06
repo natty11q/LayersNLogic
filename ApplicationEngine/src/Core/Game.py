@@ -47,7 +47,7 @@ class Game:
     @staticmethod
     def CreateGame(gameclass) -> Game:
         if not issubclass(gameclass, Game):
-            print(f"GAME PROVIDIED : {gameclass} , IS NOT A SUBCLASS OF THE GAME CLASS")
+            LNL_LogEngineFatal(f"GAME PROVIDIED : {gameclass} , IS NOT A SUBCLASS OF THE GAME CLASS")
             raise Exception()
         
         Game.__s_Instance = gameclass()
@@ -123,7 +123,7 @@ class Game:
         pass
     
     def _OnPhysicsUpdate(self) -> None:
-        print("Physics update called")
+        LNL_LogEngineTrace("Physics update called")
 
     def _OnEvent(self , event  : object, values : dict [int , int] = {}) -> None:
         pass

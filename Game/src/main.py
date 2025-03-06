@@ -2,11 +2,14 @@
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
-from ApplicationEngine.include.Maths.Vector.Vector import Vec2, Vec4
+from ApplicationEngine.include.Maths.Vector.Vector import Vec2, Vec3, Vec4
+from ApplicationEngine.include.Maths.Matrix.Matrix import Mat2, Mat3, Mat4
+from ApplicationEngine.include.Maths.Maths import *
 import ApplicationEngine.AppEngine as LNLEngine
 ## ============================= App Code =================================
 
 
+from Game.src.GameComponents.Player.PlayerClass import *
 
 import math
 
@@ -17,7 +20,137 @@ class MovingSquare(LNLEngine.Quad):
         self.RestPos : LNLEngine.Vector.Vec2 = topLeft
         
     def _OnUpdate(self):
-        self._topLeft = LNLEngine.Vector.Vec2( self.RestPos.x + ( 300 * math.cos(LNLEngine.LLEngineTime.Time() * 2) ), self.RestPos.y + ( 300 * math.sin(LNLEngine.LLEngineTime.Time() * 2) ))
+        self._topLeft = Vec2( self.RestPos.x + ( 300 * math.cos(LNLEngine.LLEngineTime.Time() * 2) ), self.RestPos.y + ( 300 * math.sin(LNLEngine.LLEngineTime.Time() * 2) ))
+
+
+
+class Cube(LNLEngine.GameObject):
+    def __init__(self, scale : float= 1, rotation : Quat.Quat = Quat.Quat() ,position : Vec3 = Vec3(0,0,-100)):
+        super().__init__()
+
+        self.m_vertexArray = LNLEngine.VertexArray.Create()
+
+        self.baseVertices = [ 
+            # position          # colour        # normal
+            # face 1 (front face)
+            -0.5,-0.5,-0.5,     0.0,0.0,1.0,        0.0,0.0,-1.0,        
+             0.5,-0.5,-0.5,     0.0,0.0,1.0,        0.0,0.0,-1.0,        
+             0.5, 0.5,-0.5,     0.0,0.0,1.0,        0.0,0.0,-1.0,       
+            -0.5, 0.5,-0.5,     0.0,0.0,1.0,        0.0,0.0,-1.0,       
+
+            # face 2 (let face)
+            -0.5,-0.5,0.5,      0.0,1.0,0.0,        -1.0,0.0,-0.0,        
+            -0.5,-0.5,-0.5,     0.0,1.0,0.0,        -1.0,0.0,-0.0,        
+            -0.5,0.5,-0.5,      0.0,1.0,0.0,        -1.0,0.0,-0.0,        
+            -0.5,0.5,0.5,       0.0,1.0,0.0,        -1.0,0.0,-0.0,        
+            
+            # face 3 (top face)
+            -0.5, 0.5,-0.5,     1.0,0.0,0.0,         0.0,1.0,-0.0,       
+            0.5, 0.5,-0.5,      1.0,0.0,0.0,         0.0,1.0,-0.0,        
+            0.5, 0.5,0.5,       1.0,0.0,0.0,         0.0,1.0,-0.0,        
+            -0.5, 0.5,0.5,      1.0,0.0,0.0,         0.0,1.0,-0.0,        
+            
+            # face 4 (bottom face)
+            -0.5, -0.5,0.5,     1.0,0.0,1.0,        0.0,-1.0,-0.0,        
+            0.5, -0.5,0.5,      1.0,0.0,1.0,        0.0,-1.0,-0.0,        
+            0.5, -0.5,-0.5,     1.0,0.0,1.0,        0.0,-1.0,-0.0,       
+            -0.5, -0.5,-0.5,    1.0,0.0,1.0,        0.0,-1.0,-0.0,       
+
+            # face 5 (right face)
+            0.5,-0.5,-0.5,      0.0,1.0,1.0,        1.0,0.0,-0.0,        
+            0.5,-0.5,0.5,       0.0,1.0,1.0,        1.0,0.0,-0.0,        
+            0.5,0.5,0.5,        0.0,1.0,1.0,        1.0,0.0,-0.0,        
+            0.5,0.5,-0.5,       0.0,1.0,1.0,        1.0,0.0,-0.0,        
+
+            # face 6 (back face)
+            0.5,-0.5,0.5,       1.0,1.0,0.0,        1.0,0.0,1.0,        
+             -0.5,-0.5,0.5,     1.0,1.0,0.0,        1.0,0.0,1.0,       
+             -0.5, 0.5,0.5,     1.0,1.0,0.0,        1.0,0.0,1.0,        
+            0.5, 0.5,0.5,       1.0,1.0,0.0,        1.0,0.0,1.0,   
+        ]
+
+        VertexBuffer = LNLEngine.VertexBuffer.Create(self.baseVertices, len(self.baseVertices))
+
+        self.layout = LNLEngine.BufferLayout(
+            [
+                LNLEngine.BufferElement("a_pos", LNLEngine.ShaderDataType.Vec3),
+                LNLEngine.BufferElement("a_col", LNLEngine.ShaderDataType.Vec3),
+                LNLEngine.BufferElement("a_normal", LNLEngine.ShaderDataType.Vec3)
+            ]
+        )
+
+        VertexBuffer.SetLayout(self.layout)
+        self.m_vertexArray.AddVertexBuffer(VertexBuffer)
+
+
+
+        indices = [
+            0,1,2,
+            2,3,0,
+              
+            4,5,6,
+            6,7,4,
+              
+            8,9,10,
+            10,11,8,
+              
+            12,13,14,
+            14,15,12,
+              
+            16,17,18,
+            18,19,16,
+              
+            20,21,22,
+            22,23,20
+        ]
+        
+        self.IndexBuffer = LNLEngine.IndexBuffer.Create(indices , len(indices))
+
+        self.m_vertexArray.SetIndexBuffer(self.IndexBuffer)
+
+    
+
+        self.translate = translate(Mat4(), position)
+        self.rotate = rotation
+        self.scale = Mat4() * scale
+
+    def _OnUpdate(self):
+        transformedVertices = self.baseVertices
+
+        vec = [0.0, 0.0, 0.0]
+        for i in range(len(transformedVertices)):
+            
+            
+            if i % 9 < 3:
+                vec[0] = transformedVertices[i]
+
+                if i % 9 == 2:
+
+                    # LNLEngine.LNL_LogTrace(toMat4(self.rotate))
+                    
+                    transform : Mat4 = (self.scale * self.translate * toMat4(self.rotate))
+                    position : Vec4 =   Vec4(*vec) * transform
+                
+                    for i in range(3):
+                        j = 2 - i
+                        transformedVertices[i - j] = position[i]
+        
+        # LNLEngine.LNL_LogEngineTrace(self.baseVertices)
+        # LNLEngine.LNL_LogEngineInfo(transformedVertices)
+
+        self.m_vertexArray = LNLEngine.VertexArray.Create()
+        
+        VertexBuffer = LNLEngine.VertexBuffer.Create(transformedVertices, len(transformedVertices))
+        VertexBuffer.SetLayout(self.layout)
+
+        self.m_vertexArray.AddVertexBuffer(VertexBuffer)
+        self.m_vertexArray.SetIndexBuffer(self.IndexBuffer)
+
+
+
+    def Draw(self):
+        # LNLEngine.Renderer.Submit(self.m_vertexArray)
+        LNLEngine.Renderer.DrawIndexed(self.m_vertexArray)
 
 class TestLayer(LNLEngine.Layer):
     def __init__(self, name="TestLayer"):
@@ -74,12 +207,24 @@ class TestLayer(LNLEngine.Layer):
 
         self.camera : LNLEngine.PesrpectiveCamera = LNLEngine.PesrpectiveCamera(self.gameWindow.GetWidth(),self.gameWindow.GetHeight())
 
+        self.Cube = Cube(rotation= Quat.Quat(0.33608,0.16351,0,0.92476), scale=1.5)
+        # self.Cube2 = Cube()
+
+
+        self.player = Player()
+
+        LNLEngine.Renderer.Enable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
+
+
+
     def OnUpdate(self):
         LNLEngine.Renderer.Clear() ## important
         
         
         # LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(10,10),LNLEngine.Vector.Vec2(100,50) , LNLEngine.Vector.Vec2(200,400)], LNLEngine.Vector.Vec4(100, 200, 255, 255))
         # LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(200,10),LNLEngine.Vector.Vec2(100,800) , LNLEngine.Vector.Vec2(700,4)], LNLEngine.Vector.Vec4(100, 200, 80, 255))
+
+        self.player.Update()
 
         # print(LNLEngine.LLEngineTime.Time())
         self.TestSquare.Update()
@@ -88,13 +233,24 @@ class TestLayer(LNLEngine.Layer):
 
 
 
+        self.Cube.Update()
 
 
         LNLEngine.Renderer.BeginScene(self.camera)
 
-        LNLEngine.Renderer.Submit(self.m_vertexArray) 
+        # LNLEngine.Renderer.Submit(self.m_vertexArray)
 
-        LNLEngine.Renderer.EndScene()        
+
+        LNLEngine.Renderer.Disable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
+        # self.player.Draw()
+
+
+        LNLEngine.Renderer.Enable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
+        self.Cube.Draw()
+        # self.Cube2.Draw()
+
+        LNLEngine.Renderer.EndScene()
+
 
 class PortalsDemo(LNLEngine.Game):
     def __init__(self):

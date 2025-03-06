@@ -5,6 +5,11 @@ from ApplicationEngine.src.LayerSystem.LayerSystem import *
 
 from ApplicationEngine.src.Graphics.Renderer.VertexArray import *
 
+
+class RenderSettings:
+        LL_SG_TRANSPARENCY_ENABLLED     : int = 1
+        LL_SG_WIREFRAME_MODE_ENABLED    : int = 2
+
 class CommandType(Enum):
     SetClearColour  = auto()
     Clear           = auto()

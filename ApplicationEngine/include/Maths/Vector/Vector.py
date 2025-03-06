@@ -77,7 +77,7 @@ class Vector:
         self._OnUpdate()
         return self
 
-    def __mul__(self, k : float) -> Vector:
+    def __mul__(self, k ) -> Vector:
         return self.copy().multiply(k)
 
     def __rmul__(self, k : float) -> Vector:
@@ -145,7 +145,7 @@ class Vector:
 
 
 # Modified Vector class
-class __Vector(Vector):
+class _Vector(Vector):
 
     def __init__(self, *args : float):
         self._m_vec : list [float] = []
@@ -164,7 +164,7 @@ class __Vector(Vector):
         return out
 
     # Tests the equality of this vector and another
-    def __eq__(self, other : __Vector) -> bool: # type: ignore
+    def __eq__(self, other : _Vector) -> bool: # type: ignore
         if self._m_size != other.size(): return False
         
         equal : bool = True
@@ -173,7 +173,7 @@ class __Vector(Vector):
         return equal
 
     # Tests the inequality of this vector and another
-    def __ne__(self, other : __Vector): # type: ignore
+    def __ne__(self, other : _Vector): # type: ignore
         return not self.__eq__(other)
 
     # Returns a tuple with the point corresponding to the vector
@@ -182,10 +182,10 @@ class __Vector(Vector):
 
     # Returns a copy of the vector
     def copy(self) -> Vector:
-        return __Vector(*self._m_vec)
+        return _Vector(*self._m_vec)
 
     # Adds another vector to this vector
-    def add(self, other : __Vector): # type: ignore
+    def add(self, other : _Vector): # type: ignore
         assert (self._m_size != other.size()), f"Attempted to add two incompatable vector types sizes: {self._m_size} {other.size()}"
         
         for i in range(self._m_size):
@@ -205,6 +205,29 @@ class __Vector(Vector):
     
     @overload
     def multiply(self : Vec2, k : float) -> Vec2: ...
+
+
+
+    @overload
+    def __mul__(self, k : int) -> Vector: ...
+
+    @overload
+    def __mul__(self, k : float) -> Vector: ...
+
+    @overload
+    def __mul__(self : Vec2, k : object) -> Vec2:
+        raise NotImplemented
+    @overload
+    def __mul__(self : Vec3, k : object) -> Vec3:
+        raise NotImplemented
+    @overload
+    def __mul__(self : Vec4, k : object) -> Vec4:
+        raise NotImplemented
+
+    def __mul__(self, k) -> Vector:
+        if isinstance(k, object):
+            return NotImplemented
+        return super().__mul__(k)
 
 
     # Multiplies the vector by a scalar
@@ -227,7 +250,7 @@ class __Vector(Vector):
         self._OnUpdate()
 
     # Returns the dot product of this vector with another one
-    def dot(self, other : __Vector): # type: ignore
+    def dot(self, other : _Vector): # type: ignore
         if not (self._m_size != other.size()):
             LNL_LogEngineFatal(f"Attempted to multiply two incompatable vector types sizes: {self._m_size} {other.size()}")
             assert False
@@ -255,27 +278,27 @@ class __Vector(Vector):
 
     # Returns the angle between this vector and another one
     def angle(self, other : Vector) -> None:
-        print("not applicabe to this vector impl")
+        LNL_LogEngineWarning("[angle] not applicabe to this vector impl, use matrices")
 
     # Rotates the vector 90 degrees anticlockwise
     def rotate_anti(self):
-        print("not applicabe to this vector impl")
+        LNL_LogEngineWarning("[rotate_anti] not applicabe to this vector impl, use matrices")
 
     # Rotates the vector according to an angle theta given in radians
     def rotate_rad(self, theta : float):
-        print("not applicabe to this vector impl")
+        LNL_LogEngineWarning("not applicabe to this vector impl, use matrices")
 
     # Rotates the vector according to an angle theta given in degrees
     def rotate(self, theta : float):
-        print("not applicabe to this vector impl")
+        LNL_LogEngineWarning("not applicabe to this vector impl, use matrices")
     
     # project the vector onto a given vector
     def get_proj(self, vec : Vector):
-        print("not applicabe to this vector impl")
+        LNL_LogEngineWarning("not applicabe to this vector impl, to be implemented")
         
 
 
-class Vec2(__Vector):
+class Vec2(_Vector):
     def __init__(self, x:float=0, y:float=0):
         super().__init__(x, y)
         self._OnUpdate()
@@ -299,12 +322,17 @@ class Vec2(__Vector):
         if all(c in mapping for c in name):
             indices = [mapping[c] for c in name]
             values  = [self._m_vec[i] for i in indices if i < len(self._m_vec)]
-            return Vector(*values) if len(values) > 1 else values[0]
+            if len(values) == 1:
+                return values[0]
+            elif len(values) == 2:
+                return Vec2(*values)
+            else:
+                return Vector(*values) if len(values) > 1 else values[0]
         raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
 
 
-class Vec3(__Vector):
+class Vec3(_Vector):
     def __init__(self, x:float=0 , y:float=0, z:float=0):
         super().__init__(x , y , z)
         self._OnUpdate()
@@ -320,7 +348,7 @@ class Vec3(__Vector):
         self.b : float = self._m_vec[2]
 
     def toVec2(self):
-        return Vec3(self.x, self.y)
+        return Vec2(self.x, self.y)
     
     def __getattr__(self, name):
         """Allows swizzling (e.g., vec.xy, vec.yzx, etc.)"""
@@ -328,11 +356,18 @@ class Vec3(__Vector):
         if all(c in mapping for c in name):
             indices = [mapping[c] for c in name]
             values  = [self._m_vec[i] for i in indices if i < len(self._m_vec)]
-            return Vector(*values) if len(values) > 1 else values[0]
+            if len(values) == 1:
+                return values[0]
+            elif len(values) == 2:
+                return Vec2(*values)
+            elif len(values) == 3:
+                return Vec3(*values)
+            else:
+                return Vector(*values) if len(values) > 1 else values[0]
         raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
 
-class Vec4(__Vector):
+class Vec4(_Vector):
     def __init__(self, x:float = 0, y:float = 0, z:float = 0, w:float = 0):
         super().__init__(x, y, z, w)
         self._OnUpdate()
@@ -355,8 +390,16 @@ class Vec4(__Vector):
         if all(c in mapping for c in name):
             indices = [mapping[c] for c in name]
             values  = [self._m_vec[i] for i in indices if i < len(self._m_vec)]
-            return Vector(*values) if len(values) > 1 else values[0]
+            if len(values) == 1:
+                return values[0]
+            elif len(values) == 2:
+                return Vec2(*values)
+            else:
+                return Vector(*values) if len(values) > 1 else values[0]
         raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+    
+    def toVec2(self):
+        return Vec2(self.x, self.y)
     
     def toVec3(self):
         return Vec3(self.x, self.y, self.z)

@@ -10,5 +10,5 @@ class ObjectAttribute(ABC):
     
     
     @staticmethod
-    def AttirbMethod(obj : GameObjectBase):
+    def AttribMethod(obj : GameObjectBase):
         ...
