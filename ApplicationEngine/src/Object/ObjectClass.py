@@ -31,6 +31,11 @@ class GameObject(GameObjectBase):
     
     def SetAttribure(self, attrib : ObjectAttribute.__class__):
         self.__Attributes.append(attrib)
+        attrib.Attrib_OnAttach(self)
+
+    def RemoveAttribure(self, attrib : ObjectAttribute.__class__):
+        self.__Attributes.remove(attrib)
+        attrib.Attrib_OnDetach(self)
         
         
     def Activate(self): self.__Active = True
@@ -38,14 +43,22 @@ class GameObject(GameObjectBase):
     def IsActive(self) -> bool: return self.__Active
     
     def Draw(self): ... 
-    
-    
+
+
+    def _OnPhysicsUpdate(self): ...
+
+
     def _OnUpdate(self): ...
     
     
     def Update(self):
         for attribute in self.__Attributes:
-            attribute.AttribMethod(self)
+            attribute.Attrib_OnUpdate(self)
+        self._OnUpdate()
+    
+    def PhysicsUpdate(self):
+        for attribute in self.__Attributes:
+            attribute.Attrib_OnPhysicsUpdate(self)
         self._OnUpdate()
 
 

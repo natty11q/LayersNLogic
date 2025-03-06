@@ -10,5 +10,18 @@ class ObjectAttribute(ABC):
     
     
     @staticmethod
-    def AttribMethod(obj : GameObjectBase):
+    def Attrib_OnUpdate(obj : GameObjectBase):
+        ...
+
+    @staticmethod
+    def Attrib_OnPhysicsUpdate(obj : GameObjectBase):
+        ...
+    
+
+    @staticmethod
+    def Attrib_OnAttach(obj : GameObjectBase):
+        ...
+    
+    @staticmethod
+    def Attrib_OnDetach(obj : GameObjectBase):
         ...

@@ -19,6 +19,9 @@ class Vector:
         self.y : float = y
 
     def _OnUpdate(self): ...
+    
+    def size(self) -> int:
+        return 2
 
     # Returns a string representation of the vector
     def __str__(self):
@@ -48,7 +51,7 @@ class Vector:
         self._OnUpdate()
         return self
 
-    def __add__(self, other : Vector) -> Vector:
+    def __add__(self, other ) -> Vector:
         return self.copy().add(other)
     
         self._OnUpdate()
@@ -67,18 +70,22 @@ class Vector:
     def subtract(self, other : Vector):
         return self.add(-other)
 
-    def __sub__(self, other : Vector) -> Vector:
+    def __sub__(self, other) -> Vector:
         return self.copy().subtract(other)
 
     # Multiplies the vector by a scalar
-    def multiply(self, k : float) -> Vector:
+    def multiply(self, k : float | int) -> Vector:
         self.x *= k
         self.y *= k
         self._OnUpdate()
         return self
 
-    def __mul__(self, k ) -> Vector:
-        return self.copy().multiply(k)
+    def __mul__(self, k : float | int | object) -> Vector:
+        if isinstance(k, (float , int)):
+            return self.copy().multiply(k)
+        else:
+            LNL_LogEngineError(f"unknown error occured when multiplying vector {self} with {k}")
+            return self
 
     def __rmul__(self, k : float) -> Vector:
         return self.copy().multiply(k)
@@ -184,9 +191,20 @@ class _Vector(Vector):
     def copy(self) -> Vector:
         return _Vector(*self._m_vec)
 
+    @overload
+    def add(self : Vec4, k : Vec4) -> Vec4: ...
+    
+    @overload
+    def add(self : Vec3, k : Vec3) -> Vec3: ...
+    
+    @overload
+    def add(self : Vec2, k : Vec2) -> Vec2: ...
+
+
     # Adds another vector to this vector
     def add(self, other : _Vector): # type: ignore
-        assert (self._m_size != other.size()), f"Attempted to add two incompatable vector types sizes: {self._m_size} {other.size()}"
+        if (self._m_size != other.size()):
+            LNL_LogEngineFatal(f"Attempted to add two incompatable vector types sizes: {self._m_size} {other.size()}")
         
         for i in range(self._m_size):
             self._m_vec[i] += other[i]
@@ -194,6 +212,35 @@ class _Vector(Vector):
         self._OnUpdate()
         return self
     
+
+    @overload
+    def __add__(self : Vec4, other : Vec4) -> Vec4: ...
+    
+    @overload
+    def __add__(self : Vec3, other : Vec3) -> Vec3: ...
+    
+    @overload
+    def __add__(self : Vec2, other : Vec2) -> Vec2: ...
+
+
+    def __add__(self, other) -> Vector:
+        return super().__add__(other)
+
+
+    @overload
+    def __sub__(self : Vec4, other : Vec4) -> Vec4: ...
+    
+    @overload
+    def __sub__(self : Vec3, other : Vec3) -> Vec3: ...
+    
+    @overload
+    def __sub__(self : Vec2, other : Vec2) -> Vec2: ...
+    
+    def __sub__(self, other ) -> Vector:
+        return super().__sub__(other)
+
+
+
     def size(self):
         return self._m_size
 
@@ -208,11 +255,22 @@ class _Vector(Vector):
 
 
 
+    
+    @overload
+    def __mul__(self : Vec2, k : int | float) -> Vec2: ...
+
+    @overload
+    def __mul__(self : Vec3, k : int | float) -> Vec3: ...
+
+    @overload
+    def __mul__(self : Vec4, k : int | float) -> Vec4: ...
+
     @overload
     def __mul__(self, k : int) -> Vector: ...
 
     @overload
     def __mul__(self, k : float) -> Vector: ...
+    
 
     @overload
     def __mul__(self : Vec2, k : object) -> Vec2:
@@ -225,13 +283,15 @@ class _Vector(Vector):
         raise NotImplemented
 
     def __mul__(self, k) -> Vector:
-        if isinstance(k, object):
-            return NotImplemented
-        return super().__mul__(k)
 
+        if isinstance(k, (int, float)):
+            return super().__mul__(k)
+        else:
+            return NotImplemented
+    
 
     # Multiplies the vector by a scalar
-    def multiply(self, k : float) -> Vector:
+    def multiply(self, k : float ) -> Vector:
         for i in range(self._m_size):
             self._m_vec[i] *= k
         self._OnUpdate()
@@ -251,8 +311,8 @@ class _Vector(Vector):
 
     # Returns the dot product of this vector with another one
     def dot(self, other : _Vector): # type: ignore
-        if not (self._m_size != other.size()):
-            LNL_LogEngineFatal(f"Attempted to multiply two incompatable vector types sizes: {self._m_size} {other.size()}")
+        if (self._m_size != other.size()):
+            LNL_LogEngineFatal(f"Attempted to multiply two incompatable vector types sizes: {self._m_size} & {other.size()}")
             assert False
         dotP = 0
         for i in range(self._m_size):
@@ -286,17 +346,28 @@ class _Vector(Vector):
 
     # Rotates the vector according to an angle theta given in radians
     def rotate_rad(self, theta : float):
-        LNL_LogEngineWarning("not applicabe to this vector impl, use matrices")
+        LNL_LogEngineWarning("[rotate_rad] not applicabe to this vector impl, use matrices")
 
     # Rotates the vector according to an angle theta given in degrees
     def rotate(self, theta : float):
-        LNL_LogEngineWarning("not applicabe to this vector impl, use matrices")
+        LNL_LogEngineWarning("[rotate] not applicabe to this vector impl, use matrices")
+
     
     # project the vector onto a given vector
     def get_proj(self, vec : Vector):
-        LNL_LogEngineWarning("not applicabe to this vector impl, to be implemented")
-        
+        LNL_LogEngineWarning("[get_proj] not applicabe to this vector impl, to be implemented")
 
+    def getIndexIfExist(self, idx) -> float:
+        if abs(idx) >= self._m_size:
+            return 0
+        return self._m_vec[idx]
+
+    def toVec2(self):
+        return Vec2(self.getIndexIfExist(0),self.getIndexIfExist(1))
+    def toVec3(self):
+        return Vec3(self.getIndexIfExist(0),self.getIndexIfExist(1),self.getIndexIfExist(3))
+    def toVec4(self):
+        return Vec4(self.getIndexIfExist(0),self.getIndexIfExist(1),self.getIndexIfExist(2),self.getIndexIfExist(3))
 
 class Vec2(_Vector):
     def __init__(self, x:float=0, y:float=0):

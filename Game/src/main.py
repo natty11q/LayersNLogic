@@ -213,22 +213,29 @@ class TestLayer(LNLEngine.Layer):
 
         self.player = Player()
 
+
+        self.portal1 = Portal(Vec2(250, 500), Vec2(750, 500) , Vec4(255,150,20,255))
+        self.portal2 = Portal(Vec2(250, 20), Vec2(250, 500) , Vec4(20,150,255,255))
+
+        self.portal1.LinkPortal(self.portal2)
+
         LNLEngine.Renderer.Enable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
 
 
 
     def OnUpdate(self):
-        LNLEngine.Renderer.Clear() ## important
+        LNLEngine.Renderer.Clear()
         
         
         # LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(10,10),LNLEngine.Vector.Vec2(100,50) , LNLEngine.Vector.Vec2(200,400)], LNLEngine.Vector.Vec4(100, 200, 255, 255))
         # LNLEngine.Renderer.DrawTriangle([LNLEngine.Vector.Vec2(200,10),LNLEngine.Vector.Vec2(100,800) , LNLEngine.Vector.Vec2(700,4)], LNLEngine.Vector.Vec4(100, 200, 80, 255))
 
-        self.player.Update()
+        # self.player.Update()
 
         # print(LNLEngine.LLEngineTime.Time())
-        self.TestSquare.Update()
-        # self.TestSquare.Draw()
+        
+        # self.TestSquare.Update()
+        self.TestSquare.Draw()
         
 
 
@@ -242,11 +249,16 @@ class TestLayer(LNLEngine.Layer):
 
 
         LNLEngine.Renderer.Disable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
-        # self.player.Draw()
+        self.player.Update()
+        self.player.Draw()
 
+        self.portal1.Draw()
+        self.portal2.Draw()
+
+        
 
         LNLEngine.Renderer.Enable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
-        self.Cube.Draw()
+        # self.Cube.Draw()
         # self.Cube2.Draw()
 
         LNLEngine.Renderer.EndScene()
@@ -256,12 +268,10 @@ class PortalsDemo(LNLEngine.Game):
     def __init__(self):
         super().__init__()
         
-        props = LNLEngine.WindowProperties("DoomExample", 900, 600)
+        props = LNLEngine.WindowProperties("PortalsDemo", 900, 600)
         self._window = LNLEngine.Window.CreateWindow(props)
         
         LNLEngine.Renderer.PushLayer(TestLayer())
-        
-        
 
     def _OnUpdate(self):
         return super()._OnUpdate()

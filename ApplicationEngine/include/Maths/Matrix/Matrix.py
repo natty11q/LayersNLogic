@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import overload
 from typing import TypeVar, Union, Self
+from ApplicationEngine.include.Common import *
 from ApplicationEngine.include.Maths.Vector.Vector import Vec2, Vec3, Vec4, Vector
 
 
@@ -98,14 +99,18 @@ class Matrix:
 
 
 
-    def __rmul__(self, other: object) ->  Matrix | Mat2 | Mat3 | Mat4 | Vec2 | Vec3 | Vec4:
+    def __rmul__(self, other: object) ->  Matrix | Mat2 | Mat3 | Mat4 | Vector | Vec2 | Vec3 | Vec4:
         if isinstance(other, (float, int)):
             return self * other
-        elif isinstance(other, (Vec2, Vec3, Vec4)):
+        elif isinstance(other, (Vector, Vec2, Vec3, Vec4)):
             assert self.rows == other.size(), "Vector-matrix multiplication dimension mismatch"
-            values = [sum(self[i, j] * other[j] for j in range(self.cols)) for i in range(self.rows)]
-            return type(other)(*values)
+            values = [sum(self[i, j] * other.get_p()[j] for j in range(self.cols)) for i in range(self.rows)]
+            if isinstance(other, (Vec2, Vec3, Vec4)):
+                return type(other)(*values)
+            else:
+                return Vector(values[0], values[1])
         else:
+            LNL_LogEngineFatal(type(other))
             raise TypeError("Unsupported reverse multiplication")
 
 
@@ -130,7 +135,7 @@ class Matrix:
         else:
             raise NotImplementedError("Determinant calculation is only implemented for 2x2 and 3x3 matrices")
 
-    def copy(self: Matrix) -> Union[Matrix, Mat2, Mat3, Mat4]:
+    def copy(self: Matrix) -> Matrix| Mat2| Mat3| Mat4:
         if isinstance(self, (Mat2,Mat3,Mat4)):
             return type(self)([row[:] for row in self._m_data])
         else:
