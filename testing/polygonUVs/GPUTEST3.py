@@ -23,7 +23,7 @@ imageLinks = os.listdir(os.path.abspath("/Users/nathanielfrimpong-santeng/codest
 
 img = Image.open(image_path)
 # (Optionally resize if needed)
-# img = img.resize((300,300))
+img = img.resize((300,300))
 tex_np = np.array(img.convert("RGB"), dtype=np.uint8)
 tex_height, tex_width, _ = tex_np.shape
 
@@ -206,7 +206,7 @@ gpu_thread = threading.Thread(target=gpu_compute_texture)
 from collections import OrderedDict
 
 # Create a dummy image so we can get the expected base type and defaults.
-_dummy = simplegui.load_image("http://commondatastorage.googleapis.com/codeskulptor-assets/lathrop/asteroid_blue.png")
+_dummy = simplegui.load_image("")
 DummyImage = type(_dummy)
 
 class SimpleGUIImageWrapper(DummyImage): #type: ignore
@@ -275,6 +275,8 @@ def draw(canvas: simplegui.Canvas):
         tex_cl = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=tex_np)
         # Create a buffer for the output image.
         output_cl = cl.Buffer(ctx, mf.WRITE_ONLY, output_buffer.nbytes)
+
+        # print(output_buffer)
 
 
     # Draw polygon outline.

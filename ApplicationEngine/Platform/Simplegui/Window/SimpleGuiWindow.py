@@ -30,7 +30,9 @@ class SimpleGUIWindow(Window):
     def GetHeight(self) -> float:   return self._Data.Height
     def GetAspectRatio(self) -> float:  return self._Data.AspectRatio
     
-    
+    def OnInput(self): ...
+
+
     def SetVsync(self, state :  bool) -> None:
         self._Data.VSync = state
 
