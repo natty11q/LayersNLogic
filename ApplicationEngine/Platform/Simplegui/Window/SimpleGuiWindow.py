@@ -58,7 +58,7 @@ class SimpleGUIWindow(Window):
 
 
     def InputHandler(self, etype: str, values: list)-> None:
-        if etype == "keydown":
+        if etype == "keyDown":
             e = KeyDownEvent()
             e.keycode = values[0]
             sendEvent(e)
