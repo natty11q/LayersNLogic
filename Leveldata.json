@@ -1,0 +1,78 @@
+{
+
+    "Scenes" : 
+    {
+
+        "MainMenu":
+        {
+            "type" :  "menu",
+            "Elements" : [
+                {
+                    "type" : "button",
+                    "position" : [100 , 100],
+                    "dimensions" : [100 , 100]
+                }
+            ]
+        },
+
+        "LNL_Scene_1" : 
+        {
+            "type" : "game",
+
+            "players" : [],
+            
+            "Levels" : 
+            [
+                {
+                    "name" : "Tutorial",
+
+                    "environment" : [
+
+                        {
+                            "type" : "bridge", 
+                            "lenght" : 100,
+                            "world_position" : {"x" : 30, "y" : 200, "z": 0},
+                            "destructable" : false,
+                            "sprite" : "Game/path/to/bridge/sprite"
+                        },
+
+                        {
+                            "type" : "bouncy_ball", 
+                            "radius" : 100,
+                            "spawn_position" : {"x" : 30, "y" : 200, "z": 0},
+                            "coeff_restitution" : 0.9
+                        }
+                    ],
+
+                    "enimies" : 
+                    [
+                        {
+                            "type" : "goomba",
+                            "spawn_position" : {"x" : 100, "y" : 100, "z": 0},
+                            "max_health" : 100
+                        },
+
+                        {
+                            "type" : "motobug",
+                            "spawn_position" : {"x" : 230, "y" : 500, "z": 0},
+                            "max_health" : 100
+                        }
+                    ],
+                    
+                    "GameComponents" : 
+                    [
+                        {
+                            "type" : "portal",
+                            "id" : 0,
+                            "destination" : 1,
+                            "rotation" : {"x" : 0, "y" : 0,"z" : 0, "w" : 1}
+                        }
+                    ]
+                }    
+            ]
+        }
+
+
+
+    }    
+}

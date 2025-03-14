@@ -9,6 +9,10 @@ from ApplicationEngine.src.Graphics.Renderer.Renderer import *
 import ApplicationEngine.src.Core.Utility.Temporal as Temporal
 
 
+from ApplicationEngine.src.Core.SceneManager import *
+from ApplicationEngine.src.Event.EventHandler import *
+
+
 
 # import _tkinter
 # import PySimpleGUI as simplegui
@@ -34,10 +38,10 @@ import ApplicationEngine.src.Core.Utility.Temporal as Temporal
 
 
 
-WINDOW_SIZE = (900, 600)
-PLAYER_SIZE = (20, 20)
-player_x = 50
-player_y = 300
+# WINDOW_SIZE = (900, 600)
+# PLAYER_SIZE = (20, 20)
+# player_x = 50
+# player_y = 300
 
 
 class Game:
@@ -70,10 +74,15 @@ class Game:
         
         
         self.__PhysicsThread : threading.Thread
-        self.__InputThread : threading.Thread
+        # self.__InputThread : threading.Thread
         
         Temporal.LLEngineTime.CapFramerate()
         Temporal.LLEngineTime.SetTargetFramerate(120)
+        
+        self._m_SceneManager : SceneManager = SceneManager()
+
+        AddEventListener(self.__HandleEvents)
+
         
         Game.__s_Instance = self
     
@@ -85,10 +94,12 @@ class Game:
     def GetWindow(self) -> Window:
         return self._window
     
+    def GetSceneManager(self) -> SceneManager:
+        return self._m_SceneManager
 
     def Run(self):
         self.__PhysicsThread : threading.Thread  = threading.Thread(target = self.__PhysicsMainloop, args=(), daemon=True)
-        self.__InputThread : threading.Thread = threading.Thread(target=self.input_listener, args=(self._window,), daemon=True)
+        # self.__InputThread : threading.Thread = threading.Thread(target=self.input_listener, args=(self._window,), daemon=True)
         
         self.__StartPhysicsThread()
         
@@ -118,23 +129,24 @@ class Game:
 
 
 # protected :
-    def _OnUpdate(self) -> None:
+    def _OnUpdate(self, deltatime : float) -> None:
         """game based render updates should be handled here"""
         pass
     
     def _OnPhysicsUpdate(self) -> None:
+        self._m_SceneManager.PhysicsUpdate(1 / Temporal.LLEngineTime.TickRate())
         LNL_LogEngineTrace("Physics update called")
 
-    def _OnEvent(self , event  : object, values : dict [int , int] = {}) -> None:
-        pass
+    def _OnEvent(self , event  : Event) -> None:
+        LNL_LogEngineTrace(f"Event occured of type : {event.GetName()}")
     
     def __StartPhysicsThread(self):
         self.__PhysicsThread.start()
 
 
-    def input_listener(self, window : Window) -> None:
-        while True:
-            pass
+    # def input_listener(self, window : Window) -> None:
+    #     while True:
+    #         pass
 
 
 
@@ -147,8 +159,8 @@ class Game:
             self._OnPhysicsUpdate()
             Temporal.time.sleep(1 / Temporal.LLEngineTime.TickRate())
 
-    def __HandleEvents(self, event : object, values : dict [int, int] = {}):  # type: ignore
-        # print("called")
+    def __HandleEvents(self, event : Event):
+        
 
         # if event == simplegui.WIN_CLOSED or event == 'Exit':	# if user closes window or clicks cancel
         #     self.__IsRunning = False
@@ -156,7 +168,7 @@ class Game:
         # if event == 'a':
         #     self.__col = "green"
 
-        self._OnEvent(event , values)
+        self._OnEvent(event)
         
         
 
@@ -188,7 +200,7 @@ class Game:
 
             
             # self.__HandleEvents()
-            self._OnUpdate()
+            self._OnUpdate(Temporal.LLEngineTime.DeltaTime())
             # self._window['-GRAPH-'].erase()
             # self._window['-GRAPH-'].TKCanvas.create_rectangle(player_x, player_y, player_x + PLAYER_SIZE[0], player_y + PLAYER_SIZE[1], fill=self.__col)
             # # self.__window['-GRAPH-'].draw_rectangle((WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2), ((WINDOW_SIZE[0] / 2) + PLAYER_SIZE[0], (WINDOW_SIZE[1] / 2) + PLAYER_SIZE[1]) , fill_color='blue')

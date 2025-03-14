@@ -45,21 +45,21 @@ class GameObject(GameObjectBase):
     def Draw(self): ... 
 
 
-    def _OnPhysicsUpdate(self): ...
+    def _OnPhysicsUpdate(self, tickTime: float): ...
 
 
-    def _OnUpdate(self): ...
+    def _OnUpdate(self, deltatime : float): ...
     
     
-    def Update(self):
+    def Update(self, deltatime : float):
         for attribute in self.__Attributes:
             attribute.Attrib_OnUpdate(self)
-        self._OnUpdate()
+        self._OnUpdate(deltatime)
     
-    def PhysicsUpdate(self):
+    def PhysicsUpdate(self, tickTime : float):
         for attribute in self.__Attributes:
             attribute.Attrib_OnPhysicsUpdate(self)
-        self._OnUpdate()
+        self._OnPhysicsUpdate(tickTime)
 
 
 
@@ -97,6 +97,6 @@ class CircleObject(GameObject):
     def Draw(self):
         pass
     
-    def Update(self):
-        return super().Update()
+    def Update(self, deltatime: float):
+        return super().Update(deltatime)
     

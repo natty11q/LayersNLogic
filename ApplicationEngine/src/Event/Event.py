@@ -1,3 +1,6 @@
+from typing import Callable
+
+
 class Event:
     def __init__(self, name : str):
         self._m_name : str = name
@@ -15,10 +18,10 @@ class EventDispatcher:
    
 
     def __init__(self):
-        self.__m_EventListeners : list[function] = []
+        self.__m_EventListeners : list[Callable[[Event], None]] = []
         self.__m_NextListenerID = 0
     
-    def AddEventListener(self, listener : function) -> int:
+    def AddEventListener(self, listener : Callable[[Event], None]) -> int:
         self.__m_EventListeners.append(listener)
 
         handle = self.__m_NextListenerID
@@ -32,7 +35,7 @@ class EventDispatcher:
             self.__m_EventListeners.pop(handle)
             self.__m_NextListenerID -= 1
     
-    def sendEvent(self, event : Event):
+    def SendEvent(self, event : Event):
         for listener in self.__m_EventListeners:
             if not event.Handled():
                 listener(event)

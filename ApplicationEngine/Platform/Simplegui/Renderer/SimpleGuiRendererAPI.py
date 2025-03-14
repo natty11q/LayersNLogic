@@ -20,7 +20,12 @@ class SimpleGUiRendererAPI(RendererAPI):
 
     
     def SetClearColour(self, col : Vector.Vec4) -> None:
-        ...
+        self.__DrawQueue.append(
+            {
+                "type": CommandType.Clear,
+                "value": col
+            }
+        )
     
     
     def Clear(self, value : int = 0) -> None:
@@ -175,7 +180,7 @@ class SimpleGUiRendererAPI(RendererAPI):
         LLEngineTime.Update()
         
         for layer in RendererAPI._LayerStack:
-            layer.OnUpdate()
+            layer.OnUpdate(LLEngineTime.DeltaTime())
         # input()
         
         for element in self.__DrawQueue:
@@ -183,6 +188,10 @@ class SimpleGUiRendererAPI(RendererAPI):
                 self.__RenderSettings |= element["value"]
             if element["type"] == CommandType.Disable:
                 self.__RenderSettings ^= element["value"]
+            
+            if element["type"] == CommandType.Clear:
+                # canvas.set_canvas_background(rgb_to_hex(element["value"]))
+                ...
 
             
             if element["type"] == CommandType.DrawTriangle:

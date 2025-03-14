@@ -113,7 +113,7 @@ class Player(LNLEngine.GameObject):
         self.InPortalColision = False
         self.InPortalColisionOnFrame = False
 
-    def _OnUpdate(self):
+    def _OnUpdate(self, deltatime : float):
         # LNLEngine.LNL_LogEngineInfo(self._World_Position)
         self.InPortalColision = self.InPortalColisionOnFrame
         self.InPortalColisionOnFrame = False

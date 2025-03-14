@@ -19,7 +19,7 @@ class MovingSquare(LNLEngine.Quad):
         super().__init__(topLeft, width, height, colour)
         self.RestPos : LNLEngine.Vector.Vec2 = topLeft
         
-    def _OnUpdate(self):
+    def _OnUpdate(self, deltatime: float):
         self._topLeft = Vec2( self.RestPos.x + ( 300 * math.cos(LNLEngine.LLEngineTime.Time() * 2) ), self.RestPos.y + ( 300 * math.sin(LNLEngine.LLEngineTime.Time() * 2) ))
 
 
@@ -114,7 +114,7 @@ class Cube(LNLEngine.GameObject):
         self.rotate = rotation
         self.scale = Mat4() * scale
 
-    def _OnUpdate(self):
+    def _OnUpdate(self, deltatime : float):
         transformedVertices = self.baseVertices
 
         vec = [0.0, 0.0, 0.0]
@@ -207,23 +207,42 @@ class TestLayer(LNLEngine.Layer):
 
         self.camera : LNLEngine.PesrpectiveCamera = LNLEngine.PesrpectiveCamera(self.gameWindow.GetWidth(),self.gameWindow.GetHeight())
 
-        self.Cube = Cube(rotation= Quat.Quat(0.33608,0.16351,0,0.92476), scale=1.5)
+        cube = Cube(rotation= Quat.Quat(0.33608,0.16351,0,0.92476), scale=1.5)
         # self.Cube2 = Cube()
 
 
-        self.player = Player()
+        player = Player()
 
 
-        self.portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
-        self.portal2 = Portal(Vec2(0, 20), Vec2(200, 500) , Vec4(20,150,255,255))
+        portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
+        portal2 = Portal(Vec2(0, 20), Vec2(200, 500) , Vec4(20,150,255,255))
 
-        self.portal1.LinkPortal(self.portal2)
+        portal1.LinkPortal(portal2)
 
-        LNLEngine.Renderer.Enable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
+        # LNLEngine.Renderer.Enable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
 
 
 
-    def OnUpdate(self):
+        self.SceneManager = LNLEngine.Game.Get().GetSceneManager()
+        
+        mainScene : LNLEngine.Scene = LNLEngine.Scene("mainScene")
+        mainScene.AddObject(portal1)
+        mainScene.AddObject(portal2)
+
+        mainScene.AddObject(player)
+        # mainScene.AddObject(cube)
+
+        # mainScene.AddObject(self.TestSquare)
+
+        self.SceneManager.add_scene(mainScene)
+        self.SceneManager.set_active_scene(mainScene.name)
+
+
+
+
+
+
+    def OnUpdate(self, deltatime : float):
         LNLEngine.Renderer.Clear()
         
         
@@ -240,26 +259,13 @@ class TestLayer(LNLEngine.Layer):
 
 
 
-        self.Cube.Update()
+        # self.Cube.Update(deltatime)
 
+        self.SceneManager.update(deltatime)
 
         LNLEngine.Renderer.BeginScene(self.camera)
 
-        # LNLEngine.Renderer.Submit(self.m_vertexArray)
-
-
-        LNLEngine.Renderer.Disable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
-        # self.player.Update()
-        # self.player.Draw()
-
-        # self.portal1.Draw()
-        # self.portal2.Draw()
-
-        
-
-        LNLEngine.Renderer.Enable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
-        self.Cube.Draw()
-        # self.Cube2.Draw()
+        self.SceneManager.draw()
 
         LNLEngine.Renderer.EndScene()
 
@@ -273,8 +279,8 @@ class PortalsDemo(LNLEngine.Game):
         
         LNLEngine.Renderer.PushLayer(TestLayer())
 
-    def _OnUpdate(self):
-        return super()._OnUpdate()
+    def _OnUpdate(self, deltatime : float):
+        return super()._OnUpdate(deltatime)
     
 
 

@@ -43,7 +43,7 @@ def draw_triangle(canvas, v0, v1, v2, uv0, uv1, uv2):
                 # Interpolate UVs with perspective correction
                 u = w0 * uv0[0] + w1 * uv1[0] + w2 * uv2[0]
                 v = w0 * uv0[1] + w1 * uv1[1] + w2 * uv2[1]
-                color = get_color_from_uv(u, v)
+                color : list[float] = get_color_from_uv(u, v)
                 canvas.draw_point((x, y), f"rgb({color[0]}, {color[1]}, {color[2]})")
 
 

@@ -12,6 +12,8 @@ class Portal(LNLEngine.GameObject):
     
     # TODO : Make this impl for 3 component vector and quats
     def __init__(self, Vertex1 : Vec2, Vertex2 : Vec2, col : Vec4, Destination : Portal | None = None, radius : float = 50):
+        super().__init__()
+        
         self.vertices : list[Vec2] = [Vertex1, Vertex2]
 
         if Destination:

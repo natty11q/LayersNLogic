@@ -6,7 +6,7 @@ class Layer:
 #protected:
 
 #public:
-    def OnUpdate(self):
+    def OnUpdate(self,  deltatime : float):
         pass
     
     def OnAttach(self):
@@ -21,7 +21,7 @@ class Layer:
     def OnEvent(self , event , type):
         pass
 
-    def Update(self):
+    def Update(self,  deltatime : float):
         pass
     
     def GetName(self) -> str:
