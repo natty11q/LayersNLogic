@@ -231,6 +231,8 @@ def update_wrapped_image():
     global wrapped_image
     # pygame.surfarray.make_surface expects an array with shape (width, height, channels),
     # so we need to transpose our output_buffer.
+    print(output_buffer)
+    input()
     surf = pygame.surfarray.make_surface(np.transpose(output_buffer, (1, 0, 2)))
     wrapped_image = SimpleGUIImageWrapper(surf)
 
