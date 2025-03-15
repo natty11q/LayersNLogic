@@ -129,13 +129,13 @@ class Player(LNLEngine.GameObject):
         self.InPortalColisionOnFrame = False
         self._World_Position += self.Velocity
         
-        if self.keys.get(LNLEngine.KEY_MAP['right'], False):
+        if self.keys.get(LNLEngine.KEY_MAP['right']):
             self._World_Position += Vec3(self.speed,0,0) * deltatime
-        if self.keys.get(LNLEngine.KEY_MAP['left'], False):
+        if self.keys.get(LNLEngine.KEY_MAP['left']):
             self._World_Position -= Vec3(self.speed,0,0) * deltatime
-        if self.keys.get(LNLEngine.KEY_MAP['up'], False):
+        if self.keys.get(LNLEngine.KEY_MAP['up']):
             self._World_Position -= Vec3(0,self.speed,0) * deltatime
-        if self.keys.get(LNLEngine.KEY_MAP['down'], False):
+        if self.keys.get(LNLEngine.KEY_MAP['down']):
             self._World_Position += Vec3(0,self.speed,0) * deltatime
 
     def _OnEvent(self, event : LNLEngine.Event):
