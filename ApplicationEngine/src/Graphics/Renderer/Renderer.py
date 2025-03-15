@@ -4,7 +4,11 @@ from ApplicationEngine.src.Graphics.Renderer.VertexArray import *
 from ApplicationEngine.src.Graphics.Camera.Camera import *
 
 
-
+    
+    
+    
+    
+from ApplicationEngine.src.Graphics.Renderer.ShaderProgram import Shader
 class Renderer:
     
     __Objects = []
@@ -12,15 +16,16 @@ class Renderer:
 
     @staticmethod
     def BeginScene(camera : Camera):
-        pass
+        pass 
    
     @staticmethod
     def EndScene():
         pass
     
     @staticmethod
-    def Submit(vertexArray: VertexArray):
+    def Submit(shader : Shader, vertexArray: VertexArray):
         #modify for defered rendering
+        shader.Bind()
         vertexArray.Bind()
         RenderCommand.DrawIndexed(vertexArray)
     
@@ -47,7 +52,7 @@ class Renderer:
         RenderCommand.PopOverlay()
     
     @staticmethod
-    def SetClearColour( col : Vector.Vec4 ) -> None:
+    def SetClearColour( col : Vec4 ) -> None:
         RenderCommand.SetClearColour(col)
     
     @staticmethod
@@ -67,27 +72,31 @@ class Renderer:
         RenderCommand.DrawIndexed(VertexArray)
     
     @staticmethod
-    def GetUniformLocation(ID : int, UniformName : str) -> None:
-        RenderCommand.GetUniformLocation(ID, UniformName)
+    def GetUniformLocation(ID : int, UniformName : str) -> int:
+        return RenderCommand.GetUniformLocation(ID, UniformName)
     
     
     @staticmethod
     def SetUniformInt(UniformLocation : int, value : int) -> None:
         RenderCommand.SetUniformInt(UniformLocation, value)
+
+    @staticmethod
+    def SetUniformFloat(UniformLocation : int, value : float) -> None:
+        RenderCommand.SetUniformFloat(UniformLocation, value)
     
     
     @staticmethod
-    def SetUniformVec2(UniformLocation : int, value : Vector.Vec2) -> None:
+    def SetUniformVec2(UniformLocation : int, value : Vec2) -> None:
         RenderCommand.SetUniformVec2(UniformLocation, value)
     
     
     @staticmethod
-    def SetUniformVec3(UniformLocation : int, value : Vector.Vec3) -> None:
+    def SetUniformVec3(UniformLocation : int, value : Vec3) -> None:
         RenderCommand.SetUniformVec3(UniformLocation, value)
     
     
     @staticmethod
-    def SetUniformVec4(UniformLocation : int, value : Vector.Vec4) -> None:
+    def SetUniformVec4(UniformLocation : int, value : Vec4) -> None:
         RenderCommand.SetUniformVec4(UniformLocation, value)
     
     
@@ -107,11 +116,11 @@ class Renderer:
     
     
     @staticmethod
-    def DrawTriangle(VertexPositions : list [Vector.Vec2], colour : Vector.Vec4):
+    def DrawTriangle(VertexPositions : list [Vec2], colour : Vec4):
         RenderCommand.DrawTriangle(VertexPositions, colour)
     
     @staticmethod
-    def DrawCircle(Position : Vector.Vec2, colour : Vector.Vec4):
+    def DrawCircle(Position : Vec2, colour : Vec4):
         RenderCommand.DrawCircle(Position, colour)
         
     @staticmethod

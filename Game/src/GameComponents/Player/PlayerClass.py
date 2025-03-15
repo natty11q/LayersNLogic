@@ -76,7 +76,7 @@ class CanTravelThroughPortals(LNLEngine.ObjectAttribute):
 
                     destOffsetOut = (dest.alongVec * normalisedDistRationOut_y) + (dest.normal * normalisedDistRationOut_x)
                     # destCenter = dest.vertices[0] + (dest.vertices[1] - dest.vertices[0]).multiply(0.5)
-                    obj._World_Position = LNLEngine.Vector.Vec3(destOffsetOut[0] - (obj.width/2), destOffsetOut[1] - (obj.height/2))
+                    obj._World_Position = LNLEngine.Vec3(destOffsetOut[0] - (obj.width/2), destOffsetOut[1] - (obj.height/2))
                     
 
                    # normal should be normalised but i am dividing jsut in case 

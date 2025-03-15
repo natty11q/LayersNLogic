@@ -28,7 +28,7 @@ class RenderCommand():
     
     
     @staticmethod
-    def SetClearColour( col : Vector.Vec4 ) -> None:
+    def SetClearColour( col : Vec4 ) -> None:
         RenderCommand.s_RendererAPI.SetClearColour(col)
     
     @staticmethod
@@ -48,27 +48,31 @@ class RenderCommand():
         RenderCommand.s_RendererAPI.DrawIndexed(VertexArray)
     
     @staticmethod
-    def GetUniformLocation(ID : int, UniformName : str) -> None:
-        RenderCommand.s_RendererAPI.GetUniformLocation(ID, UniformName)
+    def GetUniformLocation(ID : int, UniformName : str) -> int:
+        return RenderCommand.s_RendererAPI.GetUniformLocation(ID, UniformName)
     
     
     @staticmethod
     def SetUniformInt(UniformLocation : int, value : int) -> None:
         RenderCommand.s_RendererAPI.SetUniformInt(UniformLocation, value)
     
+    @staticmethod
+    def SetUniformFloat(UniformLocation : int, value : float) -> None:
+        RenderCommand.s_RendererAPI.SetUniformFloat(UniformLocation, value)
+    
     
     @staticmethod
-    def SetUniformVec2(UniformLocation : int, value : Vector.Vec2) -> None:
+    def SetUniformVec2(UniformLocation : int, value : Vec2) -> None:
         RenderCommand.s_RendererAPI.SetUniformVec2(UniformLocation, value)
     
     
     @staticmethod
-    def SetUniformVec3(UniformLocation : int, value : Vector.Vec3) -> None:
+    def SetUniformVec3(UniformLocation : int, value : Vec3) -> None:
         RenderCommand.s_RendererAPI.SetUniformVec3(UniformLocation, value)
     
     
     @staticmethod
-    def SetUniformVec4(UniformLocation : int, value : Vector.Vec4) -> None:
+    def SetUniformVec4(UniformLocation : int, value : Vec4) -> None:
         RenderCommand.s_RendererAPI.SetUniformVec4(UniformLocation, value)
     
     
@@ -88,11 +92,11 @@ class RenderCommand():
     
     
     @staticmethod
-    def DrawTriangle(VertexPositions : list [Vector.Vec2], colour : Vector.Vec4):
+    def DrawTriangle(VertexPositions : list [Vec2], colour : Vec4):
         RenderCommand.s_RendererAPI.DrawTriangle(VertexPositions, colour)
     
     @staticmethod
-    def DrawCircle(Position : Vector.Vec2, colour : Vector.Vec4):
+    def DrawCircle(Position : Vec2, colour : Vec4):
         RenderCommand.s_RendererAPI.DrawCircle(Position, colour)
         
     @staticmethod

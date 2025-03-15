@@ -1,5 +1,5 @@
-import numpy as np
 import time
+import numpy as np
 from PIL import Image
 
 # import pygame
@@ -218,36 +218,49 @@ def update_wrapped_image():
     # Read pixels in GL_RGB format as unsigned bytes.
 
     # glViewport(0, 0, canvas_width, canvas_height)
-    data = glReadPixels(0, 0, canvas_width, canvas_height, GL_RGBA, GL_UNSIGNED_BYTE)
+    # data = glReadPixels(0, 0, canvas_width, canvas_height, GL_RGBA, GL_UNSIGNED_BYTE)
+    data = glReadPixels(0, 0, canvas_width, canvas_height, GL_RGB, GL_UNSIGNED_BYTE)
     glBindFramebuffer(GL_FRAMEBUFFER, 0)
     # Convert to a NumPy array then reshape to image dimensions
 
-    surface = pygame.image.fromstring(data, (canvas_width, canvas_height), 'RGBA', True) #type: ignore
+    # surface = pygame.image.fromstring(data, (canvas_width, canvas_height), 'RGBA', True) #type: ignore
     # surface = surface.convert_alpha()
     # Flip the Surface vertically to match OpenGL's coordinate system
-    surface = pygame.transform.flip(surface, False, True)
+    # surface = pygame.transform.flip(surface, False, True)
 
 
-        # image_array = np.frombuffer(data, dtype=np.uint8).reshape(canvas_height, canvas_width, 3)# type: ignore
-        # # OpenGL's origin is bottom-left, so flip vertically.
-        # image_array = np.flipud(image_array)
-        # # Create a pygame surface; note pygame expects (width, height, channels)
-        # surf = pygame.surfarray.make_surface(np.transpose(image_array, (1, 0, 2)))
-        # wrapped_image = SimpleGUIImageWrapper(surf)
+    # image_array = np.frombuffer(data, dtype=np.uint8).reshape(canvas_height, canvas_width, 4)# type: ignore
+    image_array = np.frombuffer(data, dtype=np.uint8).reshape(canvas_height, canvas_width, 3)# type: ignore
+    # OpenGL's origin is bottom-left, so flip vertically.
 
-    wrapped_image = SimpleGUIImageWrapper(surface)
+    # image_array = np.flipud(image_array)
+    
+    # Create a pygame surface; note pygame expects (width, height, channels)
+    surf = pygame.surfarray.make_surface(np.transpose(image_array, (1, 0, 2)))
+    wrapped_image = SimpleGUIImageWrapper(surf)
+
+    # wrapped_image = SimpleGUIImageWrapper(surface)
 
 
 # --- Draw Handler ---
 def draw(canvas: simplegui.Canvas):
     start_time = time.time()
     # Render the triangle to the FBO via OpenGL
+    
+    renderTimeStart = time.time()
     render_to_fbo()
+    renderTimeEnd = time.time()
+    
     # Update our image wrapper with the new frame
+    
+    wrappedUpdateStart = time.time()
     update_wrapped_image()
+    wrappedUpdateEnd = time.time()
+
     # Draw the rendered image onto the SimpleGUI canvas
+    drawStart = time.time()
     if wrapped_image:
-        canvas._background_pygame_color = pygame.Color(255, 0 , 0)
+        # canvas._background_pygame_color = pygame.Color(255, 0 , 0)
 
         canvas.draw_image(wrapped_image,
                           wrapped_image.center,
@@ -256,6 +269,12 @@ def draw(canvas: simplegui.Canvas):
                           wrapped_image.size)
     else:
         canvas.draw_text("Rendering...", (canvas_width // 2 - 50, canvas_height // 2), 20, "White")
+    drawEnd = time.time()
+
+    print("render time : ", (renderTimeEnd - renderTimeStart))
+    print("wrappedUpdate time : ", (wrappedUpdateEnd - wrappedUpdateStart))
+    print("draw time : ", (drawEnd - drawStart))
+
     # Optionally, print frame timing
     print("Frame rate:", 1 / (time.time() - start_time))
 
@@ -263,31 +282,31 @@ def draw(canvas: simplegui.Canvas):
 frame = simplegui.create_frame("OpenGL FBO Rendering", canvas_width, canvas_height, 0)
 frame.set_draw_handler(draw)
 
-# Remove extra UI elements.
-frame._hide_controlpanel = True
-frame._canvas_border_size = 0
-frame._canvas_x_offset = 0
-frame._canvas_y_offset = 0
-frame._border_size = 0
+# # Remove extra UI elements.
+# frame._hide_controlpanel = True
+# frame._canvas_border_size = 0
+# frame._canvas_x_offset = 0
+# frame._canvas_y_offset = 0
+# frame._border_size = 0
 
 
 
 
 import pygame
-# Set the pygame display mode with OpenGL and double buffering.
+# # Set the pygame display mode with OpenGL and double buffering.
 
-pygame.display.set_mode((int(frame._canvas_x_offset + canvas_width + frame._canvas_border_size + frame._border_size),
-                        int(frame._canvas_y_offset + canvas_height + frame._canvas_border_size + frame._border_size)),
-                        simplegui.Frame._pygame_mode_flags,
-                        simplegui.Frame._pygame_mode_depth)
+# pygame.display.set_mode((int(frame._canvas_x_offset + canvas_width + frame._canvas_border_size + frame._border_size),
+#                         int(frame._canvas_y_offset + canvas_height + frame._canvas_border_size + frame._border_size)),
+#                         simplegui.Frame._pygame_mode_flags,
+#                         simplegui.Frame._pygame_mode_depth)
 
-# pygame.display.set_mode((canvas_width, canvas_height),
-#                         simplegui.Frame._pygame_mode_flags | pygame.OPENGL | pygame.DOUBLEBUF,
-#                         simplegui.Frame._pygame_mode_depth, vsync=1)
+# # pygame.display.set_mode((canvas_width, canvas_height),
+# #                         simplegui.Frame._pygame_mode_flags | pygame.OPENGL | pygame.DOUBLEBUF,
+# #                         simplegui.Frame._pygame_mode_depth, vsync=1)
 
-frame._pygame_surface = pygame.display.get_surface()
+# frame._pygame_surface = pygame.display.get_surface()
 
-# def opengl_update(rect=None):
+# # def opengl_update(rect=None):
 #     pygame.display.flip()
 
 # pygame.display.update = opengl_update

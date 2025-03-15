@@ -2,8 +2,6 @@
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
-from ApplicationEngine.include.Maths.Vector.Vector import Vec2, Vec3, Vec4
-from ApplicationEngine.include.Maths.Matrix.Matrix import Mat2, Mat3, Mat4
 from ApplicationEngine.include.Maths.Maths import *
 import ApplicationEngine.AppEngine as LNLEngine
 ## ============================= App Code =================================
@@ -15,9 +13,9 @@ import math
 
 
 class MovingSquare(LNLEngine.Quad):
-    def __init__(self, topLeft: LNLEngine.Vector.Vec2, width: float, height: float, colour: LNLEngine.Vector.Vec4):
+    def __init__(self, topLeft: LNLEngine.Vec2, width: float, height: float, colour: LNLEngine.Vec4):
         super().__init__(topLeft, width, height, colour)
-        self.RestPos : LNLEngine.Vector.Vec2 = topLeft
+        self.RestPos : LNLEngine.Vec2 = topLeft
         
     def _OnUpdate(self, deltatime: float):
         self._topLeft = Vec2( self.RestPos.x + ( 300 * math.cos(LNLEngine.LLEngineTime.Time() * 2) ), self.RestPos.y + ( 300 * math.sin(LNLEngine.LLEngineTime.Time() * 2) ))
@@ -162,15 +160,15 @@ class TestLayer(LNLEngine.Layer):
         testSquareHeight = 100
         
         self.TestSquare = MovingSquare(
-            LNLEngine.Vector.Vec2(
+            LNLEngine.Vec2(
                 self.gameWindow.GetWidth() / 2 - (testSquareWidth/2),
                 self.gameWindow.GetHeight() / 2 - (testSquareHeight/2)
             ),
             testSquareWidth, testSquareHeight,
-            LNLEngine.Vector.Vec4(255,255,0,0)
+            LNLEngine.Vec4(255,255,0,0)
         )
         
-        LNLEngine.Renderer.SetClearColour(LNLEngine.Vector.Vec4(30,10,40))
+        LNLEngine.Renderer.SetClearColour(LNLEngine.Vec4(0.1,0.6,0.9,1.0))
 
 
         self.m_vertexArray = LNLEngine.VertexArray.Create()
@@ -194,7 +192,6 @@ class TestLayer(LNLEngine.Layer):
         )
         VertexBuffer.SetLayout(layout)
         self.m_vertexArray.AddVertexBuffer(VertexBuffer)
-
 
 
         indices = [0 ,1 ,2, 

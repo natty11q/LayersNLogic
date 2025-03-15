@@ -2,8 +2,10 @@
 from ApplicationEngine.include.Maths.Base.MathBase import *
 
 
-import ApplicationEngine.include.Maths.Vector.Vector as Vector
+# import ApplicationEngine.include.Maths.Vector.Vector as Vector
+from ApplicationEngine.include.Maths.Vector.Vector import *
 import ApplicationEngine.include.Maths.Matrix.Matrix as Matrix
+from ApplicationEngine.include.Maths.Matrix.Matrix import Mat2, Mat3, Mat4
 import ApplicationEngine.include.Maths.Quaternion.Quaternion as Quat
 
 from typing import Union
