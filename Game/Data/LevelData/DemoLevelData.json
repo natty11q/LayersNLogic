@@ -44,7 +44,7 @@
                     },
 
                     "attributes" : [
-                        "AffectedByGravityAttribute",
+                        "__commented__ AffectedByGravityAttribute",
                         "CanTravelThroughPortals"
                     ]
                 }

@@ -9,6 +9,8 @@ from ApplicationEngine.src.Graphics.Renderer.Renderer import *
 import ApplicationEngine.src.Core.Utility.Temporal as Temporal
 
 
+from ApplicationEngine.src.Core.Keys import *
+
 from ApplicationEngine.src.Core.SceneManager import *
 from ApplicationEngine.src.Event.EventHandler import *
 

@@ -6,6 +6,15 @@ class Event:
         self._m_name : str = name
         self._m_handled : bool = False
 
+        self.x : float
+        self.y : float
+
+        self.button : int
+
+        self.width : int
+        self.height : int
+
+        self.keycode : int
 
     def GetName(self):
         return self._m_name

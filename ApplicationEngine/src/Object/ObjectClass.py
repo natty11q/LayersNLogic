@@ -4,6 +4,7 @@ from ApplicationEngine.src.Graphics.Renderer.Renderer import Renderer
 
 from ApplicationEngine.src.Object.ObjectBase import *
 from ApplicationEngine.src.Object.GameObjectAttributes import *
+from ApplicationEngine.src.Event.EventHandler import *
 
 SQUARE_VERTICES : list [float] = [
     ## position
@@ -28,7 +29,8 @@ class GameObject(GameObjectBase):
         self._World_Position : Vector.Vec3 = Vector.Vec3()
         self.__Attributes : list [ObjectAttribute.__class__] = []
         self.__Active : bool = True ## toggles wether an object is active in the editor and if physics is enabled for that object.
-    
+        AddEventListener(self._OnEvent)
+ 
     def SetAttribure(self, attrib : ObjectAttribute.__class__):
         self.__Attributes.append(attrib)
         attrib.Attrib_OnAttach(self)
@@ -49,6 +51,8 @@ class GameObject(GameObjectBase):
 
 
     def _OnUpdate(self, deltatime : float): ...
+
+    def _OnEvent(self, event : Event): ...
     
     
     def Update(self, deltatime : float):

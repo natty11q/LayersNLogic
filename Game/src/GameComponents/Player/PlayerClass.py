@@ -113,16 +113,36 @@ class Player(LNLEngine.GameObject):
         self.width = 100
         self.height = 100
 
+        self.speed  = 1000
+
 
         self.InPortalColision = False
         self.InPortalColisionOnFrame = False
+
+        self.keys = {}
+        for kcode in LNLEngine.KEY_MAP:
+            self.keys[kcode] = 0
 
     def _OnUpdate(self, deltatime : float):
         # LNLEngine.LNL_LogEngineInfo(self._World_Position)
         self.InPortalColision = self.InPortalColisionOnFrame
         self.InPortalColisionOnFrame = False
         self._World_Position += self.Velocity
+        
+        if self.keys.get(LNLEngine.KEY_MAP['right'], False):
+            self._World_Position += Vec3(self.speed,0,0) * deltatime
+        if self.keys.get(LNLEngine.KEY_MAP['left'], False):
+            self._World_Position -= Vec3(self.speed,0,0) * deltatime
+        if self.keys.get(LNLEngine.KEY_MAP['up'], False):
+            self._World_Position -= Vec3(0,self.speed,0) * deltatime
+        if self.keys.get(LNLEngine.KEY_MAP['down'], False):
+            self._World_Position += Vec3(0,self.speed,0) * deltatime
 
+    def _OnEvent(self, event : LNLEngine.Event):
+        if event.GetName() == "KeyDown":
+            self.keys[event.keycode] = 1
+        if event.GetName() == "KeyUp":
+            self.keys[event.keycode] = 0
     
     def Draw(self):
 
