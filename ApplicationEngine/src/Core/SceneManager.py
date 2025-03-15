@@ -9,6 +9,9 @@ class SceneManager:
         self.scenes[scene.name] = scene
     
     def set_active_scene(self, name : str):
+        if name not in self.scenes.keys():
+            LNL_LogEngineError(f"attempted to set scene [{name}] as active, but the scene [{name}] has not been added")
+            return
         self.activeScene = self.scenes.get(name)
     
     def update(self, dt : float):

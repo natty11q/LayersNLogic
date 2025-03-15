@@ -97,13 +97,17 @@ class CanTravelThroughPortals(LNLEngine.ObjectAttribute):
 
 
 class Player(LNLEngine.GameObject):
-    def __init__(self):
+    def __init__(self, name : str):
         super().__init__()
         # self.SetAttribure(PlayerInputHandlerAttribute)
-        self.SetAttribure(AffectedByGravityAttribute)
-        self.SetAttribure(CanTravelThroughPortals)
+
+        # self.SetAttribure(AffectedByGravityAttribute)
+        # self.SetAttribure(CanTravelThroughPortals)
+        self.name = name
+
 
         self.Velocity = Vec3()
+        self.Colour = Vec4(0,0,255,255)
         self._World_Position = Vec3(700, 50)
 
         self.width = 100
@@ -122,6 +126,6 @@ class Player(LNLEngine.GameObject):
     
     def Draw(self):
 
-        LNLEngine.Quad(Vec2(self._World_Position[0],self._World_Position[1]), 100, 100, Vec4(0,0,255,255)).Draw()
+        LNLEngine.Quad(Vec2(self._World_Position[0],self._World_Position[1]), 100, 100, self.Colour).Draw()
         # LNLEngine.Renderer.DrawTriangle([pos,pos2 , Vec2(200,400)], Vec4(100, 200, 255, 255))
         # LNLEngine.Renderer.DrawTriangle([Vec2(200,10),Vec2(100,800) , Vec2(700,4)], Vec4(100, 200, 80, 255))

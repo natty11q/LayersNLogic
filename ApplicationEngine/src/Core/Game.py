@@ -83,6 +83,8 @@ class Game:
 
         AddEventListener(self.__HandleEvents)
 
+        self.saveDir : str = ""
+
         
         Game.__s_Instance = self
     
@@ -110,8 +112,6 @@ class Game:
         self._window.Run()
         self.__MainLoop()
     
-    def Save(self):
-        pass
     
     def Quit(self):
         # handle everything that needs to be done before closing
@@ -119,11 +119,47 @@ class Game:
         self.__IsRunning = False
 
 
+    def Save(self):
+        outpuData = {}
+
+    def Load(self, jsonPath : str):
+        path = os.path.abspath(jsonPath)
+        jsonData : dict = {}
+        if os.path.exists(path):
+            with open(path, "r") as leveldata:
+                jsonData = json.load(leveldata)
+            
+            self.saveDir = path
+        else:
+            LNL_LogEngineError(f"Failed to load Scene Data from path : {jsonPath}, path does not exist!")
+            return
+
+        startupSceneName : str = jsonData.get("StartupScene", None)
+        exists = False
+        firstSceneName = ""
+        for scene in jsonData.get("Scenes", []):
+            s = Scene(scene["name"])
+            self._OnSceneLoad(scene, s)
+            self._m_SceneManager.add_scene(s)
+            
+            if scene["name"] == startupSceneName: 
+                exists = True
+
+            if firstSceneName == "":
+                firstSceneName = scene["name"]
+            
+            if startupSceneName is None:
+                startupSceneName = scene["name"]
+                exists = True
+        
+        if not exists:
+            LNL_LogEngineWarning(f"Scene name :  {startupSceneName} , is not a scene in leveldata, selecting :  {firstSceneName}")
+            startupSceneName = firstSceneName
+        
+        self._m_SceneManager.set_active_scene(startupSceneName)
 
 
-
-
-
+    def _OnSceneLoad(self, sceneData : dict, scene : Scene): ...
 
 
 
