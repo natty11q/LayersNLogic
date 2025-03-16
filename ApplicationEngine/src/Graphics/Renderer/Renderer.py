@@ -25,15 +25,13 @@ class Renderer:
     @staticmethod
     def Submit(shader : Shader, vertexArray: VertexArray):
         #modify for defered rendering
-        shader.Bind()
-        vertexArray.Bind()
-        RenderCommand.DrawIndexed(vertexArray)
+        RenderCommand.DrawIndexed(shader, vertexArray)
     
 
     @staticmethod
-    def SubmitImidiate(vertexArray: VertexArray):
+    def SubmitImidiate(shader : Shader, vertexArray: VertexArray):
         vertexArray.Bind()
-        RenderCommand.DrawIndexed(vertexArray)
+        RenderCommand.DrawIndexed(shader,vertexArray)
     
     @staticmethod
     def PushLayer(layer : Layer):
@@ -68,8 +66,8 @@ class Renderer:
         RenderCommand.Disable(value)
     
     @staticmethod
-    def DrawIndexed(VertexArray : VertexArray) -> None:
-        RenderCommand.DrawIndexed(VertexArray)
+    def DrawIndexed(shader : Shader, VertexArray : VertexArray) -> None:
+        RenderCommand.DrawIndexed(shader, VertexArray)
     
     @staticmethod
     def GetUniformLocation(ID : int, UniformName : str) -> int:

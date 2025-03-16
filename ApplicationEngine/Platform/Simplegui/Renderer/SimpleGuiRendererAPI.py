@@ -105,6 +105,7 @@ class SimpleGUiRendererAPI(RendererAPI):
 
     
     def SetClearColour(self, col : Vec4) -> None:
+        glClearColor(*col.get_p())
         self._DrawQueue.append(
             {
                 "type" : CommandType.SetClearColour,
@@ -115,6 +116,11 @@ class SimpleGUiRendererAPI(RendererAPI):
     
     def Clear(self, value : int = 0) -> None:
         self._DrawQueue.clear()
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.Clear,
+            }
+        )
 
     
     def Enable(self, value : int = 0) -> None:
@@ -139,15 +145,18 @@ class SimpleGUiRendererAPI(RendererAPI):
     
     
     ## TODO : change vertex argument to be a proper Vertex array instead. [ X ]
-    ## TODO : finish the VA class [X] alongside SHADER CLASSES [ ]
-    ## TODO : Implement Shader!!
-    ## TODO : Add implementation that follows the buffer layout and draws triangles using the vertices
-    def DrawIndexed(self,VertexArray : VertexArray) -> None:
+    ## TODO : finish the VA class [X] alongside SHADER CLASSES [X]
+    ## TODO : Implement Shader [X]!!
+    ## TODO : Add implementation that follows the buffer layout and draws triangles using the vertices [x]
+    ## COMPLETE !!
+
+    def DrawIndexed(self, shader: Shader, VertexArray : VertexArray) -> None:
         
         self._DrawQueue.append(
             {
                 "type" : CommandType.DrawIndexed,
-                "vertexArray" : VertexArray 
+                "vertexArray" : VertexArray,
+                "shader" : shader
             }
         )
 
@@ -208,6 +217,7 @@ class SimpleGUiRendererAPI(RendererAPI):
 
 
     def SetupFbo(self, width, height):
+        glViewport(0, 0, width, height)
         self.fbo = glGenFramebuffers(1)
         glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
 
@@ -274,7 +284,6 @@ class SimpleGUiRendererAPI(RendererAPI):
             
             elif eType == CommandType.SetClearColour:
                 col : Vec4 = element["colour"]
-                glClearColor(*col.get_p())
 
             
             elif eType == CommandType.DrawTriangle:
@@ -330,9 +339,11 @@ class SimpleGUiRendererAPI(RendererAPI):
 
             elif element["type"] == CommandType.DrawIndexed:
                 vertexArray : VertexArray = element["vertexArray"]
-                # shader : VertexArray = element["shader"]
+                shader : Shader = element["shader"]
+
                 glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
 
+                shader.Bind()
                 vertexArray.Bind()
                 glDrawElements(GL_TRIANGLES, vertexArray.GetIndexBuffer().GetCount(), GL_UNSIGNED_INT , None)
 

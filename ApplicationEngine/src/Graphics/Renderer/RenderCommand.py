@@ -44,8 +44,8 @@ class RenderCommand():
         RenderCommand.s_RendererAPI.Disable(value)
     
     @staticmethod
-    def DrawIndexed(VertexArray : VertexArray) -> None:
-        RenderCommand.s_RendererAPI.DrawIndexed(VertexArray)
+    def DrawIndexed( shader: Shader, vertexArray : VertexArray) -> None:
+        RenderCommand.s_RendererAPI.DrawIndexed(shader, vertexArray)
     
     @staticmethod
     def GetUniformLocation(ID : int, UniformName : str) -> int:

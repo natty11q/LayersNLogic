@@ -48,7 +48,7 @@ class Shader:
         success = glGetShaderiv(vertex_shader, GL_COMPILE_STATUS)
         if not success:
             maxlen = glGetShaderiv(vertex_shader, GL_INFO_LOG_LENGTH)
-            info_log = glGetShaderInfoLog(vertex_shader, maxlen)
+            info_log = glGetShaderInfoLog(vertex_shader) 
             LNL_LogEngineError(f"\nVERTEX SHADER FAILURE: {info_log.decode('utf-8')}")
 
             glDeleteShader(vertex_shader)
@@ -67,7 +67,7 @@ class Shader:
         success = glGetShaderiv(fragment_shader, GL_COMPILE_STATUS)
         if not success:
             maxlen = glGetShaderiv(fragment_shader, GL_INFO_LOG_LENGTH)
-            info_log = glGetShaderInfoLog(fragment_shader, maxlen)
+            info_log = glGetShaderInfoLog(fragment_shader)
             LNL_LogEngineError(f"\nFRAGMENT SHADER FAILURE: {info_log.decode('utf-8')}")
 
             glDeleteShader(fragment_shader)

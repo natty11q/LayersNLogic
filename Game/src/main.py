@@ -26,6 +26,28 @@ class Cube(LNLEngine.GameObject):
     def __init__(self, scale : float= 1, rotation : Quat.Quat = Quat.Quat() ,position : Vec3 = Vec3(0,0,-100)):
         super().__init__()
 
+        VERTEX_SHADER = """
+            #version 330 core
+            layout(location = 0) in vec3 a_Pos;
+            layout(location = 1) in vec3 a_Col;
+            layout(location = 2) in vec3 a_Normal;
+
+            out vec3 vertexColor;
+            void main() {
+                vertexColor = a_Col;
+                gl_Position = vec4(a_Pos, 1.0);
+            }
+        """
+        FRAGMENT_SHADER = """
+            #version 330 core
+            in vec3 vertexColor;
+            out vec4 FragColor;
+            void main() {
+                FragColor = vec4(vertexColor, 1.0);
+            }
+        """
+        self.shader : LNLEngine.Shader = LNLEngine.Shader(VERTEX_SHADER, FRAGMENT_SHADER)
+
         self.m_vertexArray = LNLEngine.VertexArray.Create()
 
         self.baseVertices = [ 
@@ -148,7 +170,7 @@ class Cube(LNLEngine.GameObject):
 
     def Draw(self):
         # LNLEngine.Renderer.Submit(self.m_vertexArray)
-        LNLEngine.Renderer.DrawIndexed(self.m_vertexArray)
+        LNLEngine.Renderer.DrawIndexed(self.shader, self.m_vertexArray)
 
 class TestLayer(LNLEngine.Layer):
     def __init__(self, name="TestLayer"):
@@ -168,8 +190,29 @@ class TestLayer(LNLEngine.Layer):
         #     LNLEngine.Vec4(255,255,0,0)
         # )
         
-        LNLEngine.Renderer.SetClearColour(LNLEngine.Vec4(0.1,0.6,0.9,1.0))
+        LNLEngine.Renderer.SetClearColour(LNLEngine.Vec4(0.15,0.1,0.2,1.0))
 
+        VERTEX_SHADER = """
+            #version 330 core
+            layout(location = 0) in vec3 a_Pos;
+            layout(location = 1) in vec3 a_Col;
+            layout(location = 2) in vec3 a_Normal;
+
+            out vec3 vertexColor;
+            void main() {
+                vertexColor = a_Col;
+                gl_Position = vec4(a_Pos, 1.0);
+            }
+        """
+        FRAGMENT_SHADER = """
+            #version 330 core
+            in vec3 vertexColor;
+            out vec4 FragColor;
+            void main() {
+                FragColor = vec4(vertexColor, 1.0);
+            }
+        """
+        self.shader : LNLEngine.Shader = LNLEngine.Shader(VERTEX_SHADER, FRAGMENT_SHADER)
 
         self.m_vertexArray = LNLEngine.VertexArray.Create()
 
@@ -181,7 +224,7 @@ class TestLayer(LNLEngine.Layer):
             -0.5,  0.5, 0.0,    0.7, 0.4, 0.8,  0.0, 0.0, 1.0
             ]
         
-        VertexBuffer = LNLEngine.VertexBuffer.Create(vertices, len(vertices))
+        VertexBuffer = LNLEngine.VertexBuffer.Create(vertices, LNLEngine.sizeof(LNLEngine.c_float) * len(vertices))
 
         layout = LNLEngine.BufferLayout(
             [
@@ -211,10 +254,10 @@ class TestLayer(LNLEngine.Layer):
         # player = Player()
 
 
-        # portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
-        # portal2 = Portal(Vec2(0, 20), Vec2(200, 500) , Vec4(20,150,255,255))
+        # self.portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
+        # self.portal2 = Portal(Vec2(0, 20), Vec2(200, 500) , Vec4(20,150,255,255))
 
-        # portal1.LinkPortal(portal2)
+        # self.portal1.LinkPortal(self.portal2)
 
         # LNLEngine.Renderer.Enable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
 
@@ -241,6 +284,7 @@ class TestLayer(LNLEngine.Layer):
 
 
     def OnUpdate(self, deltatime : float):
+        # LNLEngine.Renderer.SetClearColour(LNLEngine.Vec4(0.1,0.6,0.9,1.0))
         LNLEngine.Renderer.Clear()
         
         
@@ -260,10 +304,14 @@ class TestLayer(LNLEngine.Layer):
         # self.Cube.Update(deltatime)
 
         self.SceneManager.update(deltatime)
-
+        
         LNLEngine.Renderer.BeginScene(self.camera)
 
+        LNLEngine.Renderer.Submit(self.shader ,self.m_vertexArray)
         self.SceneManager.draw()
+
+        # self.portal1.Draw()
+        # self.portal2.Draw()
 
         LNLEngine.Renderer.EndScene()
 

@@ -5,6 +5,8 @@ from ApplicationEngine.src.LayerSystem.LayerSystem import *
 
 from ApplicationEngine.src.Graphics.Renderer.VertexArray import *
 
+from ApplicationEngine.src.Graphics.Renderer.ShaderProgram import *
+
 
 from OpenGL.GL import * # type: ignore
 
@@ -77,7 +79,7 @@ class RendererAPI(ABC): ## abstract class only
     def Disable(self, value : int = 0) -> None: ...
     
     @abstractmethod
-    def DrawIndexed(self, VertexArray : VertexArray) -> None: ...
+    def DrawIndexed(self, shader: Shader, VertexArray : VertexArray) -> None: ...
     
     @abstractmethod
     def GetUniformLocation(self, ID : int, UniformName : str) -> int: ...
