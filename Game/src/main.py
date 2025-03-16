@@ -156,17 +156,17 @@ class TestLayer(LNLEngine.Layer):
         self.gameWindow = LNLEngine.Game.Get().GetWindow()
         
         # =================================
-        testSquareWidth = 100
-        testSquareHeight = 100
+        # testSquareWidth = 100
+        # testSquareHeight = 100
         
-        self.TestSquare = MovingSquare(
-            LNLEngine.Vec2(
-                self.gameWindow.GetWidth() / 2 - (testSquareWidth/2),
-                self.gameWindow.GetHeight() / 2 - (testSquareHeight/2)
-            ),
-            testSquareWidth, testSquareHeight,
-            LNLEngine.Vec4(255,255,0,0)
-        )
+        # self.TestSquare = MovingSquare(
+        #     LNLEngine.Vec2(
+        #         self.gameWindow.GetWidth() / 2 - (testSquareWidth/2),
+        #         self.gameWindow.GetHeight() / 2 - (testSquareHeight/2)
+        #     ),
+        #     testSquareWidth, testSquareHeight,
+        #     LNLEngine.Vec4(255,255,0,0)
+        # )
         
         LNLEngine.Renderer.SetClearColour(LNLEngine.Vec4(0.1,0.6,0.9,1.0))
 

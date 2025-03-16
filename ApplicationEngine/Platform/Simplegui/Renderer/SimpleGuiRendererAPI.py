@@ -10,15 +10,15 @@ except ImportError :
 
 from ApplicationEngine.Logger.LNLEngineLogger import *
 
-# from ApplicationEngine.src.Graphics.Renderer.ShaderProgram import Shader
+from ApplicationEngine.src.Graphics.Renderer.ShaderProgram import Shader
 
 
 from collections import OrderedDict
 import glfw
 from OpenGL.GL import * # type: ignore
-from OpenGL.GL.shaders import compileProgram, compileShader
 
 import pygame
+
 
 
 
@@ -41,7 +41,7 @@ class SimpleGUiRendererAPI(RendererAPI):
     
     
     def __init__(self) -> None:
-        self.__DrawQueue : list [dict] = []
+        self._DrawQueue : list [dict] = []
         self.__RenderSettings : int = 0
 
         self.wrappedImage = None
@@ -49,6 +49,29 @@ class SimpleGUiRendererAPI(RendererAPI):
         self.fbo_texture = None
 
         self.init_gl()
+
+        TRIANGLE_VERTEX_SHADER_SRC = """
+        #version 330 core
+        layout(location = 0) in vec3 aPos;
+        uniform vec3 uColour;
+
+        out vec3 vertexColor;
+        void main() {
+            gl_Position = vec4(aPos, 1.0);
+            vertexColor = uColour;
+        }
+        """
+
+        TRIANGLE_FRAGMENT_SHADER_SRC = """
+        #version 330 core
+        in vec3 vertexColor;
+        out vec4 FragColor;
+        void main() {
+            FragColor = vec4(vertexColor, 1.0);
+        }
+        """
+
+        self.triangleShader : Shader = Shader(TRIANGLE_VERTEX_SHADER_SRC,TRIANGLE_FRAGMENT_SHADER_SRC)
 
 
     def init_gl(self):
@@ -70,7 +93,8 @@ class SimpleGUiRendererAPI(RendererAPI):
 
         # Make the window's context current
         glfw.make_context_current(window)
-
+        glViewport(0, 0, 600, 900) # default values
+        self.SetupFbo(600, 900)
 
         # ----------------------------
 
@@ -81,7 +105,7 @@ class SimpleGUiRendererAPI(RendererAPI):
 
     
     def SetClearColour(self, col : Vec4) -> None:
-        self.__DrawQueue.append(
+        self._DrawQueue.append(
             {
                 "type" : CommandType.SetClearColour,
                 "colour" : col
@@ -90,16 +114,13 @@ class SimpleGUiRendererAPI(RendererAPI):
     
     
     def Clear(self, value : int = 0) -> None:
-        self.__DrawQueue.append(
-            {
-                "type" : CommandType.Clear
-            }
-        )
+        self._DrawQueue.clear()
+
     
     def Enable(self, value : int = 0) -> None:
         self.__RenderSettings |= value
 
-        self.__DrawQueue.append(
+        self._DrawQueue.append(
             {
                 "type" : CommandType.Enable,
                 "value" : value
@@ -109,7 +130,7 @@ class SimpleGUiRendererAPI(RendererAPI):
     def Disable(self, value : int = 0) -> None:
         self.__RenderSettings ^= value
 
-        self.__DrawQueue.append(
+        self._DrawQueue.append(
             {
                 "type" : CommandType.Disable,
                 "value" : value
@@ -123,7 +144,7 @@ class SimpleGUiRendererAPI(RendererAPI):
     ## TODO : Add implementation that follows the buffer layout and draws triangles using the vertices
     def DrawIndexed(self,VertexArray : VertexArray) -> None:
         
-        self.__DrawQueue.append(
+        self._DrawQueue.append(
             {
                 "type" : CommandType.DrawIndexed,
                 "vertexArray" : VertexArray 
@@ -172,12 +193,12 @@ class SimpleGUiRendererAPI(RendererAPI):
     ## (can use an int and the two instead of an o(n) string comparison every frame) |  Done : [ x ]
 
     def DrawTriangle(self, VertexPositions : list [Vec2], colour : Vec4) -> None:
-        self.__DrawQueue.append(
+        self._DrawQueue.append(
             {
                 "type" : CommandType.DrawTriangle,
                 "vertices" : VertexPositions,
                 "indices" : [0 , 1 , 2],
-                "colour" : colour.toVec3().get_p()
+                "colour" : colour.toVec3()
             }
         )
     
@@ -235,46 +256,79 @@ class SimpleGUiRendererAPI(RendererAPI):
 
 
 
-        for element in self.__DrawQueue:
-            if element["type"] == CommandType.Enable:
+        for element in self._DrawQueue:
+            eType = element["type"]
+            
+            if eType == CommandType.Enable:
                 glEnable(element["value"])
                 self.__RenderSettings |= element["value"]
             
-            if element["type"] == CommandType.Disable:
+            elif eType == CommandType.Disable:
                 glDisable(element["value"])
                 self.__RenderSettings ^= element["value"]
             
-            if element["type"] == CommandType.Clear:
-                self.__DrawQueue.clear()
+            elif eType == CommandType.Clear:
                 glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) #type: ignore
                 glBindFramebuffer(GL_FRAMEBUFFER, 0)
-
             
-            if element["type"] == CommandType.SetClearColour:
+            elif eType == CommandType.SetClearColour:
                 col : Vec4 = element["colour"]
                 glClearColor(*col.get_p())
 
             
-            if element["type"] == CommandType.DrawTriangle:
+            elif eType == CommandType.DrawTriangle:
                 vertices : list [Vec2 | Vec3 | Vec4] = element["vertices"]
                 indices : list [int]= element["indices"]
-                color = element["colour"]
-                indexed_vertices : list[tuple[float, float, float]] = [(vertices[i].get_p()[0], vertices[i].get_p()[1], 0.0) for i in indices]
-                
-                
-                glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
+                tricol : Vec3 = element["colour"]
 
-                glBegin(GL_TRIANGLES)
-                for vertex in indexed_vertices:
-                    glColor3f(color[0], color[1], color[3])
-                    glVertex3f(vertex[0], vertex[1], vertex[2])
-                glEnd()
+                p_indexed_vertices : list[tuple[float, float, float]] = [(normalisePos(vertices[i].get_p(), canvas._width, canvas._height)) for i in indices]
+                
+                indexed_vertices = np.array(p_indexed_vertices, dtype=np.float32).flatten()
+                
+                
+                vao = glGenVertexArrays(1)
+                vbo = glGenBuffers(1)
+
+                glBindVertexArray(vao)
+                glBindBuffer(GL_ARRAY_BUFFER, vbo)
+
+                # Upload the vertex data to the GPU
+                glBufferData(GL_ARRAY_BUFFER, indexed_vertices.nbytes, indexed_vertices, GL_STATIC_DRAW)
+
+                # Enable the vertex attribute for position (location = 0 in shader)
+                glEnableVertexAttribArray(0)
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * 4, ctypes.c_void_p(0))
+
+
+
+
+
+                glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
+                
+                # Use a simple shader program (make sure your shader is active)
+                self.triangleShader.Bind()  # Ensure `shader_program` is set before calling this function
+
+                # Set the color uniform (assuming the shader has a 'uColour' uniform)
+                self.triangleShader.SetUniformVec3("uColour", tricol.divide(255))
+                # if color_location != -1:
+                #     glUniform3f(color_location, *color)
+                # else:
+                #     LNL_LogEngineWarning("Uniform 'uColour' not found in the shader!")
+
+                # Draw the triangle
+                glDrawArrays(GL_TRIANGLES, 0, 3)
+
+                # Cleanup
+                glBindBuffer(GL_ARRAY_BUFFER, 0)
+                glBindVertexArray(0)
+                glDeleteBuffers(1, [vbo])
+                glDeleteVertexArrays(1, [vao])
 
                 glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
 
-            if element["type"] == CommandType.DrawIndexed:
+            elif element["type"] == CommandType.DrawIndexed:
                 vertexArray : VertexArray = element["vertexArray"]
                 # shader : VertexArray = element["shader"]
                 glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
@@ -300,3 +354,24 @@ class SimpleGUiRendererAPI(RendererAPI):
 def denormalisePos(vertex : tuple[float, float], w , h) -> tuple[float, float]:
     # LNL_LogEngineInfo(vertex)
     return ( ((vertex[0] + 1) / 2) * w,  h - ((vertex[1] + 1) / 2) * h )
+
+def normalisePos(position : tuple[float, ...], screen_width, screen_height) -> tuple[float, float, float]:
+    """
+    Converts a screen-space position (pixels) into normalized OpenGL coordinates (-1 to 1)
+    and flips the Y-axis.
+
+    Parameters:
+    - position: Tuple (x, y) in pixel coordinates
+    - screen_width: Screen width in pixels
+    - screen_height: Screen height in pixels
+
+    Returns:
+    - Tuple (nx, ny) in normalized device coordinates (-1 to 1)
+    """
+    x, y = position
+    
+    # Convert to normalized coordinates (-1 to 1)
+    nx = (x / screen_width) * 2 - 1  # Normalize X
+    ny = 1 - (y / screen_height) * 2  # Normalize Y (flips it)
+
+    return ( ny , nx,  0.0)

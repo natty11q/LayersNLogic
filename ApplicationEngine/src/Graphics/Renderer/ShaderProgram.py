@@ -1,10 +1,10 @@
 from ApplicationEngine.include.Common import *
 from ApplicationEngine.include.Maths.Maths import *
-from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
 
 
 from OpenGL.GL import * # type: ignore
 
+from OpenGL.GL.shaders import compileProgram, compileShader
 
 class Shader:
     def __init__(self, vertexSource, fragmentSource):
@@ -41,7 +41,7 @@ class Shader:
 
         # ensure that the shader is NULL terminated
         source = vertex_source.encode('utf-8')
-        glShaderSource(vertex_shader, 1, [source], None)
+        glShaderSource(vertex_shader, source)
 
         glCompileShader(vertex_shader)
 
@@ -60,7 +60,7 @@ class Shader:
 
         # ensure that the shader is NULL terminated
         source = fragment_source.encode('utf-8')
-        glShaderSource(fragment_shader, 1, [source], None)
+        glShaderSource(fragment_shader, source)
 
         glCompileShader(fragment_shader)
 
@@ -110,35 +110,44 @@ class Shader:
 
 
     def SetUniformFloat(self, name : str, val :  float ):
+        from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         RenderCommand.SetUniformFloat(self._getUniformLocation(name), val) 
     def SetUniforInt(self, name : str, val: int):
+        from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         RenderCommand.SetUniformInt(self._getUniformLocation(name), val) 
 
     
     def SetUniformVec2(self, name : str, vec : Vec2):
+        from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         RenderCommand.SetUniformVec2(self._getUniformLocation(name), vec) 
 
     def SetUniformVec3(self, name : str, vec : Vec3):
+        from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         RenderCommand.SetUniformVec3(self._getUniformLocation(name), vec) 
 
     def SetUniformVec4(self, name : str, vec : Vec4):
+        from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         RenderCommand.SetUniformVec4(self._getUniformLocation(name), vec) 
     
 
 
     def SetUniformMatrix2(self, name : str, mat : Mat2):
+        from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         RenderCommand.SetUniformMat2(self._getUniformLocation(name), mat) 
     
     def SetUniformMatrix3(self, name : str, mat : Mat3):
+        from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         RenderCommand.SetUniformMat3(self._getUniformLocation(name), mat)
 
     def SetUniformMatrix4(self, name : str, mat : Mat4):
+        from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         RenderCommand.SetUniformMat4(self._getUniformLocation(name), mat) 
 
 
     def Get_id(self) -> int: return self._m_RendererID
 
     def _getUniformLocation(self, uniformName : str):
+        from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         retVal : int= 0
         if uniformName in self._m_uniformNameHash_:
             retVal = self._m_uniformNameHash_[uniformName]
