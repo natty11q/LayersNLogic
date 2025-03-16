@@ -86,15 +86,15 @@ class SimpleGUiRendererAPI(RendererAPI):
         glfw.window_hint(glfw.VISIBLE, glfw.FALSE)
 
         # Create a windowed mode window and its OpenGL context
-        window = glfw.create_window(800, 600, "OpenGL with GLFW", None, None)
+        window = glfw.create_window(900, 600, "OpenGL with GLFW", None, None)
         if not window:
             glfw.terminate()
             return
 
         # Make the window's context current
         glfw.make_context_current(window)
-        glViewport(0, 0, 600, 900) # default values
-        self.SetupFbo(600, 900)
+        glViewport(0, 0, 900, 600) # default values
+        self.SetupFbo(900, 600)
 
         # ----------------------------
 
@@ -232,7 +232,7 @@ class SimpleGUiRendererAPI(RendererAPI):
         image_array = np.frombuffer(data, dtype=np.uint8).reshape(height, width, 3)# type: ignore
         # OpenGL's origin is bottom-left, so flip vertically.
 
-        # image_array = np.flipud(image_array)
+        image_array = np.flipud(image_array)
         
         # Create a pygame surface; note pygame expects (width, height, channels)
         surf = pygame.surfarray.make_surface(np.transpose(image_array, (1, 0, 2)))
@@ -374,4 +374,4 @@ def normalisePos(position : tuple[float, ...], screen_width, screen_height) -> t
     nx = (x / screen_width) * 2 - 1  # Normalize X
     ny = 1 - (y / screen_height) * 2  # Normalize Y (flips it)
 
-    return ( ny , nx,  0.0)
+    return (nx, ny , 0.0)
