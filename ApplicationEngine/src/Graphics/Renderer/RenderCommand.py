@@ -98,7 +98,12 @@ class RenderCommand():
     @staticmethod
     def DrawCircle(Position : Vec2, colour : Vec4):
         RenderCommand.s_RendererAPI.DrawCircle(Position, colour)
-        
+    
+    @staticmethod
+    def BindTexture(tex_id : int):
+        RenderCommand.s_RendererAPI.BindTexture(tex_id)
+
+
     @staticmethod
     def Draw(*args):
         RenderCommand.s_RendererAPI.Draw(*args)

@@ -6,12 +6,20 @@ from OpenGL.GL import * # type: ignore
 
 from OpenGL.GL.shaders import compileProgram, compileShader
 
+# TODO : change shader and Texture classes to be seperate impls eg  simpleGuiTexture: 
+
+
 class Shader:
     def __init__(self, vertexSource, fragmentSource):
         self._m_RendererID : int = 0
         self._m_uniformNameHash_ : dict[str , int] = {}
 
         self.RecompileShader(vertexSource, fragmentSource)
+    
+    def __del__(self):
+        self.Delete()
+
+
 
     @staticmethod
     def CreateShaderFromFile(vertexFile: str, fragmentFile: str ):
@@ -105,13 +113,14 @@ class Shader:
         glUseProgram(self._m_RendererID)
     def UnBind(self):
         glUseProgram(0)
-    def Delete(self): ...
-
-
-
+    def Delete(self):
+        glDeleteProgram(self._m_RendererID)
+    
+    
     def SetUniformFloat(self, name : str, val :  float ):
         from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         RenderCommand.SetUniformFloat(self._getUniformLocation(name), val) 
+    
     def SetUniforInt(self, name : str, val: int):
         from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         RenderCommand.SetUniformInt(self._getUniformLocation(name), val) 

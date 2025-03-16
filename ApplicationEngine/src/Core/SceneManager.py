@@ -22,6 +22,6 @@ class SceneManager:
         if self.activeScene:
             self.activeScene.PhysicsUpdate(tickTime)
 
-    def draw(self):
+    def Draw(self):
         if self.activeScene:
             self.activeScene.Draw()

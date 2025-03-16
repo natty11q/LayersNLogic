@@ -278,6 +278,8 @@ class TestLayer(LNLEngine.Layer):
         # self.SceneManager.add_scene(mainScene)
         # self.SceneManager.set_active_scene(mainScene.name)
 
+        self.ScreenShader = LNLEngine.ScreenShader()
+
 
 
 
@@ -307,8 +309,10 @@ class TestLayer(LNLEngine.Layer):
         
         LNLEngine.Renderer.BeginScene(self.camera)
 
-        LNLEngine.Renderer.Submit(self.shader ,self.m_vertexArray)
-        self.SceneManager.draw()
+        self.ScreenShader.Draw()
+        # LNLEngine.Renderer.Submit(self.shader ,self.m_vertexArray)
+    
+        # self.SceneManager.Draw()
 
         # self.portal1.Draw()
         # self.portal2.Draw()

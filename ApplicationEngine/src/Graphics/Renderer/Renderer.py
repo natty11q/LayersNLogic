@@ -9,6 +9,9 @@ from ApplicationEngine.src.Graphics.Camera.Camera import *
     
     
 from ApplicationEngine.src.Graphics.Renderer.ShaderProgram import Shader
+from ApplicationEngine.src.Graphics.Renderer.Texture import Texture
+
+
 class Renderer:
     
     __Objects = []
@@ -125,6 +128,10 @@ class Renderer:
     def Draw(*args):
         RenderCommand.Draw(*args)
     
+
+    @staticmethod
+    def BindTexture(tex_id : int):
+        RenderCommand.BindTexture(tex_id)
     @staticmethod
     def GetAPI():
         return RendererAPI.GetAPI()

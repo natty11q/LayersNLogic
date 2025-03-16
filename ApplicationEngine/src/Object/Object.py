@@ -5,3 +5,6 @@ from ApplicationEngine.src.Object._2D.SpriteClass import *
 from ApplicationEngine.src.Object.AnimationClass import *
 
 from ApplicationEngine.src.Object.Entity import *
+
+
+from ApplicationEngine.src.Object.ScreenShader import *

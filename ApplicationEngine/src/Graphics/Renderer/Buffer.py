@@ -195,12 +195,12 @@ class IndexBuffer(ABC):
     def GetSize(self) -> int: return self._size
 
     @staticmethod
-    def Create(indices : list [int], size : int) -> IndexBuffer:
+    def Create(indices : list [int], count : int) -> IndexBuffer:
         from ApplicationEngine.src.Graphics.Renderer.Renderer import Renderer, RendererAPI
         match (Renderer.GetAPI()):
             case RendererAPI.API.SimpleGui:
                 from ApplicationEngine.Platform.Simplegui.Renderer.SimpleGuiBuffer import SimpleGuiIndexBuffer
-                return SimpleGuiIndexBuffer(indices, size)
+                return SimpleGuiIndexBuffer(indices, count)
             
             case _ :
                 raise NotImplemented

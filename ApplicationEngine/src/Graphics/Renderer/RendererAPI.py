@@ -6,6 +6,7 @@ from ApplicationEngine.src.LayerSystem.LayerSystem import *
 from ApplicationEngine.src.Graphics.Renderer.VertexArray import *
 
 from ApplicationEngine.src.Graphics.Renderer.ShaderProgram import *
+from ApplicationEngine.src.Graphics.Renderer.Texture import *
 
 
 from OpenGL.GL import * # type: ignore
@@ -31,6 +32,7 @@ class CommandType(Enum):
     SetUniformMat4  = auto()
     DrawTriangle    = auto()
     DrawCircle      = auto()
+    BindTexture     = auto()
 
 class RendererAPI(ABC): ## abstract class only
     
@@ -113,6 +115,9 @@ class RendererAPI(ABC): ## abstract class only
     
     @abstractmethod
     def DrawCircle(self, Position : Vec2, colour : Vec4): ...
+
+    @abstractmethod
+    def BindTexture(self, tex_id : int): ...
     
     @abstractmethod
     def Draw(self, *args): ...

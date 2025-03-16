@@ -11,6 +11,7 @@ except ImportError :
 from ApplicationEngine.Logger.LNLEngineLogger import *
 
 from ApplicationEngine.src.Graphics.Renderer.ShaderProgram import Shader
+from ApplicationEngine.src.Graphics.Renderer.Texture import Texture
 
 
 from collections import OrderedDict
@@ -196,6 +197,15 @@ class SimpleGUiRendererAPI(RendererAPI):
     def SetUniformMat4(self, UniformLocation : int, value : Mat4) -> None:
         glUniformMatrix4fv(UniformLocation, 1, GL_FALSE, value.nparr())
     
+
+    def BindTexture(self, tex_id : int):
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.BindTexture,
+                "tex_id" : tex_id
+            }
+        )
+
     
     ## TODO : Decide if this shiould be extended to an SGUICOmmand Class instead of using raw Dicts | Done [ ]
     ## TODO : Command Type cna use an enum instead of the strings for faster lookup
@@ -285,6 +295,10 @@ class SimpleGUiRendererAPI(RendererAPI):
             elif eType == CommandType.SetClearColour:
                 col : Vec4 = element["colour"]
 
+            elif eType == CommandType.BindTexture:
+                tex_id = element["tex_id"]
+                glActiveTexture(GL_TEXTURE0)
+                glBindTexture(GL_TEXTURE_2D, tex_id)
             
             elif eType == CommandType.DrawTriangle:
                 vertices : list [Vec2 | Vec3 | Vec4] = element["vertices"]
