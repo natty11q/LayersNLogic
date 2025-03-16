@@ -105,10 +105,15 @@ float sdBox(vec3 p, vec3 b)
     return length(max(q, 0.0)) + min(max(q.x, max(q.y,q.z)) , 0.0);
 }
 
+float smin(float a, float b, float k) {
+    float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
+    return mix(b, a, h) - k * h * (1.0 - h);
+}
+
 // distance to scene
 float map(vec3 p)
 {
-    vec3 spherePos = vec3(sin(Time)*3, 0, 0);
+    vec3 spherePos = vec3(sin(Time)*3, 0, Time  + (sin(Time * 0.2) * 1.1));
     vec3 boxPos = vec3(sin(Time * 5)*0.09, cos(Time * 5)*0.09, 0);
     
     vec3 q = p;
@@ -120,7 +125,7 @@ float map(vec3 p)
 
     float ground = p.y + 1;
 
-    return min(ground, min(sphere,box));
+    return min(ground, smin(sphere,box,1.5));
 }
 
 
@@ -130,7 +135,7 @@ vec4 mainImage()
 
 
     // initialise
-    vec3 ro = vec3(0,0,-3 + (Time ));             // ray origin
+    vec3 ro = vec3(0,0,-3 + (Time));             // ray origin
     vec3 rd = normalize(vec3(uv,1.0));  // ray direction
     vec3 col = vec3(0);
 
