@@ -1,8 +1,12 @@
-sys.path.append(os.path.join(os.path.dirname(__file__),'..','Level'))
-import Level
-import sys
-import os
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+
+# import Level
+
+
 import ApplicationEngine.AppEngine as LNLEngine
+
+
 try:
     import simplegui # type: ignore
     
@@ -39,8 +43,14 @@ class GameMenu:
     def start_game(self):
         print("Starting level...")
         try:
-            level_instance = Level.LNL_Level()
-            level_instance.run()
+            # sManger = LNLEngine.Game.Get().GetSceneManager()
+
+
+
+            # sManger.set_active_scene()
+            ...
+
+            ## TODO : impl with game code, modify class to use application engine 
         except AttributeError:
             print("Error: 'Level' class or 'run()' method not found in level module.")
         
@@ -57,8 +67,8 @@ class GameMenu:
         canvas.draw_text(self.TITLE, (self.WIDTH // 3, self.HEIGHT // 4), 36, "White")
         
         # Draw buttons
-        self.draw_button(canvas, self.START_BUTTON_POS, self.start_button_hover,self.start_button_image,self.start_button_hover_image)
-        self.draw_button(canvas, self.QUIT_BUTTON_POS, "Quit", "Red")
+        self.draw_button(canvas, self.START_BUTTON_POS, "START", self.start_button_hover,self.start_button_image,self.start_button_hover_image)
+        self.draw_button(canvas, self.QUIT_BUTTON_POS, "Quit", self.start_button_hover,self.start_button_image,self.start_button_hover_image)
 
     def draw_button(self, canvas, position, text, is_hovered, default_image, hover_image):
         x, y = position
