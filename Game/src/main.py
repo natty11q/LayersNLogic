@@ -362,16 +362,16 @@ class TestLayer(LNLEngine.Layer):
 
         # self.Cube.Update(deltatime)
 
-        # self.SceneManager.update(deltatime)
+        self.SceneManager.update(deltatime)
 
 
         
         LNLEngine.Renderer.BeginScene(self.camera)
 
-        self.ScreenShader.Draw()
+        # self.ScreenShader.Draw()
         # LNLEngine.Renderer.Submit(self.shader ,self.m_vertexArray)
     
-        # self.SceneManager.Draw()
+        self.SceneManager.Draw()
 
         self.TestSprite.Draw()
 

@@ -146,6 +146,6 @@ class Player(LNLEngine.GameObject):
     
     def Draw(self):
 
-        LNLEngine.Quad(Vec2(self._World_Position[0],self._World_Position[1]), 100, 100, self.Colour).Draw()
+        LNLEngine.Quad(Vec2(self._World_Position[0],self._World_Position[1]), self.width, self.height, self.Colour).Draw()
         # LNLEngine.Renderer.DrawTriangle([pos,pos2 , Vec2(200,400)], Vec4(100, 200, 255, 255))
         # LNLEngine.Renderer.DrawTriangle([Vec2(200,10),Vec2(100,800) , Vec2(700,4)], Vec4(100, 200, 80, 255))
