@@ -10,8 +10,11 @@ from PIL import Image
 
 class Texture():
     def __init__(self, image_path):
+        if os.path.exists(image_path):
+            image = Image.open(image_path)
+        else:
+            image = Image.open("ApplicationEngine/Assets/DefaultTextires/Debugempty.png")
 
-        image = Image.open(image_path)
         tex_np = np.array(image.convert("RGB"), dtype=np.uint8)
         tex_np = np.flipud(tex_np)
         self.tex_height, self.tex_width, _ = tex_np.shape

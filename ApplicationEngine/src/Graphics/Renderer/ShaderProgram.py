@@ -8,6 +8,27 @@ from OpenGL.GL.shaders import compileProgram, compileShader
 
 # TODO : change shader and Texture classes to be seperate impls eg  simpleGuiTexture: 
 
+DEFAULT_VERT = """
+    #version 330 core
+    
+    void main()
+    {
+        gl_Position = vec4(0.0f);
+    }
+"""
+
+DEFAULT_FRAG = """
+    #version 330 core
+
+
+    out vec4 FragColour
+    void main()
+    {
+        FragColour = vec4(1.0, 0.5, 0.5, 1.0);
+    }
+
+
+"""
 
 class Shader:
     def __init__(self, vertexSource, fragmentSource):
@@ -28,12 +49,12 @@ class Shader:
         # Check if vertex file exists
         if not (os.path.exists(vertexFile) or os.path.exists(os.path.join(resource_path, vertexFile))):
             LNL_LogEngineError(f"Could not resolve shader from source: {vertexFile}\nTried: {vertexFile} , {os.path.join(resource_path, vertexFile)}")
-            return None
+            return Shader(DEFAULT_VERT, DEFAULT_FRAG)
         
         # Check if fragment file exists
         elif not (os.path.exists(fragmentFile) or os.path.exists(os.path.join(resource_path, fragmentFile))):
             LNL_LogEngineError(f"Could not resolve shader from source: {fragmentFile}\nTried: {fragmentFile} , {os.path.join(resource_path, fragmentFile)}")
-            return None
+            return Shader(DEFAULT_VERT, DEFAULT_FRAG)
 
         # Read the file contents for vertex and fragment shaders
         vertex_src = get_file_contents(vertexFile)
@@ -42,7 +63,7 @@ class Shader:
         return Shader(vertex_src, fragment_src)
 
 
-    def RecompileShader(self, vertex_source, fragment_source):
+    def RecompileShader(self, vertex_source, fragment_source) -> int:
     # ----------------------- create vertex shader ----------------------------
 
         vertex_shader = glCreateShader(GL_VERTEX_SHADER)
@@ -60,8 +81,8 @@ class Shader:
             LNL_LogEngineError(f"\nVERTEX SHADER FAILURE: {info_log.decode('utf-8')}")
 
             glDeleteShader(vertex_shader)
-            return
-
+            self._m_RendererID = self.RecompileShader(DEFAULT_VERT, DEFAULT_FRAG)
+            return self._m_RendererID 
         # ----------------------- create fragment shader ----------------------------
 
         fragment_shader = glCreateShader(GL_FRAGMENT_SHADER)
@@ -80,8 +101,8 @@ class Shader:
 
             glDeleteShader(fragment_shader)
             glDeleteShader(vertex_shader)
-            return
-
+            self._m_RendererID = self.RecompileShader(DEFAULT_VERT, DEFAULT_FRAG)
+            return self._m_RendererID 
         # Create shader program
         self._m_RendererID = glCreateProgram() # type: ignore
 
@@ -100,7 +121,9 @@ class Shader:
             glDeleteProgram(self._m_RendererID)
             glDeleteShader(fragment_shader)
             glDeleteShader(vertex_shader)
-            return
+            
+            self._m_RendererID = self.RecompileShader(DEFAULT_VERT, DEFAULT_FRAG)
+            return self._m_RendererID 
 
         # Detach shaders after linking
         glDetachShader(self._m_RendererID, vertex_shader)
