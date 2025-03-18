@@ -125,7 +125,7 @@ float map(vec3 p)
 
     float ground = p.y + 1;
 
-    return min(ground, smin(sphere,box,1.5));
+    return min(ground, smin(sphere,box,0.6));
 }
 
 
@@ -157,13 +157,14 @@ vec4 mainImage()
 
     // col = palette(t * .04, vec3(0.9f,0.85f,0.99) ,vec3(0.5f,0.5f,0.5f) ,vec3(1.0f,1.0f,1.0f) ,vec3(0.263f, 0.416f, 0.557f));
     col = vec3(t * 0.1);
-    if (col.x < 1) // only need to check one value when its white / grayscale
+    if (col.x < 1 && t > 80) // only need to check one value when its white / grayscale
     {
-        // col = FlashCol().xyz * 0.2;
-        col = palette(t * .04, vec3(0.9f,0.85f,0.99) ,vec3(0.5f,0.5f,0.5f) ,vec3(1.0f,1.0f,1.0f) ,vec3(0.263f, 0.416f, 0.557f));
+        col = FlashCol().xyz * 0.2;
+        // col = palette(t * .04, vec3(0.9f,0.85f,0.99) ,vec3(0.5f,0.5f,0.5f) ,vec3(1.0f,1.0f,1.0f) ,vec3(0.263f, 0.416f, 0.557f));
+        // col = palette(t * .02, vec3(0.9f,0.2f,0.0f) ,vec3(0.6f,0.1f,0.2f) ,vec3(0.0f,1.0f,1.0f) ,vec3(0.563f, 0.316f, 0.057f));
     }
 
-    // return vec4(col, 1.0f) * 0.2;
+    // return vec4(col, 1.0f) * 0a.2;
     return vec4(col, 1.0f);
 }
 

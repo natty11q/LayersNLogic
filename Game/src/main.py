@@ -281,11 +281,68 @@ class TestLayer(LNLEngine.Layer):
         self.ScreenShader = LNLEngine.ScreenShader()
 
 
+        tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Stand.png")
+        # tex = LNLEngine.Texture("Game/Assets/Sprites/Bullet_Explode.jpeg")
+        self.spritePos = Vec3(50,290, 0)
+        self.speed = 1000
+        self.TestSprite = LNLEngine.Sprite(tex, self.spritePos.toVec2() , tex.tex_width / 3, tex.tex_height / 3)
+
+        self.keys = {}
+
+
+
+        bullet_tex  = LNLEngine.Texture("Game/Assets/Sprites/Bullet_Shot.jpeg")
+        topLeft_uv = Vec2( 
+                            ( (bullet_tex.tex_width / 6) * 1 ), 
+                            0 * bullet_tex.tex_height
+                        )
+        bottomRight_uv = Vec2( 
+                            ( (bullet_tex.tex_width / 6) * 2 ), 
+                            1 * bullet_tex.tex_height
+                        )
+        self.bulletSprite = LNLEngine.Sprite(bullet_tex, self.spritePos.toVec2() , (bullet_tex.tex_width / 6) / 3, bullet_tex.tex_height / 3, (topLeft_uv, bottomRight_uv))
+
+        self.bullet_TTL = 1
+        self.bullet_TTL_MAX = 1
+
+        self.bulletPos = Vec3(0,0,0)
+
+        self.bulletSpeed = 2500
+
+
+    def OnEvent(self, event: LNLEngine.Event):
+        if event.GetName() == "KeyDown":
+            self.keys[event.keycode] = 1
+
+
+            if event.keycode == LNLEngine.KEY_MAP['space'] and self.bullet_TTL <= 0:
+                self.bullet_TTL = self.bullet_TTL_MAX
+                self.bulletPos = self.spritePos + Vec3(20,100,0)
+
+        if event.GetName() == "KeyUp":
+            self.keys[event.keycode] = 0
 
 
 
 
     def OnUpdate(self, deltatime : float):
+
+        if self.keys.get(LNLEngine.KEY_MAP['right']):
+            self.spritePos += Vec3(self.speed,0,0) * deltatime
+        if self.keys.get(LNLEngine.KEY_MAP['left']):
+            self.spritePos -= Vec3(self.speed,0,0) * deltatime
+        if self.keys.get(LNLEngine.KEY_MAP['up']):
+            self.spritePos -= Vec3(0,self.speed,0) * deltatime
+        if self.keys.get(LNLEngine.KEY_MAP['down']):
+            self.spritePos += Vec3(0,self.speed,0) * deltatime
+
+        if self.bullet_TTL > 0:
+            self.bulletPos += Vec3(self.bulletSpeed, 0,0) * deltatime
+            self.bulletSprite.SetPos(self.bulletPos.toVec2())
+            self.bullet_TTL -= deltatime
+
+        self.TestSprite.SetPos(self.spritePos.toVec2())
+
         # LNLEngine.Renderer.SetClearColour(LNLEngine.Vec4(0.1,0.6,0.9,1.0))
         LNLEngine.Renderer.Clear()
         
@@ -305,7 +362,9 @@ class TestLayer(LNLEngine.Layer):
 
         # self.Cube.Update(deltatime)
 
-        self.SceneManager.update(deltatime)
+        # self.SceneManager.update(deltatime)
+
+
         
         LNLEngine.Renderer.BeginScene(self.camera)
 
@@ -313,6 +372,11 @@ class TestLayer(LNLEngine.Layer):
         # LNLEngine.Renderer.Submit(self.shader ,self.m_vertexArray)
     
         # self.SceneManager.Draw()
+
+        self.TestSprite.Draw()
+
+        if self.bullet_TTL > 0:
+            self.bulletSprite.Draw()
 
         # self.portal1.Draw()
         # self.portal2.Draw()

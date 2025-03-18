@@ -5,7 +5,7 @@ from ApplicationEngine.include.Common import *
 from ApplicationEngine.include.Maths.Maths import *
 from ApplicationEngine.include.Window.Window import *
 from ApplicationEngine.src.Object.Object import *
-from ApplicationEngine.src.Graphics.Renderer.Renderer import *
+from ApplicationEngine.src.Graphics.Graphics import *
 import ApplicationEngine.src.Core.Utility.Temporal as Temporal
 
 
@@ -45,6 +45,50 @@ from ApplicationEngine.src.Event.EventHandler import *
 # player_x = 50
 # player_y = 300
 
+class EngineSettings:
+    SETTINGS_DATA = {
+
+    }
+
+    OUTPUT_DIR = ""
+    AUTOSAVE_TIMEOUT_S  = 0
+    AUTOSAVE_TIME_MAX_S = 60
+
+    @staticmethod
+    def Get() -> str | float | int:
+        return 0 
+
+    @staticmethod
+    def Set() -> None:
+        ...
+    
+
+    @staticmethod
+    def Save() -> bool:
+        success = True
+
+        ...
+
+        return success
+
+    @staticmethod
+    def Load() -> bool:
+        success = True
+
+        ...
+
+        return success
+    
+
+    @staticmethod
+    def Update(deltatime : float) -> None:
+        EngineSettings.AUTOSAVE_TIMEOUT_S -= deltatime
+        if EngineSettings.AUTOSAVE_TIMEOUT_S > 0:
+            return
+
+        LNL_LogEngineTrace("Auto Saving Engine Settings")
+
+        EngineSettings.AUTOSAVE_TIMEOUT_S = EngineSettings.AUTOSAVE_TIME_MAX_S
 
 class Game:
     
@@ -160,6 +204,25 @@ class Game:
         
         self._m_SceneManager.set_active_scene(startupSceneName)
 
+    def LoadEngineSettings(self, jsonPath : str):
+        path = os.path.abspath(jsonPath)
+        jsonData : dict = {}
+        if os.path.exists(path):
+            with open(path, "r") as leveldata:
+                jsonData = json.load(leveldata)
+            
+            self.saveDir = path
+        else:
+            LNL_LogEngineError(f"Failed to load Settings Data from path : {jsonPath}, path does not exist!")
+            return
+        
+
+
+        #TODO : impl
+
+
+    def SaveSettings(self):
+        ...
 
     def _OnSceneLoad(self, sceneData : dict, scene : Scene): ...
 

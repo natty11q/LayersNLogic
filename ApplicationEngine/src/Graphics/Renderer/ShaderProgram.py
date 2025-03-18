@@ -106,6 +106,8 @@ class Shader:
         glDetachShader(self._m_RendererID, vertex_shader)
         glDetachShader(self._m_RendererID, fragment_shader)
 
+        # glDeleteShader(self._m_RendererID)
+
         return self._m_RendererID
 
 
@@ -121,7 +123,7 @@ class Shader:
         from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         RenderCommand.SetUniformFloat(self._getUniformLocation(name), val) 
     
-    def SetUniforInt(self, name : str, val: int):
+    def SetUniformInt(self, name : str, val: int):
         from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
         RenderCommand.SetUniformInt(self._getUniformLocation(name), val) 
 

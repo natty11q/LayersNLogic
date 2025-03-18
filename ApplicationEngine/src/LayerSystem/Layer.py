@@ -1,7 +1,13 @@
+from ApplicationEngine.src.Event.EventHandler import *
+
+
+
 class Layer:
     def __init__(self , name = "Layer"):
         self.__Name : str = name
         self.__Active : bool = True
+
+        AddEventListener(self.OnEvent)
 
 #protected:
 
@@ -18,7 +24,7 @@ class Layer:
     def OnGuiRender(self):
         pass
 
-    def OnEvent(self , event , type):
+    def OnEvent(self , event : Event):
         pass
 
     def Update(self,  deltatime : float):

@@ -1,5 +1,6 @@
 from ApplicationEngine.include.Common import *
 from ApplicationEngine.include.Maths.Maths import *
+from ApplicationEngine.src.Event.Event import Event
 from ApplicationEngine.src.Graphics.Renderer.Renderer import *
 
 from ApplicationEngine.src.Object.ObjectClass import GameObject
@@ -9,6 +10,7 @@ from ApplicationEngine.src.Core.Utility.Temporal import *
 class ScreenShader(GameObject):
 
     def __init__(self):
+        super().__init__()
         vertices = [
             # Positions        # UVs
             -1.0, -1.0, 0.0,   0.0, 0.0,  # Bottom-left
@@ -44,7 +46,7 @@ class ScreenShader(GameObject):
         self.VertexArray.SetIndexBuffer(ib)
 
 
-        DefaultVertexShader = """
+        self.DefaultVertexShader = """
             #version 330 core
 
             layout(location = 0) in vec3 a_Pos;
@@ -100,11 +102,14 @@ class ScreenShader(GameObject):
         DefaultFragmentShader = get_file_contents("ApplicationEngine/src/Object/Shaders/ScreenShaderRaymarch.frag")
         # DefaultFragmentShader = get_file_contents("ApplicationEngine/src/Object/Shaders/ScreenShaderBackground.frag")
 
-        self.Shader = Shader(DefaultVertexShader, DefaultFragmentShader)
+        self.Shader = Shader(self.DefaultVertexShader, DefaultFragmentShader)
 
         self.Texture = Texture("ApplicationEngine/src/Object/Textures/testImage3.png")
     
 
+    def _OnEvent(self, event: Event):
+        DefaultFragmentShader = get_file_contents("ApplicationEngine/src/Object/Shaders/ScreenShaderRaymarch.frag")
+        self.Shader.RecompileShader(self.DefaultVertexShader, DefaultFragmentShader)
 
     def Draw(self):
 
@@ -118,6 +123,6 @@ class ScreenShader(GameObject):
         self.Shader.SetUniformFloat("aspectRatios", 900/600) # temporary Values , TODO : make it get the canvas dimensions
 
         self.Texture.Bind()
-        self.Shader.SetUniforInt("texture0", 0)
+        self.Shader.SetUniformInt("texture0", 0)
         
         Renderer.Submit(self.Shader, self.VertexArray)

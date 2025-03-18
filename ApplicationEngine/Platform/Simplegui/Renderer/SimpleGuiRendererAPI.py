@@ -51,7 +51,7 @@ class SimpleGUiRendererAPI(RendererAPI):
 
         self.init_gl()
 
-        TRIANGLE_VERTEX_SHADER_SRC = """
+        self.TRIANGLE_VERTEX_SHADER_SRC = """
         #version 330 core
         layout(location = 0) in vec3 aPos;
         uniform vec3 uColour;
@@ -63,7 +63,7 @@ class SimpleGUiRendererAPI(RendererAPI):
         }
         """
 
-        TRIANGLE_FRAGMENT_SHADER_SRC = """
+        self.TRIANGLE_FRAGMENT_SHADER_SRC = """
         #version 330 core
         in vec3 vertexColor;
         out vec4 FragColor;
@@ -72,7 +72,7 @@ class SimpleGUiRendererAPI(RendererAPI):
         }
         """
 
-        self.triangleShader : Shader = Shader(TRIANGLE_VERTEX_SHADER_SRC,TRIANGLE_FRAGMENT_SHADER_SRC)
+        self.triangleShader : Shader | None = None
 
 
     def init_gl(self):
@@ -94,8 +94,22 @@ class SimpleGUiRendererAPI(RendererAPI):
 
         # Make the window's context current
         glfw.make_context_current(window)
+
+        # self.TriangleVao = -1
+        # self.TriangleVbo = -1
+        
+        
         glViewport(0, 0, 900, 600) # default values
+        
+        
+        
+        self.fbo = glGenFramebuffers(1)
+        self.fbo_texture = glGenTextures(1)
+        
+        
         self.SetupFbo(900, 600)
+
+        
 
         # ----------------------------
 
@@ -227,11 +241,13 @@ class SimpleGUiRendererAPI(RendererAPI):
 
 
     def SetupFbo(self, width, height):
+        # glDeleteTextures(1, [self.fbo_texture])
         glViewport(0, 0, width, height)
-        self.fbo = glGenFramebuffers(1)
-        glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
 
-        self.fbo_texture = glGenTextures(1)
+        # self.fbo = glGenFramebuffers(1)
+        glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
+        # self.fbo_texture = glGenTextures(1)
+
         # recalc the fbo texture in case of window resize
         glBindTexture(GL_TEXTURE_2D, self.fbo_texture)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
@@ -243,6 +259,8 @@ class SimpleGUiRendererAPI(RendererAPI):
         if glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE:
             print("Error: Framebuffer is not complete!")
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
+    
+
 
     def updateWrappedImage(self, width, height):
         glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
@@ -266,11 +284,11 @@ class SimpleGUiRendererAPI(RendererAPI):
         canvas : simplegui.Canvas = args[0]
         LLEngineTime.Update()
         
+        self.SetupFbo(canvas._width, canvas._height)
         for layer in RendererAPI._LayerStack:
             layer.OnUpdate(LLEngineTime.DeltaTime())
  
 
-        self.SetupFbo(canvas._width, canvas._height)
 
 
 
@@ -311,9 +329,10 @@ class SimpleGUiRendererAPI(RendererAPI):
                 
                 
                 vao = glGenVertexArrays(1)
-                vbo = glGenBuffers(1)
-
                 glBindVertexArray(vao)
+        
+
+                vbo = glGenBuffers(1)
                 glBindBuffer(GL_ARRAY_BUFFER, vbo)
 
                 # Upload the vertex data to the GPU
@@ -323,6 +342,8 @@ class SimpleGUiRendererAPI(RendererAPI):
                 glEnableVertexAttribArray(0)
                 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * 4, ctypes.c_void_p(0))
 
+                if not self.triangleShader:
+                    self.triangleShader = Shader(self.TRIANGLE_VERTEX_SHADER_SRC,self.TRIANGLE_FRAGMENT_SHADER_SRC)
 
 
 
