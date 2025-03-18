@@ -293,12 +293,12 @@ class TestLayer(LNLEngine.Layer):
 
         bullet_tex  = LNLEngine.Texture("Game/Assets/Sprites/Bullet_Shot.jpeg")
         topLeft_uv = Vec2( 
-                            ( (bullet_tex.tex_width / 6) * 1 ), 
-                            0 * bullet_tex.tex_height
+                            ( (1 / 6) * 1 ), 
+                            0 * 1
                         )
         bottomRight_uv = Vec2( 
-                            ( (bullet_tex.tex_width / 6) * 2 ), 
-                            1 * bullet_tex.tex_height
+                            ( (1 / 6) * 2 ), 
+                            1 * 1
                         )
         self.bulletSprite = LNLEngine.Sprite(bullet_tex, self.spritePos.toVec2() , (bullet_tex.tex_width / 6) / 3, bullet_tex.tex_height / 3, (topLeft_uv, bottomRight_uv))
 
