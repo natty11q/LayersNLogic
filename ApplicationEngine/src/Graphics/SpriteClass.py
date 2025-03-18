@@ -111,7 +111,9 @@ class Sprite(GameObject):
 
             void main()
             {
-                FragColor = RenderSprite();
+                vec4 col = RenderSprite();
+                if (col.x > 0.95 && col.y > 0.95 && col.z > 0.95) discard;
+                FragColor = col;
                 // FragColor = vec4(0.5f);
             }
         """

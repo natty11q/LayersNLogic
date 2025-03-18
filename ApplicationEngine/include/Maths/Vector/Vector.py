@@ -465,6 +465,10 @@ class Vec2(_Vector):
                 return values[0]
             elif len(values) == 2:
                 return Vec2(*values)
+            elif len(values) == 3:
+                return Vec3(*values)
+            elif len(values) == 4:
+                return Vec4(*values)
             else:
                 return Vector(*values) if len(values) > 1 else values[0]
         raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
