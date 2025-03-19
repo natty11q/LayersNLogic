@@ -254,10 +254,10 @@ class TestLayer(LNLEngine.Layer):
         # player = Player()
 
 
-        # self.portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
-        # self.portal2 = Portal(Vec2(0, 20), Vec2(200, 500) , Vec4(20,150,255,255))
+        self.portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
+        self.portal2 = Portal(Vec2(0, 20), Vec2(200, 500) , Vec4(20,150,255,255))
 
-        # self.portal1.LinkPortal(self.portal2)
+        self.portal1.LinkPortal(self.portal2)
 
         # LNLEngine.Renderer.Enable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
 
@@ -281,11 +281,11 @@ class TestLayer(LNLEngine.Layer):
         self.ScreenShader = LNLEngine.ScreenShader()
 
 
-        tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Stand.png")
+        tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Stan d.png")
         # tex = LNLEngine.Texture("Game/Assets/Sprites/Bullet_Explode.jpeg")
         self.spritePos = Vec3(50,290, 0)
         self.speed = 1000
-        self.TestSprite = LNLEngine.Sprite(tex, self.spritePos.toVec2() , tex.tex_width / 3, tex.tex_height / 3)
+        self.TestSprite = LNLEngine.Sprite(tex, self.spritePos.toVec2() , 200, 300)
 
         self.keys = {}
 
@@ -378,8 +378,8 @@ class TestLayer(LNLEngine.Layer):
         if self.bullet_TTL > 0:
             self.bulletSprite.Draw()
 
-        # self.portal1.Draw()
-        # self.portal2.Draw()
+        self.portal1.Draw()
+        self.portal2.Draw()
 
         LNLEngine.Renderer.EndScene()
 
