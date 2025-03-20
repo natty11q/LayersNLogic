@@ -233,7 +233,7 @@ class TestPhysicsObject(LNLEngine.GameObject2D):
 
         self.m_vertexArray.SetIndexBuffer(IndexBuffer)
 
-        LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(self.body)
+        LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(self.body, True)
     
     def Draw(self):
 
@@ -442,17 +442,17 @@ class TestLayer(LNLEngine.Layer):
         
         LNLEngine.Renderer.BeginScene(self.camera)
 
-        self.testPhsicsComponent.Draw()
 
-        # self.ScreenShader.Draw()
+        self.ScreenShader.Draw()
         # LNLEngine.Renderer.Submit(self.shader ,self.m_vertexArray)
     
         # self.SceneManager.Draw()
 
-        # self.TestSprite.Draw()
+        self.testPhsicsComponent.Draw()
+        self.TestSprite.Draw()
 
-        # if self.bullet_TTL > 0:
-        #     self.bulletSprite.Draw()
+        if self.bullet_TTL > 0:
+            self.bulletSprite.Draw()
 
         # self.portal1.Draw()
         # self.portal2.Draw()
