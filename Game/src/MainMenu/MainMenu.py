@@ -1,12 +1,16 @@
-sys.path.append(os.path.join(os.path.dirname(__file__),'..','Level'))
-import Level
 import sys
 import os
-import ApplicationEngine.AppEngine as LNLEngine
+if __name__ == "__main__":
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+
 try:
     import simplegui # type: ignore
 except ImportError :
     import SimpleGUICS2Pygame.simpleguics2pygame as simplegui
+
+import ApplicationEngine.AppEngine as LNLEngine
+# import Level
+import Game.src.Level.LevelClass as Level
 
 # sys.path.append(os.path.join(os.path.dirname(__file__),'..','Level'))
 class GameMenu:
@@ -56,8 +60,12 @@ class GameMenu:
     def start_game(self):
         print("Starting level...")
         try:
-            level_instance = Level.LNL_Level()
-            level_instance.run()
+            ## TODO: create Level based on the json that contains the level data, just need to set the level as active heere
+            ## we dont need to create a new instance, the engine will handle the level loading.
+            level_instance = Level.LNL_Level("Debug Level Name")
+            # level_instance.run()
+
+            # once the active level is set then the current scene will be changed automaticallty.
         except AttributeError:
             print("Error: 'Level' class or 'run()' method not found in level module.")
         
@@ -75,7 +83,7 @@ class GameMenu:
         
         # Draw buttons
         self.draw_button(canvas, self.START_BUTTON_POS, self.start_button_hover,self.start_button_image,self.start_button_hover_image)
-        self.draw_button(canvas, self.QUIT_BUTTON_POS, "Quit", "Red")
+        self.draw_button(canvas, self.QUIT_BUTTON_POS, self.quit_button_hover, self.quit_button_image, self.quit_button_hover_image)
 
     def draw_button(self, canvas, position, is_hovered, default_image, hover_image):
         x, y = position
@@ -121,6 +129,8 @@ class GameMenu:
         self.frame.start()
 
 
-# Create and run the menu
-menu = GameMenu()
-menu.run()
+# for debug before main game impl
+if __name__ == "__main__":
+    # Create and run the menu
+    menu = GameMenu()
+    menu.run()
