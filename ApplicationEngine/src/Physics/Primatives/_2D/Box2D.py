@@ -1,5 +1,6 @@
 from ApplicationEngine.src.Physics.RigidBody.RigidBody2D import *
 
+from ApplicationEngine.src.Physics.Primatives._2D.Collider2D import *
 
 class Box2D:
     def __init__(self, _min: Vec2, _max: Vec2):

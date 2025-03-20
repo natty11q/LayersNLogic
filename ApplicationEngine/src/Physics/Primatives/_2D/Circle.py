@@ -1,8 +1,8 @@
 from ApplicationEngine.src.Physics.RigidBody.RigidBody2D import *
+from ApplicationEngine.src.Physics.Primatives._2D.Collider2D import *
 
 
-
-class Circle:
+class Circle(Collider2D):
 
     def __init__(self):
         self._radius : float = 1.0

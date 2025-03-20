@@ -1,10 +1,9 @@
 from ApplicationEngine.include.Maths.Maths import *
-# from ApplicationEngine.src.Object.Object import * 
 
 
 from typing import overload
 
-
+from ApplicationEngine.src.Physics.Primatives._2D.Collider2D import *
 #Temporary F declare
 class Transform:
     def __init__(self):
@@ -32,6 +31,10 @@ class RigidBody2D:
         self.mass = 0.0
         self.inverseMass = 0.0
 
+        self.collider : Collider2D | None = None
+
+        self.COR = 1.0 # coeff of restitution
+
     def physicsUpdate(self, dt : float):
         if self.mass == 0.0: return  ## using 0 mass objects as infinite mass objects as there is no impl for 0 mass 
 
@@ -51,6 +54,12 @@ class RigidBody2D:
         if self.rawTransform:
             self.rawTransform.position = self.position
     
+
+    def hasInfiniteMass(self) -> bool:
+        return self.mass == 0.0
+    
+
+
     @overload
     def setTransform(self, position : Vec2): ...
     
@@ -62,6 +71,11 @@ class RigidBody2D:
         if rotation:
             self.rotation = rotation
 
+    def setVelocity(self, velocity : Vec2):
+        self.linearVelocity = velocity
+
+    def getVelocity(self):
+        return self.linearVelocity
 
     def getRotation(self) -> float:
         return self.rotation
@@ -90,4 +104,14 @@ class RigidBody2D:
     def addForce(self, force : Vec2):
         self.forceAccum += force
 
+    def setCollider(self, collider : Collider2D):
+        self.collider = collider
     
+    def getCollider(self):
+        return self.collider
+    
+
+    def getCoefficientOfRestitution(self):
+        return self.COR
+    def setCoefficientOfRestitution(self, cor : float):
+        self.COR = cor
