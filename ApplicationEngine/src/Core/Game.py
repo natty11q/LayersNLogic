@@ -15,6 +15,7 @@ from ApplicationEngine.src.Core.SceneManager import *
 from ApplicationEngine.src.Event.EventHandler import *
 
 
+from ApplicationEngine.src.Physics.LNL_Physics import *
 
 # import _tkinter
 # import PySimpleGUI as simplegui
@@ -127,6 +128,8 @@ class Game:
         
         self._m_SceneManager : SceneManager = SceneManager()
 
+        self._m_PhysicsSystem2D : PhysicsSystem2D = PhysicsSystem2D(Vec2(0.0, -9.81 * 30))
+
         AddEventListener(self.__HandleEvents)
 
         self.saveDir : str = ""
@@ -144,6 +147,9 @@ class Game:
     
     def GetSceneManager(self) -> SceneManager:
         return self._m_SceneManager
+    
+    def GetPhysicsSystem2D(self):
+        return self._m_PhysicsSystem2D
 
     def Run(self):
         self.__PhysicsThread : threading.Thread  = threading.Thread(target = self.__PhysicsMainloop, args=(), daemon=True)
@@ -235,8 +241,11 @@ class Game:
         pass
     
     def _OnPhysicsUpdate(self) -> None:
+        #TODO: add seperate deltatime for physics system.
         self._m_SceneManager.PhysicsUpdate(1 / Temporal.LLEngineTime.TickRate())
-        LNL_LogEngineTrace("Physics update called")
+        
+        self._m_PhysicsSystem2D.update(1 / Temporal.LLEngineTime.TickRate())
+        # LNL_LogEngineTrace("Physics update called")
 
     def _OnEvent(self , event  : Event) -> None:
         LNL_LogEngineTrace(f"Event occured of type : {event.GetName()}")

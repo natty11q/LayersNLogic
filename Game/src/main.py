@@ -172,6 +172,75 @@ class Cube(LNLEngine.GameObject):
         # LNLEngine.Renderer.Submit(self.m_vertexArray)
         LNLEngine.Renderer.DrawIndexed(self.shader, self.m_vertexArray)
 
+
+class TestPhysicsObject(LNLEngine.GameObject2D):
+    def __init__(self, position: LNLEngine.Vec2 = Vec2(), mass: float = 100):
+        super().__init__(position, mass)
+
+        LNLEngine.Renderer.SetClearColour(LNLEngine.Vec4(0.15,0.1,0.2,1.0))
+
+        VERTEX_SHADER = """
+            #version 330 core
+            layout(location = 0) in vec3 a_Pos;
+            layout(location = 1) in vec3 a_Col;
+            layout(location = 2) in vec3 a_Normal;
+
+            uniform vec3 worldPosition;
+
+            out vec3 vertexColor;
+            void main() {
+                vertexColor = a_Col;
+                gl_Position = vec4(a_Pos + worldPosition, 1.0);
+            }
+        """
+        FRAGMENT_SHADER = """
+            #version 330 core
+            in vec3 vertexColor;
+            out vec4 FragColor;
+            void main() {
+                FragColor = vec4(vertexColor, 1.0);
+            }
+        """
+        self.shader : LNLEngine.Shader = LNLEngine.Shader(VERTEX_SHADER, FRAGMENT_SHADER)
+
+        self.m_vertexArray = LNLEngine.VertexArray.Create()
+
+        vertices = [ 
+            # position          # colour        # normal
+            -0.5, -0.5, 0.0,    0.3, 0.2, 0.8,  0.0, 0.0, 1.0,
+             0.5, -0.5, 0.0,    0.8, 0.2, 0.3,  0.0, 0.0, 1.0,
+             0.5,  0.5, 0.0,    0.3, 0.8, 0.2,  0.0, 0.0, 1.0,
+            -0.5,  0.5, 0.0,    0.7, 0.4, 0.8,  0.0, 0.0, 1.0
+            ]
+        
+        VertexBuffer = LNLEngine.VertexBuffer.Create(vertices, LNLEngine.sizeof(LNLEngine.c_float) * len(vertices))
+
+        layout = LNLEngine.BufferLayout(
+            [
+                LNLEngine.BufferElement("a_pos", LNLEngine.ShaderDataType.Vec3),
+                LNLEngine.BufferElement("a_col", LNLEngine.ShaderDataType.Vec3),
+                LNLEngine.BufferElement("a_normal", LNLEngine.ShaderDataType.Vec3)
+            ]
+        )
+        VertexBuffer.SetLayout(layout)
+        self.m_vertexArray.AddVertexBuffer(VertexBuffer)
+
+
+        indices = [0 ,1 ,2, 
+                   2 ,3 ,0]
+        
+        IndexBuffer = LNLEngine.IndexBuffer.Create(indices , len(indices))
+
+        self.m_vertexArray.SetIndexBuffer(IndexBuffer)
+
+        LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(self.body)
+    
+    def Draw(self):
+
+        self.shader.Bind()
+        self.shader.SetUniformVec3("worldPosition",Vec3( *( self.body.getPosition() / 1000 ) .get_p() ))
+        LNLEngine.Renderer.Submit(self.shader ,self.m_vertexArray)
+
 class TestLayer(LNLEngine.Layer):
     def __init__(self, name="TestLayer"):
         super().__init__(name)
@@ -310,6 +379,8 @@ class TestLayer(LNLEngine.Layer):
         self.bulletSpeed = 2500
 
 
+        self.testPhsicsComponent = TestPhysicsObject(Vec2(-20, 300))
+
     def OnEvent(self, event: LNLEngine.Event):
         if event.GetName() == "KeyDown":
             self.keys[event.keycode] = 1
@@ -343,6 +414,8 @@ class TestLayer(LNLEngine.Layer):
 
         self.TestSprite.SetPos(self.spritePos.toVec2())
 
+        # LNL_LogTrace("phys pos : ", self.testPhsicsComponent.body.getPosition())
+
         # LNLEngine.Renderer.SetClearColour(LNLEngine.Vec4(0.1,0.6,0.9,1.0))
         LNLEngine.Renderer.Clear()
         
@@ -356,6 +429,7 @@ class TestLayer(LNLEngine.Layer):
         
         # self.TestSquare.Update()
         # self.TestSquare.Draw()
+        self.testPhsicsComponent.Update(deltatime)
         
 
 
@@ -368,15 +442,17 @@ class TestLayer(LNLEngine.Layer):
         
         LNLEngine.Renderer.BeginScene(self.camera)
 
+        self.testPhsicsComponent.Draw()
+
         # self.ScreenShader.Draw()
         # LNLEngine.Renderer.Submit(self.shader ,self.m_vertexArray)
     
-        self.SceneManager.Draw()
+        # self.SceneManager.Draw()
 
-        self.TestSprite.Draw()
+        # self.TestSprite.Draw()
 
-        if self.bullet_TTL > 0:
-            self.bulletSprite.Draw()
+        # if self.bullet_TTL > 0:
+        #     self.bulletSprite.Draw()
 
         # self.portal1.Draw()
         # self.portal2.Draw()
