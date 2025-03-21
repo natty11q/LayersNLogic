@@ -14,6 +14,7 @@ from ApplicationEngine.src.Core.Keys import *
 from ApplicationEngine.src.Core.SceneManager import *
 from ApplicationEngine.src.Event.EventHandler import *
 
+# import pygame
 
 
 # import _tkinter
@@ -120,7 +121,7 @@ class Game:
         
         
         self.__PhysicsThread : threading.Thread
-        # self.__InputThread : threading.Thread
+        self.__InputThread : threading.Thread
         
         Temporal.LLEngineTime.CapFramerate()
         Temporal.LLEngineTime.SetTargetFramerate(120)
@@ -147,9 +148,10 @@ class Game:
 
     def Run(self):
         self.__PhysicsThread : threading.Thread  = threading.Thread(target = self.__PhysicsMainloop, args=(), daemon=True)
-        # self.__InputThread : threading.Thread = threading.Thread(target=self.input_listener, args=(self._window,), daemon=True)
+        self.__InputThread : threading.Thread = threading.Thread(target= self.input_listener, args=(), daemon=True)
         
         self.__StartPhysicsThread()
+        self.__startInputThread()
         
         
         if Renderer.GetAPI() != RendererAPI.API.SimpleGui:
@@ -159,6 +161,13 @@ class Game:
         self.__MainLoop()
     
     
+    def input_listener(self):
+        # while True:
+        #     for event in pygame.event.get():
+        #         if event.type == pygame.MOUSEMOTION:
+        #             LNL_LogEngineInfo("mouse position changed : " , event.x , event.y)
+        LLEngineTime.CustomSleep()
+
     def Quit(self):
         # handle everything that needs to be done before closing
         self.Save()
@@ -244,6 +253,8 @@ class Game:
     def __StartPhysicsThread(self):
         self.__PhysicsThread.start()
 
+    def __startInputThread(self):
+        self.__InputThread.start()
 
     # def input_listener(self, window : Window) -> None:
     #     while True:

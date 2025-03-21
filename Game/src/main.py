@@ -12,6 +12,8 @@ from Game.src.GameComponents.Player.PlayerClass import *
 import math
 
 
+from Game.src.MainMenu.MainMenuLayer import *
+
 class MovingSquare(LNLEngine.Quad):
     def __init__(self, topLeft: LNLEngine.Vec2, width: float, height: float, colour: LNLEngine.Vec4):
         super().__init__(topLeft, width, height, colour)
@@ -281,7 +283,7 @@ class TestLayer(LNLEngine.Layer):
         self.ScreenShader = LNLEngine.ScreenShader()
 
 
-        tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Stan d.png")
+        tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Stand.png")
         # tex = LNLEngine.Texture("Game/Assets/Sprites/Bullet_Explode.jpeg")
         self.spritePos = Vec3(50,290, 0)
         self.speed = 1000
@@ -396,6 +398,7 @@ class PortalsDemo(LNLEngine.Game):
 
 
         LNLEngine.Renderer.PushLayer(TestLayer())
+        # LNLEngine.Renderer.PushLayer(MenuLayer())
 
 
     
