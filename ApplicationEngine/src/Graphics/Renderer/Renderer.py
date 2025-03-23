@@ -32,6 +32,11 @@ class Renderer:
     
 
     @staticmethod
+    def CustomRendererCommand(command, args : list) -> None:
+        RenderCommand.CustomRendererCommand(command, args)
+
+
+    @staticmethod
     def SubmitImidiate(shader : Shader, vertexArray: VertexArray):
         vertexArray.Bind()
         RenderCommand.DrawIndexed(shader,vertexArray)

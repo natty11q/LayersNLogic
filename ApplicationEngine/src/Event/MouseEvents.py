@@ -13,6 +13,8 @@ class MouseButtonDownEvent(Event):
         super().__init__("MouseButtonDown")
         self.button : int = -1 # Mouse Button that was Down, 1 - LMB, 2 - MMB, 3 - RMB
 
+        self.x : float = -1
+        self.y : float = -1
 # class MouseButtonHeldEvent(Event):
 #     def __init__(self):
 #         super().__init__("MouseButtonHeld")
@@ -23,6 +25,8 @@ class MouseButtonUpEvent(Event):
         super().__init__("MouseButtonUp")
         self.button : int = -1 # Mouse Button that is Held, 1 - LMB, 2 - MMB, 3 - RMB
 
+        self.x : float = -1
+        self.y : float = -1
 class MouseScrollEvent(Event):
     def __init__(self):
         super().__init__("MouseScroll")

@@ -33,6 +33,7 @@ class CommandType(Enum):
     DrawTriangle    = auto()
     DrawCircle      = auto()
     BindTexture     = auto()
+    CustomCommand   = auto()
 
 class RendererAPI(ABC): ## abstract class only
     
@@ -74,6 +75,9 @@ class RendererAPI(ABC): ## abstract class only
     @abstractmethod
     def Clear(self, value : int = 0) -> None: ...
     
+    @abstractmethod
+    def CustomRendererCommand(self, command, args : list) -> None: ...
+   
     @abstractmethod
     def Enable(self, value : int = 0) -> None: ...
     

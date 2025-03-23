@@ -1,5 +1,6 @@
 from typing import Callable
 
+from ApplicationEngine.src.Event.EventTypes import *
 
 class Event:
     def __init__(self, name : str):
@@ -16,8 +17,13 @@ class Event:
 
         self.keycode : int
 
+        self.type : LNL_EventType = LNL_EventType.Default
+
     def GetName(self):
         return self._m_name
+    
+    def GetType(self):
+        return self.type
     
     def Handled(self):
         return self._m_handled

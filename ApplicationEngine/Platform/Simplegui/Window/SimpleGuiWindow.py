@@ -14,12 +14,16 @@ except ImportError :
     import SimpleGUICS2Pygame.simpleguics2pygame as simplegui # type: ignore
     
     
+import pygame
+
 
 class SimpleGUIWindow(Window):
     def __init__(self, props : WindowProperties):
         super().__init__(props)
         
         self.frame : simplegui.Frame = simplegui.create_frame(self._Data.Title, self._Data.Width, self._Data.Height)
+        pygame.event.post(pygame.event.Event(pygame.ACTIVEEVENT, gain=1, state=6))
+
         self.frame.set_draw_handler(self.SimpleGuiUpdate)
 
         self.frame.set_keydown_handler(self.KeyDownHandler)
@@ -53,8 +57,37 @@ class SimpleGUIWindow(Window):
         return self.frame
 
     def SimpleGuiUpdate(self, canvas: simplegui.Canvas):
+        self.pygame_event_callback()
         Renderer.Draw(canvas)
 
+    def pygame_event_callback(self):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                print("mbtn down", event.pos, event.button , event.touch)
+                e = MouseButtonDownEvent()
+                e.button = event.button
+                e.x = event.pos[0] - self.frame._canvas_x_offset
+                e.y = event.pos[1] - self.frame._canvas_y_offset
+                print("modPos down", e.x, e.y)
+                sendEvent(e)
+                # self.firstclick = True
+
+            elif event.type == pygame.MOUSEBUTTONUP:
+                print("mbtn up", event.pos, event.button , event.touch)
+                e = MouseButtonUpEvent()
+                e.button = event.button
+                e.x = event.pos[0] - self.frame._canvas_x_offset
+                e.y = event.pos[1] - self.frame._canvas_y_offset
+                sendEvent(e)
+                print("modPos up", e.x, e.y)
+            
+            elif event.type == pygame.MOUSEMOTION:
+                e = MouseMovedEvent()
+                e.x = event.pos[0] - self.frame._canvas_x_offset
+                e.y = event.pos[1] - self.frame._canvas_y_offset
+                sendEvent(e)
+                print("modPos moved", e.x, e.y)
+            
 
 
     def InputHandler(self, etype: str, values: list)-> None:
@@ -68,24 +101,24 @@ class SimpleGUIWindow(Window):
             e.keycode = values[0]
             sendEvent(e)
 
-        elif etype == "mouseReleased":
-            e = MouseButtonUpEvent()
-            e.button = 1
-            sendEvent(e)
+        # elif etype == "mouseReleased":
+        #     e = MouseButtonUpEvent()
+        #     e.button = 1
+        #     sendEvent(e)
 
-        elif etype == "mouseDragged":
-            if not self.firstclick:
-                e = MouseButtonDownEvent()
-                e.button = 1
-                sendEvent(e)
-                self.firstclick = True
+        # elif etype == "mouseDragged":
+        #     if not self.firstclick:
+        #         e = MouseButtonDownEvent()
+        #         e.button = 1
+        #         sendEvent(e)
+        #         self.firstclick = True
         
-        elif etype == "mouseMoved":
-            self.mousePos = values[0]
-            e = MouseMovedEvent()
-            e.x = values[0][0]
-            e.y = values[0][1]
-            sendEvent(e)
+        # elif etype == "mouseMoved":
+        #     self.mousePos = values[0]
+        #     e = MouseMovedEvent()
+        #     e.x = values[0][0]
+        #     e.y = values[0][1]
+        #     sendEvent(e)
 
 
 

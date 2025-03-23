@@ -30,6 +30,11 @@ class RenderCommand():
     @staticmethod
     def SetClearColour( col : Vec4 ) -> None:
         RenderCommand.s_RendererAPI.SetClearColour(col)
+
+
+    @staticmethod
+    def CustomRendererCommand(command, args : list) -> None:
+        RenderCommand.s_RendererAPI.CustomRendererCommand(command, args)
     
     @staticmethod
     def Clear( value : int = 0) -> None:

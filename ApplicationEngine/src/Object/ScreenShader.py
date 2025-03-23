@@ -9,7 +9,7 @@ from ApplicationEngine.src.Core.Utility.Temporal import *
 
 class ScreenShader(GameObject):
 
-    def __init__(self):
+    def __init__(self, VertexShader : str | None = None, FragmentShader : str | None = None, VertexShaderIsPath : bool = False, FragmentShaderIsPath : bool = False):
         super().__init__()
         vertices = [
             # Positions        # UVs
@@ -98,18 +98,40 @@ class ScreenShader(GameObject):
 
 
 
-
-        DefaultFragmentShader = get_file_contents("ApplicationEngine/src/Object/Shaders/ScreenShaderRaymarch.frag")
         # DefaultFragmentShader = get_file_contents("ApplicationEngine/src/Object/Shaders/ScreenShaderBackground.frag")
 
-        self.Shader = Shader(self.DefaultVertexShader, DefaultFragmentShader)
+        if VertexShader:
+            if VertexShaderIsPath:
+                self.VertexShader = get_file_contents(VertexShader)
+            else:
+                self.VertexShader = VertexShader
+        else:
+            self.VertexShader = self.DefaultVertexShader
+
+
+        if FragmentShader:
+            if FragmentShaderIsPath:
+                self.FragmentShader = get_file_contents(FragmentShader)
+            else:
+                self.FragmentShader = FragmentShader
+        else:
+            self.FragmentShader = get_file_contents("ApplicationEngine/src/Object/Shaders/ScreenShaderRaymarch.frag")
+
+
+        self.Shader = Shader(self.VertexShader, self.FragmentShader)
 
         self.Texture = Texture("ApplicationEngine/src/Object/Textures/testImage3.png")
+
+
+        self.Campos_xy = Vec2()
     
 
     def _OnEvent(self, event: Event):
         DefaultFragmentShader = get_file_contents("ApplicationEngine/src/Object/Shaders/ScreenShaderRaymarch.frag")
         self.Shader.RecompileShader(self.DefaultVertexShader, DefaultFragmentShader)
+
+    def SetUniformFloat(self, type : ShaderDataType , name : str, value ):
+        ...
 
     def Draw(self):
 
@@ -119,6 +141,7 @@ class ScreenShader(GameObject):
         self.Shader.SetUniformFloat("HudOpacity", 1.0)
         self.Shader.SetUniformFloat("Time", LLEngineTime.Time())
         self.Shader.SetUniformVec2("Dimensions", Vec2(900, 600)) # temporary Values , TODO : make it get the canvas dimensions
+        self.Shader.SetUniformVec2("Campos_XY", self.Campos_xy) # temporary Values , TODO : make it get the canvas dimensions
         
         self.Shader.SetUniformFloat("aspectRatios", 900/600) # temporary Values , TODO : make it get the canvas dimensions
 

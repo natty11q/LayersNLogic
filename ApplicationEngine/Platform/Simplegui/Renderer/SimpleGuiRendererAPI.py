@@ -73,6 +73,10 @@ class SimpleGUiRendererAPI(RendererAPI):
         """
 
         self.triangleShader : Shader | None = None
+    
+    
+    # def mouse_callback(self, window, button, action, mods):
+    #     ...
 
 
     def init_gl(self):
@@ -116,7 +120,14 @@ class SimpleGUiRendererAPI(RendererAPI):
         
         
 
-
+    def CustomRendererCommand(self, command, args : list):
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.CustomCommand,
+                "func" : command,
+                "args" : args
+            }
+        )
 
     
     def SetClearColour(self, col : Vec4) -> None:
@@ -283,6 +294,7 @@ class SimpleGUiRendererAPI(RendererAPI):
     def Draw(self, *args):
         canvas : simplegui.Canvas = args[0]
         LLEngineTime.Update()
+        # self.pygame_event_callback()
         
         self.SetupFbo(canvas._width, canvas._height)
         for layer in RendererAPI._LayerStack:
@@ -304,6 +316,13 @@ class SimpleGUiRendererAPI(RendererAPI):
             elif eType == CommandType.Disable:
                 glDisable(element["value"])
                 self.__RenderSettings ^= element["value"]
+            
+            elif eType == CommandType.CustomCommand:
+                glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
+
+                element["func"](*element["args"])
+                
+                glBindFramebuffer(GL_FRAMEBUFFER, 0)
             
             elif eType == CommandType.Clear:
                 glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)

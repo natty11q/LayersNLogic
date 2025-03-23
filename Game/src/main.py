@@ -26,7 +26,7 @@ class MovingSquare(LNLEngine.Quad):
 
 class Cube(LNLEngine.GameObject):
     def __init__(self, scale : float= 1, rotation : Quat.Quat = Quat.Quat() ,position : Vec3 = Vec3(0,0,-100)):
-        super().__init__()
+        # super().__init__()
 
         VERTEX_SHADER = """
             #version 330 core
@@ -176,7 +176,7 @@ class Cube(LNLEngine.GameObject):
 
 class TestLayer(LNLEngine.Layer):
     def __init__(self, name="TestLayer"):
-        super().__init__(name)
+        # super().__init__(name)
         self.gameWindow = LNLEngine.Game.Get().GetWindow()
         
         # =================================
@@ -375,13 +375,13 @@ class TestLayer(LNLEngine.Layer):
     
         self.SceneManager.Draw()
 
-        self.TestSprite.Draw()
+        # self.TestSprite.Draw()
 
-        if self.bullet_TTL > 0:
-            self.bulletSprite.Draw()
+        # if self.bullet_TTL > 0:
+        #     self.bulletSprite.Draw()
 
-        self.portal1.Draw()
-        self.portal2.Draw()
+        # self.portal1.Draw()
+        # self.portal2.Draw()
 
         LNLEngine.Renderer.EndScene()
 
@@ -397,8 +397,8 @@ class PortalsDemo(LNLEngine.Game):
         self.Load("Game/Data/LevelData/DemoLevelData.json")
 
 
-        LNLEngine.Renderer.PushLayer(TestLayer())
-        # LNLEngine.Renderer.PushLayer(MenuLayer())
+        # LNLEngine.Renderer.PushLayer(TestLayer())
+        LNLEngine.Renderer.PushLayer(MenuLayer())
 
 
     

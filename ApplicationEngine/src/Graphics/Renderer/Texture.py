@@ -15,14 +15,23 @@ class Texture():
         else:
             image = Image.open("ApplicationEngine/Assets/DefaultTextires/Debugempty.png")
 
-        tex_np = np.array(image.convert("RGB"), dtype=np.uint8)
+        tex_np = np.array(image, dtype=np.uint8)
+        if image.mode == "RGB":
+            tex_np = np.array(image.convert("RGB"), dtype=np.uint8)
+        if image.mode == "RGBA":
+            tex_np = np.array(image.convert("RGBA"), dtype=np.uint8)
         tex_np = np.flipud(tex_np)
         self.tex_height, self.tex_width, _ = tex_np.shape
 
         self.texture_id = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.tex_width, self.tex_height,
+
+        if image.mode == "RGB":
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.tex_width, self.tex_height,
                      0 , GL_RGB, GL_UNSIGNED_BYTE, tex_np)
+        if image.mode == "RGBA":
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.tex_width, self.tex_height,
+                     0 , GL_RGBA, GL_UNSIGNED_BYTE, tex_np)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glGenerateMipmap(GL_TEXTURE_2D)  # Generate mipmaps for scaling

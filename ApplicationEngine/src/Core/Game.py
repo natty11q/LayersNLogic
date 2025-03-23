@@ -14,6 +14,11 @@ from ApplicationEngine.src.Core.Keys import *
 from ApplicationEngine.src.Core.SceneManager import *
 from ApplicationEngine.src.Event.EventHandler import *
 
+
+from ApplicationEngine.src.Core.Mouse import *
+from ApplicationEngine.src.Core.Keys import *
+
+
 # import pygame
 
 
@@ -109,6 +114,12 @@ class Game:
     def __init__(self):
         self.__IsRunning : bool = False
         self._window : Window
+
+
+
+
+        Mouse.Init()
+        Keys.Init()
         
         # layout = [[]] # clear layout
         # # layout = [[simplegui.Frame("Game", [[simplegui.Graph((900, 600), (0, 0), (900, 600), background_color='white', key='-GRAPH-')]], key='-FRAME-')]] # clear layout

@@ -16,6 +16,7 @@ uniform vec2 Dimensions;
 // (W/H)
 uniform float aspectRatio;
 
+uniform vec2 Campos_XY;
 
 vec4 RenderHudTextrue()
 {
@@ -135,7 +136,7 @@ vec4 mainImage()
 
 
     // initialise
-    vec3 ro = vec3(0,0,-3 + (Time));             // ray origin
+    vec3 ro = vec3(Campos_XY ,-3 + (Time + 5 * sin(Time)) );             // ray origin
     vec3 rd = normalize(vec3(uv,1.0));  // ray direction
     vec3 col = vec3(0);
 
@@ -165,7 +166,7 @@ vec4 mainImage()
     }
 
     // return vec4(col, 1.0f) * 0a.2;
-    return vec4(col, 1.0f);
+    return vec4(vec3(1.0f) - col, 1.0f);
 }
 
 void main()

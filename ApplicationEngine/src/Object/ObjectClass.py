@@ -6,6 +6,9 @@ from ApplicationEngine.src.Object.ObjectBase import *
 from ApplicationEngine.src.Object.GameObjectAttributes import *
 from ApplicationEngine.src.Event.EventHandler import *
 
+
+import inspect
+
 SQUARE_VERTICES : list [float] = [
     ## position
     -1.0, -1.0,  0.0,  
@@ -25,11 +28,31 @@ SQUARE_INDICES : list [int] = [
 
 class GameObject(GameObjectBase):
     
-    def __init__(self):
+    def __init__(self, *eat_args, **eat_kwargs):
         self._World_Position : Vec3 = Vec3()
         self.__Attributes : list [ObjectAttribute.__class__] = []
         self.__Active : bool = True ## toggles wether an object is active in the editor and if physics is enabled for that object.
+        
+        self.id = LNL_IDGenerator.get_id()
         AddEventListener(self._OnEvent)
+
+    def __init_subclass__(cls,*args, **kwargs):
+        """removes the need to super init every game object in the game code"""
+        
+        super().__init_subclass__(*args,**kwargs)
+        
+        # Store the original __init__ of the subclass
+        original_init = cls.__init__
+
+        def new_init(self, *args, **kwargs):
+            # Call Base class __init__ first
+            super(cls, self).__init__(*args, **kwargs)
+
+            # Call the subclass's original __init__
+            original_init(self, *args, **kwargs)
+
+        cls.__init__ = new_init  # Override the subclass's __init__
+
  
     def SetAttribure(self, attrib : ObjectAttribute.__class__):
         self.__Attributes.append(attrib)
@@ -72,6 +95,8 @@ class Triangle(GameObject):
         super().__init__()
         self._positions = [v1,v2,v3]
         self._colour = colour
+    
+    
         
     def Draw(self):
         Renderer.DrawTriangle(self._positions, self._colour)
@@ -85,6 +110,30 @@ class Quad(GameObject):
         self._height = height
         self._colour = colour
     
+    # def __init_subclass__(cls, *args, **kwargs):
+    #     # super().__init_subclass__(*args, **kwargs)
+        
+    #     # # Store the original __init__ of the subclass
+    #     # original_init = cls.__init__
+
+    #     # # Get the parameters of the subclass’s __init__
+    #     # subclass_signature = inspect.signature(original_init)
+    #     # base_signature = inspect.signature(Quad.__init__)
+
+    #     # def new_init(self, *args, **kwargs):
+    #     #     # Extract arguments meant for Base and Subclass separately
+    #     #     base_params = {k: kwargs.pop(k) for k in base_signature.parameters if k in kwargs}
+    #     #     subclass_params = {k: kwargs[k] for k in subclass_signature.parameters if k in kwargs}
+
+    #     #     # Call Base class __init__
+    #     #     super(cls, self).__init__(*args, **base_params)
+
+    #     #     # Call the subclass's original __init__
+    #     #     original_init(self, * args, **subclass_params)
+
+    #     # cls.__init__ = new_init  # Override the subclass's __init__
+
+    
     def Draw(self):
         Renderer.DrawTriangle(
             [self._topLeft , Vec2(self._topLeft.x, self._topLeft.y + self._height), Vec2(self._topLeft.x + self._width, self._topLeft.y + self._height)]
@@ -96,6 +145,7 @@ class Quad(GameObject):
 
 class CircleObject(GameObject):
     def __init__(self, position : Vec3 = Vec3()):
+        super().__init__()
         self._Position : Vec3 = position
 
     def Draw(self):

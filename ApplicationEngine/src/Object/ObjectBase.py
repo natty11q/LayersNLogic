@@ -1,5 +1,5 @@
 from abc import ABC
-
+import random
 class GameObjectBase(ABC):
     def Activate(self): ...
     def DeActivate(self): ...
@@ -11,3 +11,16 @@ class GameObjectBase(ABC):
     
     def Update(self, deltatime : float): ...
     def PhysicsUpdate(self, tickTime : float): ...
+
+
+class LNL_IDGenerator:
+    _current_id = 0
+
+    @classmethod
+    def get_id(cls):
+        cls._current_id += 1
+        return cls._current_id
+
+    @classmethod
+    def random_id(cls):
+        return random.randint(0, cls._current_id)

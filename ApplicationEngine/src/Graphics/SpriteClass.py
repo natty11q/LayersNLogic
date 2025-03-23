@@ -83,13 +83,13 @@ class Sprite(GameObject):
 
                 vec2 Transform = vec2(u_SpritePosition.x / u_ScreenDimensions.x, -u_SpritePosition.y / u_ScreenDimensions.y);
 
-                transformed_position = transformed_position + Transform;
+                transformed_position = transformed_position + (Transform * 2.0);
                 transformed_position = transformed_position + vec2(-1.0, +1.0); // undo initial transform   
 
 
                 CurrentPosition = transformed_position;
                 TextureCoordinate = a_TexCoord;
-                gl_Position = vec4(transformed_position, 0.0 , 1.0);
+                gl_Position = vec4(CurrentPosition, 0.0 , 1.0);
             }
         """
         SPRITE_FRAGMENT_SHADER = """
@@ -112,7 +112,7 @@ class Sprite(GameObject):
             void main()
             {
                 vec4 col = RenderSprite();
-                if (col.x > 0.95 && col.y > 0.95 && col.z > 0.95) discard;
+                // if (col.x > 0.95 && col.y > 0.95 && col.z > 0.95) discard;
                 FragColor = col;
                 // FragColor = vec4(0.5f);
             }
