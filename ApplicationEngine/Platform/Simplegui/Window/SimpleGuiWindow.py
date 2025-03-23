@@ -32,8 +32,11 @@ class SimpleGUIWindow(Window):
         self.frame.set_mousedrag_handler(self.MouseDraggedHandler)
         # self.frame.set_mousemove_handler(self.MouseMovedHandler) # type: ignore
 
-        self.firstclick = False
-        self.mousePos : tuple[int, int] = (-1,-1)
+        pygame.mixer.init()
+
+        self.windowEvents = pygame.event.get()
+        # self.firstclick = False
+        # self.mousePos : tuple[int, int] = (-1,-1)
         
     def Run(self):
         self.frame.start()
@@ -59,9 +62,11 @@ class SimpleGUIWindow(Window):
     def SimpleGuiUpdate(self, canvas: simplegui.Canvas):
         self.pygame_event_callback()
         Renderer.Draw(canvas)
+        self.windowEvents = pygame.event.get()
+        
 
     def pygame_event_callback(self):
-        for event in pygame.event.get():
+        for event in self.windowEvents:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 print("mbtn down", event.pos, event.button , event.touch)
                 e = MouseButtonDownEvent()

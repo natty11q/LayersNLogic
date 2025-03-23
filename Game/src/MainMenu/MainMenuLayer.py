@@ -75,6 +75,8 @@ class MenuLayer(LNLEngine.Layer):
 
 
         self.ScreenShader = LNLEngine.ScreenShader()
+        # self.ScreenShader2 = LNLEngine.ScreenShader()
+        self.ParticleShader = LNLEngine.ScreenShader(FragmentShader="ApplicationEngine/src/Object/Shaders/ParticleShader.frag", FragmentShaderIsPath=True)
 
         # ========== sprite load : )==============
         tex = LNLEngine.Texture("Game/Assets/Menu/theguyfull.png")
@@ -91,7 +93,8 @@ class MenuLayer(LNLEngine.Layer):
                                             Vec2(600,450),
 
                                             "Game/Assets/Menu/quitbutton.png",
-                                            "Game/Assets/Menu/quitbuttonhover.png"
+                                            "Game/Assets/Menu/quitbuttonhover.png",
+                                            "quit"
                                         )
         self.StartButton : Menu_Button = Menu_Button(
                                             tex.tex_width  / 20,
@@ -115,6 +118,8 @@ class MenuLayer(LNLEngine.Layer):
         self.basePos = Vec2(0, -self.ParalaxDistance)
         self.MenuTheGuyLayer = LNLEngine.Sprite(tex, self.basePos , self.gameWindow.GetWidth() + 2*self.ParalaxDistance ,  self.gameWindow.GetHeight() + 2*self.ParalaxDistance)
 
+        LNLEngine.pygame.mixer.music.load("Game/Assets/Audio/MenuAudio.mp3")
+        LNLEngine.pygame.mixer.music.play()
 
     def OnUpdate(self, deltatime: float):
         LNLEngine.Renderer.Clear()
@@ -163,5 +168,8 @@ class MenuLayer(LNLEngine.Layer):
         LNLEngine.Renderer.CustomRendererCommand(LNLEngine.glDepthMask, [LNLEngine.GL_TRUE])
         LNLEngine.RenderCommand.Disable(LNLEngine.GL_BLEND)
         
+
+        # self.ScreenShader2.Draw()
+        # self.ParticleShader.Draw()
         
         LNLEngine.Renderer.EndScene()

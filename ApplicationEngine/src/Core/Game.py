@@ -117,9 +117,10 @@ class Game:
 
 
 
-
+        
         Mouse.Init()
         Keys.Init()
+
         
         # layout = [[]] # clear layout
         # # layout = [[simplegui.Frame("Game", [[simplegui.Graph((900, 600), (0, 0), (900, 600), background_color='white', key='-GRAPH-')]], key='-FRAME-')]] # clear layout

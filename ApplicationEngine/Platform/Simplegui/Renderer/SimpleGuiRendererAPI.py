@@ -292,6 +292,7 @@ class SimpleGUiRendererAPI(RendererAPI):
 
 
     def Draw(self, *args):
+        # glViewport(0,0,900,600)
         canvas : simplegui.Canvas = args[0]
         LLEngineTime.Update()
         # self.pygame_event_callback()

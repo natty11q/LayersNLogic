@@ -6,7 +6,7 @@ out vec4 FragColor;
 in vec2 CurrentPosition;
 in vec2 TextureCoordinate;
 
-uniform sampler2D diffuse0;
+uniform sampler2D texture0;
 uniform float HudOpacity;
 uniform float Time;
 
@@ -18,7 +18,7 @@ uniform float aspectRatio;
 
 vec4 RenderHudTextrue()
 {
-    return texture(diffuse0,TextureCoordinate) * vec4(1.0f,1.0f,1.0f,HudOpacity);
+    return texture(texture0,TextureCoordinate) * vec4(1.0f,1.0f,1.0f,HudOpacity);
 }
 
 // struct uiButton

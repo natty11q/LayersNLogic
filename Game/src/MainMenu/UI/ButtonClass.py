@@ -16,8 +16,10 @@ class Menu_Button(LNLEngine.GameObject):
     def __init__(self, width : float, height : float,
                 position : Vec2,
                 baseSpritePath  : str, 
-                hoverSpritePath : str | None = None):
+                hoverSpritePath : str | None = None,
+                name : str =  ""):
         
+        self.name = name
     
         self.basePosition       : Vec2 = position
         self.currentPosition    : Vec2 = position
@@ -48,6 +50,8 @@ class Menu_Button(LNLEngine.GameObject):
         self.selected : bool = False # if the button had the keydown event above it
         self.pressed  : bool = False # if the button was pressed on this frame
 
+        self.OnHover : bool = False
+
 
 
 
@@ -70,6 +74,12 @@ class Menu_Button(LNLEngine.GameObject):
 
         if self.pressed:
             LNL_LogEngineInfo("button pressed : ", self.id)
+
+            # for debug:
+            if self.name == "quit":
+                LNLEngine.pygame.mixer.Channel(3).play(LNLEngine.pygame.mixer.Sound("Game/Assets/Audio/SFX/melancholy-ui-chime-47804.mp3"))
+            else:
+                LNLEngine.pygame.mixer.Channel(3).play(LNLEngine.pygame.mixer.Sound("Game/Assets/Audio/SFX/menu_select_main_entry_sfx.wav"))
             self.OnButtonPress()
         
         self.pressed = False
@@ -81,7 +91,12 @@ class Menu_Button(LNLEngine.GameObject):
         
         if self.Overlap():
             self.hovered = True
+            if not self.OnHover:
+                LNLEngine.pygame.mixer.Channel(2).play(LNLEngine.pygame.mixer.Sound("Game/Assets/Audio/SFX/menu_moving_selection_sfx.wav"))
+            self.OnHover = True
 
+        if not self.hovered:
+            self.OnHover = False
 
         if self.currentWidth != self.prevWidth:
             self.BaseSprite.SetWidth(self.currentWidth)
