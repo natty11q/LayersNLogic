@@ -107,6 +107,8 @@ class MenuLayer(LNLEngine.Layer):
                                         )
 
 
+        self.StartButton.AddOnClickkHandler(print, ["start Button Pressed"])
+
 
         self.ParalaxDistance : float = 10
 

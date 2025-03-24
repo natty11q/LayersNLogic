@@ -143,4 +143,13 @@ class Sprite(GameObject):
         self.SheetTexture.Bind()
         self.SpriteShader.SetUniformInt("SpriteSheet", 0)
 
+        if self.SheetTexture.hasTransparent:
+            RenderCommand.Enable(GL_BLEND)
+            Renderer.CustomRendererCommand(glBlendFunc, [GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA])
+            Renderer.CustomRendererCommand(glDepthMask, [GL_FALSE])
+            
         Renderer.Submit(self.SpriteShader, self.VertexArray)
+
+        if self.SheetTexture.hasTransparent:
+            Renderer.CustomRendererCommand(glDepthMask, [GL_TRUE])
+            RenderCommand.Disable(GL_BLEND)

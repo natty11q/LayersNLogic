@@ -14,7 +14,12 @@ class SceneManager:
             return
         self.activeScene = self.scenes.get(name)
     
-    
+    def OnEvent(self, e : Event):
+        if self.activeScene:
+            self.activeScene.OnEvent(e)
+
+
+
     def update(self, dt : float):
         if self.activeScene:
             self.activeScene.Update(dt)

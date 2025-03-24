@@ -12,13 +12,25 @@ import os
 import json
 
 
+class SceneType(Enum):
+    Undef = auto()
+    Menu = auto()
+    Game = auto()
+
+
+
 
 
 class Scene:
     def __init__(self, name : str):
         self.name = name
         self.objects : list[GameObject] = []  # List of GameObject instances
+        self.UIElements : list[GameObject] = []  # List of GameObject instances
         self.levelManager : LevelManager = LevelManager()
+
+        self.sceneType : SceneType = SceneType.Undef
+
+        AddEventListener( self.OnEvent )
 
     def AddObject(self, obj : GameObject):
         self.objects.append(obj)
@@ -26,8 +38,18 @@ class Scene:
     def GetLevelManager(self):
         return self.levelManager
 
+    def _OnUpdate(self, dt : float):
+        ...
+    
+    def OnEvent(self, e : Event):
+        ...
+
     def Update(self, dt : float):
-        self.levelManager.Update(dt)
+        if self.sceneType not in [SceneType.Menu]:
+            self.levelManager.Update(dt)
+
+        self._OnUpdate(dt)
+
         for obj in self.objects:
             obj.Update(dt)
     

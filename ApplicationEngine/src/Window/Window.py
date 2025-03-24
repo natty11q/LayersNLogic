@@ -38,7 +38,6 @@ class WindowProperties:
         self.__Title = newT
 
 class Window(ABC):
-    
     @dataclass
     class WindowData:
         Title   : str = ""
@@ -56,6 +55,8 @@ class Window(ABC):
         self._Data.Height  = props.Height()
         self._Data.AspectRatio = props.AspectRatio()
         self._Data.VSync
+
+        Window.s_Props = props
         
         self.__m_Window = None
     

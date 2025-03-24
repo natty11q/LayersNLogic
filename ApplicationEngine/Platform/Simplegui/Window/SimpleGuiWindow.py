@@ -8,6 +8,9 @@ from ApplicationEngine.src.Graphics.Renderer.Renderer import Renderer
 from ApplicationEngine.src.Event.EventHandler import * 
 
 
+from ApplicationEngine.src.Core.Keys import * 
+
+
 try:
     import simplegui # type: ignore
 except ImportError :
@@ -28,8 +31,10 @@ class SimpleGUIWindow(Window):
 
         self.frame.set_keydown_handler(self.KeyDownHandler)
         self.frame.set_keyup_handler(self.KeyUpHandler)
-        self.frame.set_mouseclick_handler(self.MouseReleasedHandler)
-        self.frame.set_mousedrag_handler(self.MouseDraggedHandler)
+        # self.frame.set_mouseclick_handler(self.MouseReleasedHandler)
+        # self.frame.set_mousedrag_handler(self.MouseDraggedHandler)
+
+
         # self.frame.set_mousemove_handler(self.MouseMovedHandler) # type: ignore
 
         pygame.mixer.init()
@@ -67,6 +72,8 @@ class SimpleGUIWindow(Window):
 
     def pygame_event_callback(self):
         for event in self.windowEvents:
+            if (event.type == pygame.QUIT):  # pylint: disable=no-member  # noqa
+                    self.frame.stop()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 print("mbtn down", event.pos, event.button , event.touch)
                 e = MouseButtonDownEvent()
@@ -92,8 +99,22 @@ class SimpleGUIWindow(Window):
                 e.y = event.pos[1] - self.frame._canvas_y_offset
                 sendEvent(e)
                 print("modPos moved", e.x, e.y)
-            
 
+            elif event.type == pygame.KEYDOWN:
+                e = KeyDownEvent()
+                # print("keydown" , event.key, event.mod, event.unicode, event.scancode, pygame.key.name(event.key))
+            
+                # TODO Find a better Solution to this
+                e.keycode = KEY_MAP.get(pygame.key.name(event.key), KEY_MAP.get(pygame.key.name(event.key).upper(), event.key))
+                sendEvent(e)
+            
+            elif event.type == pygame.KEYUP:
+                e = KeyUpEvent()
+                # print("keydown" , event.key, event.mod, event.unicode, event.scancode, pygame.key.name(event.key))
+            
+                # TODO Find a better Solution to this
+                e.keycode = KEY_MAP.get(pygame.key.name(event.key), KEY_MAP.get(pygame.key.name(event.key).upper(), event.key))
+                sendEvent(e)
 
     def InputHandler(self, etype: str, values: list)-> None:
         if etype == "keyDown":
@@ -105,6 +126,8 @@ class SimpleGUIWindow(Window):
             e = KeyUpEvent()
             e.keycode = values[0]
             sendEvent(e)
+
+
 
         # elif etype == "mouseReleased":
         #     e = MouseButtonUpEvent()

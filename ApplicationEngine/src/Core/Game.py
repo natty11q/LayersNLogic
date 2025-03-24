@@ -117,7 +117,7 @@ class Game:
 
 
 
-        
+
         Mouse.Init()
         Keys.Init()
 
@@ -159,11 +159,14 @@ class Game:
         return self._m_SceneManager
 
     def Run(self):
-        self.__PhysicsThread : threading.Thread  = threading.Thread(target = self.__PhysicsMainloop, args=(), daemon=True)
-        self.__InputThread : threading.Thread = threading.Thread(target= self.input_listener, args=(), daemon=True)
+        self.stop_event_Phys = threading.Event()
+        self.stop_event_Inp  = threading.Event()
+
+        self.__PhysicsThread : threading.Thread  = threading.Thread(target = self.__PhysicsMainloop, args=())
+        self.__InputThread : threading.Thread = threading.Thread(target= self.input_listener, args=())
         
         self.__StartPhysicsThread()
-        self.__startInputThread()
+        # self.__startInputThread()
         
         
         if Renderer.GetAPI() != RendererAPI.API.SimpleGui:
@@ -279,7 +282,7 @@ class Game:
 
 # private :
     def __PhysicsMainloop(self):
-        while True:
+        while not self.stop_event_Phys.is_set():
             self._OnPhysicsUpdate()
             Temporal.time.sleep(1 / Temporal.LLEngineTime.TickRate())
 
@@ -334,6 +337,14 @@ class Game:
         # print(f"fps : {Temporal.Time.FPS()}\n")
         # self.frame.stop()
         # self._window.close()
+
+        self.stop_event_Phys.set()
+        self.stop_event_Inp.set()
+
+        self.__PhysicsThread.join()
+        # self.__InputThread.join()
+
+        LNL_LogEngineInfo("Application quit success")
 
 
 

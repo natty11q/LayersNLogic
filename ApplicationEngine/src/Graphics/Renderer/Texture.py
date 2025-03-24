@@ -9,7 +9,8 @@ from PIL import Image
 
 
 class Texture():
-    def __init__(self, image_path):
+    def __init__(self, image_path, transparent : bool = False):
+        
         if os.path.exists(image_path):
             image = Image.open(image_path)
         else:
@@ -24,7 +25,11 @@ class Texture():
         self.tex_height, self.tex_width, _ = tex_np.shape
 
         self.texture_id = glGenTextures(1)
+        
+        self.hasTransparent = transparent
+        
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
+
 
         if image.mode == "RGB":
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.tex_width, self.tex_height,
@@ -36,7 +41,7 @@ class Texture():
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glGenerateMipmap(GL_TEXTURE_2D)  # Generate mipmaps for scaling
         glBindTexture(GL_TEXTURE_2D, 0)  # Unbind the texture
-    
+
     def Bind(self):
         from ApplicationEngine.src.Graphics.Renderer.Renderer import Renderer
         # if not glIsTexture(self.texture_id):
@@ -46,5 +51,5 @@ class Texture():
     def UnBind(self):
         glBindTexture(GL_TEXTURE_2D, 0)
 
-    def __del__(self):
-        glDeleteTextures(1, [self.texture_id])
+    # def __del__(self):
+    #     glDeleteTextures(1, [self.texture_id])

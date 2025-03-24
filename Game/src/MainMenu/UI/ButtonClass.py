@@ -41,7 +41,7 @@ class Menu_Button(LNLEngine.GameObject):
 
 
         # TODO : decide if the button action should be handled here or outside the class
-        self.OnClickHandles : list = [] # a list contatining the actions that occur when the button is pressed
+        self.OnClickHandles : dict = {} # a list contatining the actions that occur when the button is pressed
         self.nextButtonId   : int = 0
 
 
@@ -116,8 +116,6 @@ class Menu_Button(LNLEngine.GameObject):
                 self.selected = True
 
             pos = LNLEngine.Mouse.GetPos()
-            LNL_LogError(pos , "btn pos : ", self.currentPosition,
-                         self.currentPosition + Vec2(self.width, self.height))
 
         if event.GetName() == "MouseButtonUp" and event.button == 1:
             if self.hovered and self.selected:
@@ -132,7 +130,7 @@ class Menu_Button(LNLEngine.GameObject):
 
 
     def AddOnClickkHandler(self, onClick, args : list) -> int:
-        self.OnClickHandles[self.nextButtonId] = [onClick, args]
+        self.OnClickHandles[self.nextButtonId] = (onClick, args)
         self.nextButtonId += 1
         return self.nextButtonId -1
 
@@ -149,5 +147,5 @@ class Menu_Button(LNLEngine.GameObject):
         return False
 
     def OnButtonPress(self):
-        for handleData in self.OnClickHandles:
+        for handleData in self.OnClickHandles.values():
             handleData[0]( *(handleData[1]) )

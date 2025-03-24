@@ -12,7 +12,8 @@ from Game.src.GameComponents.Player.PlayerClass import *
 import math
 
 
-from Game.src.MainMenu.MainMenuLayer import *
+# from Game.src.MainMenu.MainMenuLayer import *
+from Game.src.MainMenu.MainMenuScene import *
 
 class MovingSquare(LNLEngine.Quad):
     def __init__(self, topLeft: LNLEngine.Vec2, width: float, height: float, colour: LNLEngine.Vec4):
@@ -253,7 +254,7 @@ class TestLayer(LNLEngine.Layer):
         # self.Cube2 = Cube()
 
 
-        # player = Player()
+        player = Player("")
 
 
         self.portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
@@ -269,16 +270,17 @@ class TestLayer(LNLEngine.Layer):
         
         mainScene : LNLEngine.Scene = LNLEngine.Scene("mainScene")
 
-        # mainScene.AddObject(portal1)
-        # mainScene.AddObject(portal2)
+        mainScene.AddObject(self.portal1)
+        mainScene.AddObject(self.portal2)
 
-        # mainScene.AddObject(player)
+        mainScene.AddObject(player)
         # mainScene.AddObject(cube)
 
         # mainScene.AddObject(self.TestSquare)
 
-        # self.SceneManager.add_scene(mainScene)
-        # self.SceneManager.set_active_scene(mainScene.name)
+        self.SceneManager.add_scene(mainScene)
+        self.SceneManager.add_scene(MainMenuScene())
+        self.SceneManager.set_active_scene("MainMenu")
 
         self.ScreenShader = LNLEngine.ScreenShader()
 
@@ -396,9 +398,8 @@ class PortalsDemo(LNLEngine.Game):
 
         self.Load("Game/Data/LevelData/DemoLevelData.json")
 
-
-        # LNLEngine.Renderer.PushLayer(TestLayer())
-        LNLEngine.Renderer.PushLayer(MenuLayer())
+        # LNLEngine.Renderer.PushLayer(MenuLayer())
+        LNLEngine.Renderer.PushLayer(TestLayer())
 
 
     

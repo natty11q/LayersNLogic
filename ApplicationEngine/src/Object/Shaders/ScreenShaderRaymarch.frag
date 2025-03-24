@@ -136,7 +136,7 @@ vec4 mainImage()
 
 
     // initialise
-    vec3 ro = vec3(Campos_XY ,-3 + (Time + 5 * sin(Time)) );             // ray origin
+    vec3 ro = vec3(Campos_XY ,-3 + ((Time / 5) + 5 * sin(Time / 10)) );             // ray origin
     vec3 rd = normalize(vec3(uv,1.0));  // ray direction
     vec3 col = vec3(0);
 

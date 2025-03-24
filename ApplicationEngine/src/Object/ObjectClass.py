@@ -25,7 +25,6 @@ SQUARE_INDICES : list [int] = [
 
 
 
-
 class GameObject(GameObjectBase):
     
     def __init__(self, *eat_args, **eat_kwargs):
