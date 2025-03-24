@@ -379,7 +379,21 @@ class TestLayer(LNLEngine.Layer):
         self.bulletSpeed = 2500
 
 
-        self.testPhsicsComponent = TestPhysicsObject(Vec2(-20, 300))
+        self.testPhsicsComponent  = TestPhysicsObject(Vec2(-20, 700))
+        self.testPhsicsComponent2 = TestPhysicsObject(Vec2(-20, -400),0)
+
+
+
+
+        walktex = LNLEngine.Texture("Game/Assets/Sprites/Larks_Shoot.jpeg")
+        r = 12
+        c = 1
+        self.guyWalk = LNLEngine.SpriteAnimation.LoadFromSpritesheet(walktex,
+                                                                     r, c,
+                                                                     walktex.tex_width/r/0.5, walktex.tex_height / c /0.5, 
+                                                                     framerate=24,
+                                                                     repeat= True)
+        self.guyWalk.Play()
 
     def OnEvent(self, event: LNLEngine.Event):
         if event.GetName() == "KeyDown":
@@ -430,7 +444,9 @@ class TestLayer(LNLEngine.Layer):
         # self.TestSquare.Update()
         # self.TestSquare.Draw()
         self.testPhsicsComponent.Update(deltatime)
+        self.testPhsicsComponent2.Update(deltatime)
         
+        self.guyWalk.Update(deltatime)
 
 
 
@@ -449,11 +465,13 @@ class TestLayer(LNLEngine.Layer):
         # self.SceneManager.Draw()
 
         self.testPhsicsComponent.Draw()
+        self.testPhsicsComponent2.Draw()
         self.TestSprite.Draw()
 
         if self.bullet_TTL > 0:
             self.bulletSprite.Draw()
 
+        self.guyWalk.Draw()
         # self.portal1.Draw()
         # self.portal2.Draw()
 
