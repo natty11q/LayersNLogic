@@ -115,13 +115,14 @@ class PlayerState(Enum):
 
 
 class Player(LNLEngine.GameObject2D):
-    def __init__(self, name : str):
-        super().__init__(mass= 70)
+    def __init__(self, position: Vec2 = Vec2(),  name : str = ""):
+        super().__init__(position, mass = 70.0)
         # self.SetAttribure(PlayerInputHandlerAttribute)
 
         # self.SetAttribure(AffectedByGravityAttribute)
         # self.SetAttribure(CanTravelThroughPortals)
         self.name = name
+        self.bound = False
 
 
         # self.Velocity = Vec3()
@@ -199,7 +200,10 @@ class Player(LNLEngine.GameObject2D):
         for kcode in LNLEngine.KEY_MAP:
             self.keys[kcode] = 0
 
-
+        c1 : LNLEngine.Circle = LNLEngine.Circle()
+        c1.setRadius(self.width / 2)
+        c1.setRigidBody(self.body)
+        self.body.setCollider(c1)
         self.body.linearDamping = 0.8
         LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(self.body, False)
 
@@ -214,17 +218,18 @@ class Player(LNLEngine.GameObject2D):
 
         inputVector : Vec2 = Vec2()
 
-        if self.keys.get(LNLEngine.KEY_MAP['right']):
-            inputVector += Vec2(1, 0)
+        if self.bound:
+            if self.keys.get(LNLEngine.KEY_MAP['right']):
+                inputVector += Vec2(1, 0)
 
-        if self.keys.get(LNLEngine.KEY_MAP['left']):
-            inputVector += Vec2(-1, 0)
+            if self.keys.get(LNLEngine.KEY_MAP['left']):
+                inputVector += Vec2(-1, 0)
 
-        if self.keys.get(LNLEngine.KEY_MAP['up']):
-            inputVector += Vec2(0, 1)
+            if self.keys.get(LNLEngine.KEY_MAP['up']):
+                inputVector += Vec2(0, 1)
 
-        if self.keys.get(LNLEngine.KEY_MAP['down']):
-            inputVector += Vec2(0, -1)
+            if self.keys.get(LNLEngine.KEY_MAP['down']):
+                inputVector += Vec2(0, -1)
 
 
         inputVector = inputVector.normalize()

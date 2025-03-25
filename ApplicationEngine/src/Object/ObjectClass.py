@@ -38,22 +38,22 @@ class GameObject(GameObjectBase):
         self.id = LNL_IDGenerator.get_id()
         AddEventListener(self._OnEvent)
 
-    def __init_subclass__(cls,*args, **kwargs):
-        """removes the need to super init every game object in the game code"""
+    # def __init_subclass__(cls,*args, **kwargs):
+    #     """removes the need to super init every game object in the game code"""
         
-        super().__init_subclass__(*args,**kwargs)
+    #     super().__init_subclass__(*args,**kwargs)
         
-        # Store the original __init__ of the subclass
-        original_init = cls.__init__
+    #     # Store the original __init__ of the subclass
+    #     original_init = cls.__init__
 
-        def new_init(self, *args, **kwargs):
-            # Call Base class __init__ first
-            super(cls, self).__init__(*args, **kwargs)
+    #     def new_init(self, *args, **kwargs):
+    #         # Call Base class __init__ first
+    #         super(cls, self).__init__(*args, **kwargs)
 
-            # Call the subclass's original __init__
-            original_init(self, *args, **kwargs)
+    #         # Call the subclass's original __init__
+    #         original_init(self, *args, **kwargs)
 
-        cls.__init__ = new_init  # Override the subclass's __init__
+    #     cls.__init__ = new_init  # Override the subclass's __init__
 
  
     def SetAttribure(self, attrib : ObjectAttribute.__class__):

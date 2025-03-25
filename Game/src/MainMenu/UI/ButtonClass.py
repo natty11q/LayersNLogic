@@ -18,6 +18,7 @@ class Menu_Button(LNLEngine.GameObject):
                 baseSpritePath  : str, 
                 hoverSpritePath : str | None = None,
                 name : str =  ""):
+        super().__init__()
         
         self.name = name
     

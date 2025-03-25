@@ -27,7 +27,7 @@ class MovingSquare(LNLEngine.Quad):
 
 class Cube(LNLEngine.GameObject):
     def __init__(self, scale : float= 1, rotation : Quat.Quat = Quat.Quat() ,position : Vec3 = Vec3(0,0,-100)):
-        # super().__init__()
+        super().__init__()
 
         VERTEX_SHADER = """
             #version 330 core
@@ -246,7 +246,7 @@ class TestPhysicsObject(LNLEngine.GameObject2D):
 
 class TestLayer(LNLEngine.Layer):
     def __init__(self, name="TestLayer"):
-        # super().__init__(name)
+        super().__init__(name)
         self.gameWindow = LNLEngine.Game.Get().GetWindow()
         
         # =================================
@@ -323,7 +323,9 @@ class TestLayer(LNLEngine.Layer):
         # self.Cube2 = Cube()
 
 
-        player = Player("")
+        player  = Player(Vec2(0,0), "player1")
+        player.bound = True
+        player2 = Player(Vec2(100,200), "player2")
 
 
         self.portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
@@ -343,6 +345,7 @@ class TestLayer(LNLEngine.Layer):
         # mainScene.AddObject(self.portal2)
 
         mainScene.AddObject(player)
+        mainScene.AddObject(player2)
         # mainScene.AddObject(cube)
 
         # mainScene.AddObject(self.TestSquare)
@@ -565,23 +568,23 @@ class PortalsDemo(LNLEngine.Game):
 
 
                 
-            for i in range( len( sceneData.get("players", []) ) ):
+            # for i in range( len( sceneData.get("players", []) ) ):
                 
-                s_player = sceneData["players"][i]
-                p = Player(s_player.get("name", scene.name + "_player_" + str(i) ))
+            #     s_player = sceneData["players"][i]
+            #     p = Player(s_player.get("name", scene.name + "_player_" + str(i) ))
 
-                p._World_Position = Vec3(*s_player["world_position"].values())
-                p.width = s_player["width"]
-                p.height = s_player["height"]
-                p.Colour = Vec4(*s_player["colour"].values())
+            #     p._World_Position = Vec3(*s_player["world_position"].values())
+            #     p.width = s_player["width"]
+            #     p.height = s_player["height"]
+            #     p.Colour = Vec4(*s_player["colour"].values())
                 
-                for s_p_attribute in s_player["attributes"]:
-                    if s_p_attribute == "AffectedByGravityAttribute":
-                        p.SetAttribure(AffectedByGravityAttribute)
-                    elif s_p_attribute == "CanTravelThroughPortals":
-                        p.SetAttribure(CanTravelThroughPortals)
+            #     for s_p_attribute in s_player["attributes"]:
+            #         if s_p_attribute == "AffectedByGravityAttribute":
+            #             p.SetAttribure(AffectedByGravityAttribute)
+            #         elif s_p_attribute == "CanTravelThroughPortals":
+            #             p.SetAttribure(CanTravelThroughPortals)
                 
-                scene.AddObject(p)
+            #     scene.AddObject(p)
 
     def _OnUpdate(self, deltatime : float):
         return super()._OnUpdate(deltatime)
