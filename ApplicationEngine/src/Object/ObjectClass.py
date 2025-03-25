@@ -8,6 +8,8 @@ from ApplicationEngine.src.Event.EventHandler import *
 
 
 import inspect
+from ApplicationEngine.src.Physics.LNL_Physics import *
+
 
 SQUARE_VERTICES : list [float] = [
     ## position
@@ -29,6 +31,7 @@ class GameObject(GameObjectBase):
     
     def __init__(self, *eat_args, **eat_kwargs):
         self._World_Position : Vec3 = Vec3()
+
         self.__Attributes : list [ObjectAttribute.__class__] = []
         self.__Active : bool = True ## toggles wether an object is active in the editor and if physics is enabled for that object.
         
@@ -86,6 +89,15 @@ class GameObject(GameObjectBase):
         for attribute in self.__Attributes:
             attribute.Attrib_OnPhysicsUpdate(self)
         self._OnPhysicsUpdate(tickTime)
+
+
+class GameObject2D(GameObject):
+    def __init__(self, position : Vec2 = Vec2(), mass : float = 100.0):
+        super().__init__()
+        self.body : RigidBody2D = RigidBody2D()
+        
+        self.body.setTransform(position)
+        self.body.setMass(mass)
 
 
 

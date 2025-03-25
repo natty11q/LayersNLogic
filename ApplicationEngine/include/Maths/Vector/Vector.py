@@ -92,7 +92,10 @@ class Vector:
 
     # Divides the vector by a scalar
     def divide(self, k : float) -> Vector:
-        return self.multiply(1/k)
+        if k != 0:
+            return self.multiply(1/k)
+        else:
+            return self.multiply(1/sys.float_info.max)
 
     def __truediv__(self, k : float) -> Vector:
         return self.copy().divide(k)
@@ -328,7 +331,7 @@ class _Vector(Vector):
 
     def __truediv__(self, k : float) -> Vector:
         if isinstance(k, (int, float)):
-            return super().__mul__(k)
+            return super().__mul__(1/k)
         else:
             return NotImplemented
 
@@ -356,7 +359,10 @@ class _Vector(Vector):
         
         self._OnUpdate()
         return dotP
-        
+    
+    def zero(self):
+        for i in range(len(self._m_vec)):
+            self._m_vec[i] = 0
 
     # Returns the length of the vector
     def length(self):

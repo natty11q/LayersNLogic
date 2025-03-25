@@ -33,13 +33,13 @@
                     "name" : "player1",
                     "world_position" : {"x" : 500, "y" : 20, "z": 0},
 
-                    "width" : 100,
+                    "width" : 400,
                     "height" : 100,
 
                     "colour" : {
-                        "r" : 44,
+                        "r" : 0,
                         "g" : 20,
-                        "b" : 255,
+                        "b" : 0,
                         "a" : 255
                     },
 

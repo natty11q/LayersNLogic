@@ -18,7 +18,7 @@ class Sprite(GameObject):
         self.spriteAspectRatio : float = width / height
 
 
-
+        self.UVCache = UVs
 
 
         UV0 = UVs[0].get_p()
@@ -102,10 +102,13 @@ class Sprite(GameObject):
             in vec2 TextureCoordinate;
 
             uniform sampler2D SpriteSheet;
+            uniform int flipped_lr;
+
 
             vec4 RenderSprite()
             {
-                return texture(SpriteSheet,TextureCoordinate);
+                vec2 modUV = vec2( (1.0 - TextureCoordinate.x * flipped_lr + (TextureCoordinate.x) * (1 - flipped_lr) ), TextureCoordinate.y);
+                return texture(SpriteSheet,modUV);
             }
 
 
@@ -122,11 +125,26 @@ class Sprite(GameObject):
         self.SpriteShader : Shader = Shader(SPRITE_VERTEX_SHADER, SPRITE_FRAGMENT_SHADER)
         self.SheetTexture : Texture = SpriteSheet
 
+        self.flipped_lr = False
+        self.flipped_ud = False
+
         self.SpritePos : Vec2 = position
 
     def SetPos(self, position : Vec2): self.SpritePos = position
     def SetWidth(self, new_W : float): self.spriteWidth = new_W
     def SetHeight(self, new_H : float): self.spriteHeight = new_H
+
+
+
+    def copy(self):
+        return Sprite(self.SheetTexture, self.SpritePos, self.spriteWidth, self.spriteHeight, self.UVCache)
+
+
+    def Flip_lr(self):
+        self.flipped_lr = not self.flipped_lr
+
+    def Flip_ud(self):
+        self.flipped_ud = not self.flipped_ud
     
     
     def Draw(self):
@@ -140,6 +158,7 @@ class Sprite(GameObject):
         self.SpriteShader.SetUniformVec2("u_SpriteDimensions", Vec2(self.spriteWidth, self.spriteHeight))
         self.SpriteShader.SetUniformVec3("u_ScreenDimensions", Vec3(w_width, w_height, (w_width/w_height)))
 
+        self.SpriteShader.SetUniformInt("flipped_lr", int(self.flipped_lr))
         self.SheetTexture.Bind()
         self.SpriteShader.SetUniformInt("SpriteSheet", 0)
 
