@@ -131,7 +131,7 @@ class Player(LNLEngine.GameObject2D):
         self.width = 100
         self.height = 100
 
-        self.speed  = 10000
+        self.speed  = 100
 
 
         self.InPortalColision = False
@@ -228,7 +228,7 @@ class Player(LNLEngine.GameObject2D):
 
 
         inputVector = inputVector.normalize()
-        force += inputVector * self.speed
+        force += inputVector * self.speed * self.body.getMass()
         self.body.addForce(force)
 
 
