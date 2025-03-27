@@ -153,7 +153,7 @@ class BufferLayout:
 
 class VertexBuffer(ABC):
     def __init__(self):
-        self._vertices : list[float] = []
+        self._vertices : np.ndarray = np.array([], dtype=np.float32)
         self._size = 0
     
     def Bind(self): ...
@@ -163,7 +163,7 @@ class VertexBuffer(ABC):
     def GetLayout(self) -> BufferLayout: ...
     
     
-    def GetVertices(self) -> list[float]: return self._vertices
+    def GetVertices(self) -> list[float]: return self._vertices.tolist()
     def GetSize(self) -> int: return self._size
 
     @staticmethod
@@ -195,12 +195,12 @@ class IndexBuffer(ABC):
     def GetSize(self) -> int: return self._size
 
     @staticmethod
-    def Create(indices : list [int], size : int) -> IndexBuffer:
+    def Create(indices : list [int], count : int) -> IndexBuffer:
         from ApplicationEngine.src.Graphics.Renderer.Renderer import Renderer, RendererAPI
         match (Renderer.GetAPI()):
             case RendererAPI.API.SimpleGui:
                 from ApplicationEngine.Platform.Simplegui.Renderer.SimpleGuiBuffer import SimpleGuiIndexBuffer
-                return SimpleGuiIndexBuffer(indices, size)
+                return SimpleGuiIndexBuffer(indices, count)
             
             case _ :
                 raise NotImplemented

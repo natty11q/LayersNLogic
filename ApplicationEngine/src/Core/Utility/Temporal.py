@@ -150,7 +150,7 @@ class LLEngineTime:
         else:
             LLEngineTime.__FPS = 1 / (sum(LLEngineTime.__FPS_CACHE) / LLEngineTime.__FPS_CACHE_SIZE) # caclulate average frames per second
             LLEngineTime.__FPS_CACHE = []
-            print(f"fps : {LLEngineTime.FPS()}\n")
+            LNL_LogEngineTrace(f"fps : {LLEngineTime.FPS()}\n")
         
 #--------------- public
     @staticmethod

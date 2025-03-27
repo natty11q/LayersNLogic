@@ -1,4 +1,6 @@
 pyopengl
 pygame
 SimpleGUICS2Pygame
+glfw
+numpy
 # serial

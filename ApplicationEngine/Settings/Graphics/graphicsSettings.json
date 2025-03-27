@@ -4,7 +4,7 @@
         "height" : 500
     },
 
-    "BASE_TICK_RATE" : 1,
+    "BASE_TICK_RATE" : 60,
     "STARTING_TARGET_FRAMERATE" : 240,
     "FRAMERATE_UNCAPPED" : false,
     "VSYNC_ENABLED" : true

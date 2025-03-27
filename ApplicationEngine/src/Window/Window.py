@@ -38,7 +38,6 @@ class WindowProperties:
         self.__Title = newT
 
 class Window(ABC):
-    
     @dataclass
     class WindowData:
         Title   : str = ""
@@ -56,6 +55,8 @@ class Window(ABC):
         self._Data.Height  = props.Height()
         self._Data.AspectRatio = props.AspectRatio()
         self._Data.VSync
+
+        Window.s_Props = props
         
         self.__m_Window = None
     
@@ -88,7 +89,9 @@ class Window(ABC):
     def GetAspectRatio(self) -> float: ...
     
     
-    def SetVsync(self) -> None: ...
+    def SetVsync(self, state : bool) -> None: ...
     def ISVsync(self) -> bool: ...
     
-    def GetNativeWindow(self) -> None: ...
+    def GetNativeWindow(self) -> object: ...
+
+    def InputHandler(self, etype: str, values: list)-> None: ...

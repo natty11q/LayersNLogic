@@ -11,7 +11,7 @@ class Camera:
                  width,
                  height,
                  
-                 position : Vector.Vec3 = Vector.Vec3(),
+                 position : Vec3 = Vec3(),
                  rotation : Quat.Quat = Quat.Quat(),
                  
                  FOVdeg     : float = 45,
@@ -20,11 +20,11 @@ class Camera:
                 ):
         
         self._m_FovDeg : float  = FOVdeg
-        self._m_Position : Vector.Vec3   = position
+        self._m_Position : Vec3   = position
         self._m_Rotation : Quat.Quat     = rotation
         
-        self._m_Orientation : Vector.Vec3   = Vector.Vec3(0.0, 1.0, 0.0) # const
-        self._m_Up : Vector.Vec3            = Vector.Vec3(0.0, 1.0, 0.0)
+        self._m_Orientation : Vec3   = Vec3(0.0, 1.0, 0.0) # const
+        self._m_Up : Vec3            = Vec3(0.0, 1.0, 0.0)
         
         
         self._m_ProjectionMatrix : Matrix.Mat4 = Matrix.Mat4()
@@ -51,7 +51,7 @@ class Camera:
     def HandleInputs(self, deltatime : float, window : Window):
         ...
         
-    def SetPosition(self, position : Vector.Vec3):
+    def SetPosition(self, position : Vec3):
         self._m_Position = position
         self._RecalculateViewMatrix()
     
@@ -88,7 +88,7 @@ class Camera:
 
 
 class PesrpectiveCamera(Camera):
-    def __init__(self, width, height, position: Vec3 = Vector.Vec3(), rotation: Quat.Quat = Quat.Quat(), FOVdeg: float = 45, nearPlane: float = 0.1, farPlane: float = 100):
+    def __init__(self, width, height, position: Vec3 = Vec3(), rotation: Quat.Quat = Quat.Quat(), FOVdeg: float = 45, nearPlane: float = 0.1, farPlane: float = 100):
         super().__init__(width, height, position, rotation, FOVdeg, nearPlane, farPlane)
 
 

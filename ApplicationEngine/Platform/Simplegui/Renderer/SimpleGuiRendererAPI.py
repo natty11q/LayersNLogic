@@ -10,216 +10,434 @@ except ImportError :
 
 from ApplicationEngine.Logger.LNLEngineLogger import *
 
+from ApplicationEngine.src.Graphics.Renderer.ShaderProgram import Shader
+from ApplicationEngine.src.Graphics.Renderer.Texture import Texture
+
+
+from collections import OrderedDict
+import glfw
+from OpenGL.GL import * # type: ignore
+
+import pygame
+
+
+
+
+_dummy = simplegui.load_image("")
+DummyImage  = type(_dummy)
+class SimpleGUIImageWrapper(DummyImage):# type: ignore
+    def __init__(self, surface):
+        self._pygame_surface = surface
+        self.center = (surface.get_width() / 2, surface.get_height() / 2)
+        self.size = (surface.get_width(), surface.get_height())
+        self._pygamesurfaces_cached = OrderedDict()
+        self._pygamesurfaces_cached_clear = lambda: self._pygamesurfaces_cached.clear()
+        self._pygamesurfaces_cache_max_size = getattr(_dummy, "_pygamesurfaces_cache_default_max_size", 50)
+        self._draw_count = 0
+
+
+
 
 class SimpleGUiRendererAPI(RendererAPI):
     
-    class RenderSettings:
-        LL_SG_TRANSPARENCY_ENABLLED     : int = 1
-        LL_SG_WIREFRAME_MODE_ENABLED    : int = 2
     
     def __init__(self) -> None:
-        self.__DrawQueue : list [dict] = []
+        self._DrawQueue : list [dict] = []
         self.__RenderSettings : int = 0
-        
-        self.wfMode = self.__RenderSettings & SimpleGUiRendererAPI.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED
+
+        self.wrappedImage = None
+        self.fbo : int = -1
+        self.fbo_texture = None
+
+        self.init_gl()
+
+        self.TRIANGLE_VERTEX_SHADER_SRC = """
+        #version 330 core
+        layout(location = 0) in vec3 aPos;
+        uniform vec3 uColour;
+
+        out vec3 vertexColor;
+        void main() {
+            gl_Position = vec4(aPos, 1.0);
+            vertexColor = uColour;
+        }
+        """
+
+        self.TRIANGLE_FRAGMENT_SHADER_SRC = """
+        #version 330 core
+        in vec3 vertexColor;
+        out vec4 FragColor;
+        void main() {
+            FragColor = vec4(vertexColor, 1.0);
+        }
+        """
+
+        self.triangleShader : Shader | None = None
     
-    def SetClearColour(self, col : Vector.Vec4) -> None:
-        ...
+    
+    # def mouse_callback(self, window, button, action, mods):
+    #     ...
+
+
+    def init_gl(self):
+        # Initialize GLFW
+        if not glfw.init():
+            return
+        
+        # Set GLFW window hints (optional)
+        glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
+        glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
+        glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
+        glfw.window_hint(glfw.VISIBLE, glfw.FALSE)
+
+        # Create a windowed mode window and its OpenGL context
+        window = glfw.create_window(900, 600, "OpenGL with GLFW", None, None)
+        if not window:
+            glfw.terminate()
+            return
+
+        # Make the window's context current
+        glfw.make_context_current(window)
+
+        # self.TriangleVao = -1
+        # self.TriangleVbo = -1
+        
+        
+        glViewport(0, 0, 900, 600) # default values
+        
+        
+        
+        self.fbo = glGenFramebuffers(1)
+        self.fbo_texture = glGenTextures(1)
+        
+        
+        self.SetupFbo(900, 600)
+
+        
+
+        # ----------------------------
+
+        
+        
+
+    def CustomRendererCommand(self, command, args : list):
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.CustomCommand,
+                "func" : command,
+                "args" : args
+            }
+        )
+
+    
+    def SetClearColour(self, col : Vec4) -> None:
+        glClearColor(*col.get_p())
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.SetClearColour,
+                "colour" : col
+            }
+        )
     
     
     def Clear(self, value : int = 0) -> None:
-        self.__DrawQueue.clear()
+        self._DrawQueue.clear()
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.Clear,
+            }
+        )
+
     
     def Enable(self, value : int = 0) -> None:
         self.__RenderSettings |= value
+
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.Enable,
+                "value" : value
+            }
+        )
         
-        
-        
-        self.wfMode = self.__RenderSettings & SimpleGUiRendererAPI.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED
-    
     def Disable(self, value : int = 0) -> None:
-        pass
-    
+        self.__RenderSettings ^= value
+
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.Disable,
+                "value" : value
+            }
+        )    
     
     
     ## TODO : change vertex argument to be a proper Vertex array instead. [ X ]
-    ## TODO : finish the VA class [X] alongside SHADER CLASSES [ ]
-    ## TODO : Implement Shader!!
-    ## TODO : Add implementation that follows the buffer layout and draws triangles using the vertices
-    def DrawIndexed(self,VertexArray : VertexArray) -> None:
-        VBuffers : list[VertexBuffer] = VertexArray.GetVetexBuffers()
-        IBuffer  : IndexBuffer = VertexArray.GetIndexBuffer()
+    ## TODO : finish the VA class [X] alongside SHADER CLASSES [X]
+    ## TODO : Implement Shader [X]!!
+    ## TODO : Add implementation that follows the buffer layout and draws triangles using the vertices [x]
+    ## COMPLETE !!
+
+    def DrawIndexed(self, shader: Shader, VertexArray : VertexArray) -> None:
         
-        
-        RawVertices : list[Vector.Vec4] = []
-        Colours : list[Vector.Vec4] = []
-        for Vbuffer in VBuffers:
-            
-            vertexComponent : list[Vector.Vec4]= []
-            
-            bufferVertices = Vbuffer.GetVertices()
-            layout = Vbuffer.GetLayout()
-            
-            # LNL_LogEngineTrace("buffer verts" , bufferVertices)
-            # LNL_LogEngineTrace("buffer verts size" , Vbuffer.GetSize())
-            # LNL_LogEngineTrace("buffer indices" , IBuffer.GetIndices())
-
-
-            elements : list [BufferElement] = layout.getElements()
-            stride  : int = layout.GetStride()
-            
-            for element in elements:
-                if element.Name.lower() in ["a_position", "a_pos"]:
-
-                    vIndex : int = element.Offset
-                    vertexComponent.clear()
-                    while (vIndex < Vbuffer.GetSize()):
-                        vert = []
-                        for j in range(element.GetComponentCount()):
-                            vert.append(bufferVertices[vIndex + j])
-                            
-                        if element.GetComponentCount() <= 4: # if it isnt <= 4 then something has gone wrong
-                            vertexComponent.append(Vector.Vec4(*vert))
-
-                        # LNL_LogEngineTrace("vert" , vert)
-                        # LNL_LogEngineTrace("vIndex" , vIndex)
-                        # LNL_LogEngineTrace("stride" , stride)
-                        # LNL_LogEngineTrace("vSize" , Vbuffer.GetSize())
-                        # LNL_LogEngineTrace("vComponent" , vertexComponent)
-                        
-                        vIndex += (stride // SizeOfShaderDataType(ShaderDataType.Float))
-                
-                elif element.Name.lower() in ["a_colour", "a_col", "a_color"]:
-                    CIndex : int = element.Offset // SizeOfShaderDataType(ShaderDataType.Float)
-                    while (CIndex < Vbuffer.GetSize()):
-                        col = []
-                        for j in range(element.GetComponentCount()):
-                            col.append(int(bufferVertices[CIndex + j] * 255))      
-                        if element.GetComponentCount() <= 4: # if it isnt <= 4 then something has gone wrong
-                            Colours.append( Vector.Vec4(*col) )
-                        CIndex += (stride // SizeOfShaderDataType(ShaderDataType.Float))
-                    
-                    
-                    # LNL_LogEngineInfo("cols" , Colours)
-                    # LNL_LogEngineInfo("colslen" , len(Colours) )
-
-            RawVertices += vertexComponent
-            # LNL_LogEngineInfo("rawVerts Len : " , len(RawVertices) )
-
-        
-        self.__DrawQueue.append(
+        self._DrawQueue.append(
             {
                 "type" : CommandType.DrawIndexed,
-                "vertices" : RawVertices,
-                "indexBuffer" : IBuffer,
-                "colours" : Colours
+                "vertexArray" : VertexArray,
+                "shader" : shader
             }
         )
 
     # TODO : Change this to return int
-    def GetUniformLocation(self, ID : int, UniformName : str) -> None:
-        pass
+    def GetUniformLocation(self, ID : int, UniformName : str) -> int:
+        return glGetUniformLocation(ID, UniformName)
     
 
     def SetUniformInt(self, UniformLocation : int, value : int) -> None:
-        pass
+        glUniform1i(UniformLocation, value)
+
+    def SetUniformFloat(self, UniformLocation : int, value : float) -> None:
+        glUniform1f(UniformLocation, value)
     
     
-    def SetUniformVec2(self, UniformLocation : int, value : Vector.Vec2) -> None:
-        pass
+    def SetUniformVec2(self, UniformLocation : int, value : Vec2) -> None:
+        glUniform2f(UniformLocation, value[0], value[1])
     
     
-    def SetUniformVec3(self, UniformLocation : int, value : Vector.Vec3) -> None:
-        pass
+    def SetUniformVec3(self, UniformLocation : int, value : Vec3) -> None:
+        glUniform3f(UniformLocation, value[0], value[1], value[2])
     
     
-    def SetUniformVec4(self, UniformLocation : int, value : Vector.Vec4) -> None:
-        pass
+    def SetUniformVec4(self, UniformLocation : int, value : Vec4) -> None:
+        glUniform4f(UniformLocation, value[0], value[1], value[2], value[3])
+
     
     
-    def SetUniformMat2(self, UniformLocation : int, value : Matrix.Mat2) -> None:
-        pass
+    def SetUniformMat2(self, UniformLocation : int, value : Mat2) -> None:
+        glUniformMatrix2fv(UniformLocation, 1, GL_FALSE, value.nparr())
     
     
-    def SetUniformMat3(self, UniformLocation : int, value : Matrix.Mat3) -> None:
-        pass
+    def SetUniformMat3(self, UniformLocation : int, value : Mat3) -> None:
+        glUniformMatrix3fv(UniformLocation, 1, GL_FALSE, value.nparr())
     
 
-    def SetUniformMat4(self, UniformLocation : int, value : Matrix.Mat4) -> None:
-        pass
+    def SetUniformMat4(self, UniformLocation : int, value : Mat4) -> None:
+        glUniformMatrix4fv(UniformLocation, 1, GL_FALSE, value.nparr())
     
+
+    def BindTexture(self, tex_id : int):
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.BindTexture,
+                "tex_id" : tex_id
+            }
+        )
+
     
     ## TODO : Decide if this shiould be extended to an SGUICOmmand Class instead of using raw Dicts | Done [ ]
     ## TODO : Command Type cna use an enum instead of the strings for faster lookup
     ## (can use an int and the two instead of an o(n) string comparison every frame) |  Done : [ x ]
 
-    def DrawTriangle(self, VertexPositions : list [Vector.Vec2], colour : Vector.Vec4) -> None:
-        self.__DrawQueue.append(
+    def DrawTriangle(self, VertexPositions : list [Vec2], colour : Vec4) -> None:
+        self._DrawQueue.append(
             {
                 "type" : CommandType.DrawTriangle,
                 "vertices" : VertexPositions,
                 "indices" : [0 , 1 , 2],
-                "colour" : colour.toVec3().get_p()
+                "colour" : colour.toVec3()
             }
         )
     
-    def DrawCircle(self, Position : Vector.Vec2, colour : Vector.Vec4) -> None: ...
-            
+    def DrawCircle(self, Position : Vec2, colour : Vec4) -> None: ...
+
+
+
+
+    def SetupFbo(self, width, height):
+        # glDeleteTextures(1, [self.fbo_texture])
+        glViewport(0, 0, width, height)
+
+        # self.fbo = glGenFramebuffers(1)
+        glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
+        # self.fbo_texture = glGenTextures(1)
+
+        # recalc the fbo texture in case of window resize
+        glBindTexture(GL_TEXTURE_2D, self.fbo_texture)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+                    0, GL_RGB, GL_UNSIGNED_BYTE, None)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.fbo_texture, 0)
+
+        if glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE:
+            print("Error: Framebuffer is not complete!")
+        glBindFramebuffer(GL_FRAMEBUFFER, 0)
+    
+
+
+    def updateWrappedImage(self, width, height):
+        glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
+        data = glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE)
+        glBindFramebuffer(GL_FRAMEBUFFER, 0)
+
+        image_array = np.frombuffer(data, dtype=np.uint8).reshape(height, width, 3)# type: ignore
+        # OpenGL's origin is bottom-left, so flip vertically.
+
+        image_array = np.flipud(image_array)
+        
+        # Create a pygame surface; note pygame expects (width, height, channels)
+        surf = pygame.surfarray.make_surface(np.transpose(image_array, (1, 0, 2)))
+        self.wrappedImage = SimpleGUIImageWrapper(surf)
+
+
+
+
+
     def Draw(self, *args):
+        # glViewport(0,0,900,600)
         canvas : simplegui.Canvas = args[0]
         LLEngineTime.Update()
+        # self.pygame_event_callback()
         
+        self.SetupFbo(canvas._width, canvas._height)
         for layer in RendererAPI._LayerStack:
-            layer.OnUpdate()
-        # input()
-        
-        for element in self.__DrawQueue:
+            layer.OnUpdate(LLEngineTime.DeltaTime())
+ 
+
+
+
+
+
+
+        for element in self._DrawQueue:
+            eType = element["type"]
             
-            if element["type"] == CommandType.DrawTriangle:
-                vertices : list [Vector.Vec2 | Vector.Vec3 | Vector.Vec4] = element["vertices"]
-                indices : list [int]= element["indices"]
-                color = element["colour"]
-                indexed_vertices = [(vertices[i].get_p()[0], vertices[i].get_p()[1]) for i in indices]
+            if eType == CommandType.Enable:
+                glEnable(element["value"])
+                self.__RenderSettings |= element["value"]
+            
+            elif eType == CommandType.Disable:
+                glDisable(element["value"])
+                self.__RenderSettings ^= element["value"]
+            
+            elif eType == CommandType.CustomCommand:
+                glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
+
+                element["func"](*element["args"])
                 
-                if self.wfMode:
-                    canvas.draw_polygon(indexed_vertices, 1, rgb_to_hex(color),None)
-                else:
-                    canvas.draw_polygon(indexed_vertices, 1, rgb_to_hex(color),rgb_to_hex(color))
+                glBindFramebuffer(GL_FRAMEBUFFER, 0)
+            
+            elif eType == CommandType.Clear:
+                glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) #type: ignore
+                glBindFramebuffer(GL_FRAMEBUFFER, 0)
+            
+            elif eType == CommandType.SetClearColour:
+                col : Vec4 = element["colour"]
+
+            elif eType == CommandType.BindTexture:
+                tex_id = element["tex_id"]
+                glActiveTexture(GL_TEXTURE0)
+                glBindTexture(GL_TEXTURE_2D, tex_id)
+            
+            elif eType == CommandType.DrawTriangle:
+                vertices : list [Vec2 | Vec3 | Vec4] = element["vertices"]
+                indices : list [int]= element["indices"]
+                tricol : Vec3 = element["colour"]
+
+                p_indexed_vertices : list[tuple[float, float, float]] = [(normalisePos(vertices[i].get_p(), canvas._width, canvas._height)) for i in indices]
+                
+                indexed_vertices = np.array(p_indexed_vertices, dtype=np.float32).flatten()
+                
+                
+                vao = glGenVertexArrays(1)
+                glBindVertexArray(vao)
         
 
+                vbo = glGenBuffers(1)
+                glBindBuffer(GL_ARRAY_BUFFER, vbo)
 
-            if element["type"] == CommandType.DrawIndexed:
-                vertices : list [Vector.Vec2 | Vector.Vec3 | Vector.Vec4] = element["vertices"]
-                # LNL_LogEngineTrace("verts (drawing)" , vertices)
-                IBuffer : IndexBuffer = element["indexBuffer"]
-                colours : list[Vector.Vec4] = element["colours"]
+                # Upload the vertex data to the GPU
+                glBufferData(GL_ARRAY_BUFFER, indexed_vertices.nbytes, indexed_vertices, GL_STATIC_DRAW)
+
+                # Enable the vertex attribute for position (location = 0 in shader)
+                glEnableVertexAttribArray(0)
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * 4, ctypes.c_void_p(0))
+
+                if not self.triangleShader:
+                    self.triangleShader = Shader(self.TRIANGLE_VERTEX_SHADER_SRC,self.TRIANGLE_FRAGMENT_SHADER_SRC)
+
+
+
+
+                glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
                 
-                # indexed_vertices : list [tuple [float , float]] = []
-                indexed_cols  : list [Vector.Vec4] = []
-                
-                vertIndex_index = 0
-                indices = IBuffer.GetIndices()
-                # LNL_LogEngineTrace("inds (drawing)" , indices)
-                while vertIndex_index < IBuffer.GetSize():
-                    triangle : list [tuple [float , float]] = []
-                    # for vertex in vertices:
-                    #     LNL_LogEngineTrace(vertex.get_p())
-                    #     LNL_LogEngineTrace(denormalisePos((vertex[0], vertex[1]), canvas._width, canvas._height))
-                    # input()
+                # Use a simple shader program (make sure your shader is active)
+                self.triangleShader.Bind()  # Ensure `shader_program` is set before calling this function
 
-                    for tri_idx in range(3):
-                        vert = vertices[indices[vertIndex_index]].get_p()
-                        triangle.append(denormalisePos((vert[0], vert[1]), canvas._width, canvas._height))
-                        vertIndex_index += 1
+                # Set the color uniform (assuming the shader has a 'uColour' uniform)
+                self.triangleShader.SetUniformVec3("uColour", tricol.divide(255))
+                # if color_location != -1:
+                #     glUniform3f(color_location, *color)
+                # else:
+                #     LNL_LogEngineWarning("Uniform 'uColour' not found in the shader!")
+
+                # Draw the triangle
+                glDrawArrays(GL_TRIANGLES, 0, 3)
+
+                # Cleanup
+                glBindBuffer(GL_ARRAY_BUFFER, 0)
+                glBindVertexArray(0)
+                glDeleteBuffers(1, [vbo])
+                glDeleteVertexArrays(1, [vao])
+
+                glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
 
-                    # LNL_LogEngineInfo("vertIndex : ", vertIndex_index)
-                    if self.wfMode:
-                        canvas.draw_polygon(triangle, 1, rgb_to_hex(colours[vertIndex_index - 3].toVec3().get_p()),None)
-                    else: 
-                        canvas.draw_polygon(triangle, 1, rgb_to_hex(colours[vertIndex_index - 3].toVec3().get_p()),rgb_to_hex(colours[vertIndex_index - 3].toVec3().get_p()))
+            elif element["type"] == CommandType.DrawIndexed:
+                vertexArray : VertexArray = element["vertexArray"]
+                shader : Shader = element["shader"]
+
+                glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
+
+                shader.Bind()
+                vertexArray.Bind()
+                glDrawElements(GL_TRIANGLES, vertexArray.GetIndexBuffer().GetCount(), GL_UNSIGNED_INT , None)
+
+                glBindFramebuffer(GL_FRAMEBUFFER, 0)
+
+        self.updateWrappedImage(canvas._width, canvas._height)
+        if self.wrappedImage:
+            canvas.draw_image(self.wrappedImage,
+                            self.wrappedImage.center,
+                            self.wrappedImage.size,
+                            (canvas._width / 2, canvas._height / 2),
+                            self.wrappedImage.size)
+            
+        else:
+            canvas.draw_text("Rendering...", (canvas._width // 2 - 50, canvas._height // 2), 20, "White")
 
 
 # from normalised coord system to screenspace
 def denormalisePos(vertex : tuple[float, float], w , h) -> tuple[float, float]:
+    # LNL_LogEngineInfo(vertex)
     return ( ((vertex[0] + 1) / 2) * w,  h - ((vertex[1] + 1) / 2) * h )
+
+def normalisePos(position : tuple[float, ...], screen_width, screen_height) -> tuple[float, float, float]:
+    """
+    Converts a screen-space position (pixels) into normalized OpenGL coordinates (-1 to 1)
+    and flips the Y-axis.
+
+    Parameters:
+    - position: Tuple (x, y) in pixel coordinates
+    - screen_width: Screen width in pixels
+    - screen_height: Screen height in pixels
+
+    Returns:
+    - Tuple (nx, ny) in normalized device coordinates (-1 to 1)
+    """
+    x, y = position
+    
+    # Convert to normalized coordinates (-1 to 1)
+    nx = (x / screen_width) * 2 - 1  # Normalize X
+    ny = 1 - (y / screen_height) * 2  # Normalize Y (flips it)
+
+    return (nx, ny , 0.0)

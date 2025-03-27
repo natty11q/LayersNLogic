@@ -2,8 +2,10 @@
 from ApplicationEngine.include.Maths.Base.MathBase import *
 
 
-import ApplicationEngine.include.Maths.Vector.Vector as Vector
+# import ApplicationEngine.include.Maths.Vector.Vector as Vector
+from ApplicationEngine.include.Maths.Vector.Vector import *
 import ApplicationEngine.include.Maths.Matrix.Matrix as Matrix
+from ApplicationEngine.include.Maths.Matrix.Matrix import Mat2, Mat3, Mat4
 import ApplicationEngine.include.Maths.Quaternion.Quaternion as Quat
 
 from typing import Union
@@ -59,3 +61,37 @@ def inverse(matrix : Matrix.Matrix) -> Matrix.Matrix:
         return type(matrix)()
     else:
         return Matrix.Matrix(matrix.rows, matrix.cols, sum(identity, []))
+    
+
+
+class LNLMAths:
+    @staticmethod
+    def rotate_vec2(point : Vec2, origin : Vec2, angleDeg : float) -> Vec2:
+        x : float = point.x - origin.x 
+        y : float = point.y - origin.y
+
+
+        cos : float = math.cos(math.radians(angleDeg))        
+        sin : float = math.sin(math.radians(angleDeg))        
+
+
+        xp = (x * cos) - (y * sin)
+        yp = (x * sin) + (y * cos)
+        
+
+        xp += origin.x
+        yp += origin.y
+
+        return Vec2(xp, yp)
+    
+
+
+    @staticmethod
+    def compare_f(x : float, y : float, ebsilon : float = sys.float_info.min):
+        """compare two floats to a certain degree (ebsilon), used for certain physics calcs to reduce floating point err like when using floating point"""
+        return abs(x - y) <= (ebsilon * max(1.0, max(abs(x), abs(y))))
+    
+
+    def compare_vec2(vecA : Vec2, vecB : Vec2, ebsilon : float = sys.float_info.min):
+        """compare two vec2s to a certain degree (ebsilon), used for certain physics calcs to reduce floating point err"""
+        return LNLMAths.compare_f(vecA.x, vecB.x, ebsilon) and LNLMAths.compare_f(vecA.y, vecB.y, ebsilon)

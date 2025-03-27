@@ -5,6 +5,17 @@ from ApplicationEngine.src.LayerSystem.LayerSystem import *
 
 from ApplicationEngine.src.Graphics.Renderer.VertexArray import *
 
+from ApplicationEngine.src.Graphics.Renderer.ShaderProgram import *
+from ApplicationEngine.src.Graphics.Renderer.Texture import *
+
+
+from OpenGL.GL import * # type: ignore
+
+class RenderSettings:
+        #TODO : change values to use opengl enum values so that it works with glEnable
+        LL_SG_TRANSPARENCY_ENABLLED     : int = 1
+        LL_SG_WIREFRAME_MODE_ENABLED    : int = 2
+
 class CommandType(Enum):
     SetClearColour  = auto()
     Clear           = auto()
@@ -21,6 +32,8 @@ class CommandType(Enum):
     SetUniformMat4  = auto()
     DrawTriangle    = auto()
     DrawCircle      = auto()
+    BindTexture     = auto()
+    CustomCommand   = auto()
 
 class RendererAPI(ABC): ## abstract class only
     
@@ -57,11 +70,14 @@ class RendererAPI(ABC): ## abstract class only
     
 
     @abstractmethod
-    def SetClearColour(self, col : Vector.Vec4 ) -> None: ...
+    def SetClearColour(self, col : Vec4 ) -> None: ...
 
     @abstractmethod
     def Clear(self, value : int = 0) -> None: ...
     
+    @abstractmethod
+    def CustomRendererCommand(self, command, args : list) -> None: ...
+   
     @abstractmethod
     def Enable(self, value : int = 0) -> None: ...
     
@@ -69,22 +85,25 @@ class RendererAPI(ABC): ## abstract class only
     def Disable(self, value : int = 0) -> None: ...
     
     @abstractmethod
-    def DrawIndexed(self, VertexArray : VertexArray) -> None: ...
+    def DrawIndexed(self, shader: Shader, VertexArray : VertexArray) -> None: ...
     
     @abstractmethod
-    def GetUniformLocation(self, ID : int, UniformName : str) -> None: ...
+    def GetUniformLocation(self, ID : int, UniformName : str) -> int: ...
     
     @abstractmethod
     def SetUniformInt(self, UniformLocation : int, value : int) -> None: ...
+
+    @abstractmethod
+    def SetUniformFloat(self, UniformLocation : int, value : float) -> None: ...
     
     @abstractmethod
-    def SetUniformVec2(self, UniformLocation : int, value : Vector.Vec2) -> None: ...
+    def SetUniformVec2(self, UniformLocation : int, value : Vec2) -> None: ...
     
     @abstractmethod
-    def SetUniformVec3(self, UniformLocation : int, value : Vector.Vec3) -> None: ...
+    def SetUniformVec3(self, UniformLocation : int, value : Vec3) -> None: ...
     
     @abstractmethod
-    def SetUniformVec4(self, UniformLocation : int, value : Vector.Vec4) -> None: ...
+    def SetUniformVec4(self, UniformLocation : int, value : Vec4) -> None: ...
     
     @abstractmethod
     def SetUniformMat2(self, UniformLocation : int, value : Matrix.Mat2) -> None: ...
@@ -96,10 +115,13 @@ class RendererAPI(ABC): ## abstract class only
     def SetUniformMat4(self, UniformLocation : int, value : Matrix.Mat4) -> None: ...
     
     @abstractmethod
-    def DrawTriangle(self, VertexPositions : list [Vector.Vec2], colour : Vector.Vec4): ...
+    def DrawTriangle(self, VertexPositions : list [Vec2], colour : Vec4): ...
     
     @abstractmethod
-    def DrawCircle(self, Position : Vector.Vec2, colour : Vector.Vec4): ...
+    def DrawCircle(self, Position : Vec2, colour : Vec4): ...
+
+    @abstractmethod
+    def BindTexture(self, tex_id : int): ...
     
     @abstractmethod
     def Draw(self, *args): ...

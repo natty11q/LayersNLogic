@@ -4,6 +4,12 @@ from ApplicationEngine.src.Graphics.Renderer.Renderer import Renderer
 
 from ApplicationEngine.src.Object.ObjectBase import *
 from ApplicationEngine.src.Object.GameObjectAttributes import *
+from ApplicationEngine.src.Event.EventHandler import *
+
+
+import inspect
+from ApplicationEngine.src.Physics.LNL_Physics import *
+
 
 SQUARE_VERTICES : list [float] = [
     ## position
@@ -21,16 +27,42 @@ SQUARE_INDICES : list [int] = [
 
 
 
-
 class GameObject(GameObjectBase):
     
-    def __init__(self):
-        self._World_Position : Vector.Vec3 = Vector.Vec3()
+    def __init__(self, *eat_args, **eat_kwargs):
+        self._World_Position : Vec3 = Vec3()
+
         self.__Attributes : list [ObjectAttribute.__class__] = []
         self.__Active : bool = True ## toggles wether an object is active in the editor and if physics is enabled for that object.
-    
+        
+        self.id = LNL_IDGenerator.get_id()
+        AddEventListener(self._OnEvent)
+
+    # def __init_subclass__(cls,*args, **kwargs):
+    #     """removes the need to super init every game object in the game code"""
+        
+    #     super().__init_subclass__(*args,**kwargs)
+        
+    #     # Store the original __init__ of the subclass
+    #     original_init = cls.__init__
+
+    #     def new_init(self, *args, **kwargs):
+    #         # Call Base class __init__ first
+    #         super(cls, self).__init__(*args, **kwargs)
+
+    #         # Call the subclass's original __init__
+    #         original_init(self, *args, **kwargs)
+
+    #     cls.__init__ = new_init  # Override the subclass's __init__
+
+ 
     def SetAttribure(self, attrib : ObjectAttribute.__class__):
         self.__Attributes.append(attrib)
+        attrib.Attrib_OnAttach(self)
+
+    def RemoveAttribure(self, attrib : ObjectAttribute.__class__):
+        self.__Attributes.remove(attrib)
+        attrib.Attrib_OnDetach(self)
         
         
     def Activate(self): self.__Active = True
@@ -38,52 +70,98 @@ class GameObject(GameObjectBase):
     def IsActive(self) -> bool: return self.__Active
     
     def Draw(self): ... 
+
+
+    def _OnPhysicsUpdate(self, tickTime: float): ...
+
+
+    def _OnUpdate(self, deltatime : float): ...
+
+    def _OnEvent(self, event : Event): ...
     
     
-    def _OnUpdate(self): ...
-    
-    
-    def Update(self):
+    def Update(self, deltatime : float):
         for attribute in self.__Attributes:
-            attribute.AttirbMethod(self)
-        self._OnUpdate()
+            attribute.Attrib_OnUpdate(self)
+        self._OnUpdate(deltatime)
+    
+    def PhysicsUpdate(self, tickTime : float):
+        for attribute in self.__Attributes:
+            attribute.Attrib_OnPhysicsUpdate(self)
+        self._OnPhysicsUpdate(tickTime)
+
+
+class GameObject2D(GameObject):
+    def __init__(self, position : Vec2 = Vec2(), mass : float = 100.0):
+        super().__init__()
+        self.body : RigidBody2D = RigidBody2D()
+        
+        self.body.setTransform(position)
+        self.body.setMass(mass)
 
 
 
 class Triangle(GameObject):
-    def __init__(self, v1 : Vector.Vec2 ,  v2 : Vector.Vec2 ,  v3 : Vector.Vec2 , colour : Vector.Vec4):
+    def __init__(self, v1 : Vec2 ,  v2 : Vec2 ,  v3 : Vec2 , colour : Vec4):
         super().__init__()
         self._positions = [v1,v2,v3]
         self._colour = colour
+    
+    
         
     def Draw(self):
         Renderer.DrawTriangle(self._positions, self._colour)
 
 
 class Quad(GameObject):
-    def __init__(self,topLeft : Vector.Vec2, width : float, height : float , colour : Vector.Vec4):
+    def __init__(self,topLeft : Vec2, width : float, height : float , colour : Vec4):
         super().__init__()
         self._topLeft = topLeft
         self._width  = width
         self._height = height
         self._colour = colour
     
+    # def __init_subclass__(cls, *args, **kwargs):
+    #     # super().__init_subclass__(*args, **kwargs)
+        
+    #     # # Store the original __init__ of the subclass
+    #     # original_init = cls.__init__
+
+    #     # # Get the parameters of the subclass’s __init__
+    #     # subclass_signature = inspect.signature(original_init)
+    #     # base_signature = inspect.signature(Quad.__init__)
+
+    #     # def new_init(self, *args, **kwargs):
+    #     #     # Extract arguments meant for Base and Subclass separately
+    #     #     base_params = {k: kwargs.pop(k) for k in base_signature.parameters if k in kwargs}
+    #     #     subclass_params = {k: kwargs[k] for k in subclass_signature.parameters if k in kwargs}
+
+    #     #     # Call Base class __init__
+    #     #     super(cls, self).__init__(*args, **base_params)
+
+    #     #     # Call the subclass's original __init__
+    #     #     original_init(self, * args, **subclass_params)
+
+    #     # cls.__init__ = new_init  # Override the subclass's __init__
+
+    
     def Draw(self):
         Renderer.DrawTriangle(
-            [self._topLeft , Vector.Vec2(self._topLeft.x, self._topLeft.y + self._height), Vector.Vec2(self._topLeft.x + self._width, self._topLeft.y + self._height)]
+            [self._topLeft , Vec2(self._topLeft.x, self._topLeft.y + self._height), Vec2(self._topLeft.x + self._width, self._topLeft.y + self._height)]
                               ,self._colour)
         Renderer.DrawTriangle(
-            [self._topLeft , Vector.Vec2(self._topLeft.x + self._width, self._topLeft.y + self._height), Vector.Vec2(self._topLeft.x + self._width, self._topLeft.y)]
+            [self._topLeft , Vec2(self._topLeft.x + self._width, self._topLeft.y + self._height), Vec2(self._topLeft.x + self._width, self._topLeft.y)]
                               ,self._colour)
 
 
 class CircleObject(GameObject):
-    def __init__(self, position : Vector.Vec3 = Vector.Vec3()):
-        self._Position : Vector.Vec3 = position
+    def __init__(self, position : Vec3 = Vec3()):
+        super().__init__()
+        self._Position : Vec3 = position
 
     def Draw(self):
         pass
     
-    def Update(self):
-        return super().Update()
+    def Update(self, deltatime: float):
+        return super().Update(deltatime)
     
