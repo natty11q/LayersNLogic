@@ -323,9 +323,11 @@ class TestLayer(LNLEngine.Layer):
         # self.Cube2 = Cube()
 
 
-        player  = Player(Vec2(0,0), "player1")
+        player  = Player(Vec2(0,0), 70,  "player1")
         player.bound = True
-        player2 = Player(Vec2(100,200), "player2")
+
+        player2 = Player(Vec2(100,200), 7000, "player2")
+        player3 = Player(Vec2(300,200), 7, "player2")
 
 
         self.portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
@@ -344,8 +346,27 @@ class TestLayer(LNLEngine.Layer):
         # mainScene.AddObject(self.portal1)
         # mainScene.AddObject(self.portal2)
 
+        groundBody : LNLEngine.RigidBody2D = LNLEngine.RigidBody2D()
+        groundBody.setTransform(Vec2( self.gameWindow.GetWidth()/2, self.gameWindow.GetHeight() - 200))
+        
+        # groundBody.setTransform(Vec2(0,500) )
+        # groundBody.setMass(sys.float_info.max)
+        groundBody.setMass(0.0)
+        
+        groundCollieder : LNLEngine.Collider2D = LNLEngine.Box2D()
+        groundCollieder.setSize(Vec2(self.gameWindow.GetWidth() * 10, 20) )
+        groundCollieder.setRigidBody(groundBody )
+        
+        groundBody.setCollider(groundCollieder)
+
+        # LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(groundBody, True)
+        LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(groundBody, False)
+
         mainScene.AddObject(player)
+        
         mainScene.AddObject(player2)
+        mainScene.AddObject(player3)
+
         # mainScene.AddObject(cube)
 
         # mainScene.AddObject(self.TestSquare)

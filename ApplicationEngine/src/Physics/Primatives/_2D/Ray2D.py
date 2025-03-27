@@ -1,5 +1,5 @@
 from ApplicationEngine.include.Maths.Maths import *
-
+from ApplicationEngine.src.Physics.Primatives._2D.Collider2D import *
 
 class Ray2D:
     def __init__(self, origin : Vec2, direction : Vec2, maxlen = sys.float_info.max):

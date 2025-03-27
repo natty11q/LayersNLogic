@@ -1,4 +1,5 @@
 from ApplicationEngine.src.Physics.RigidBody.RigidBody2D import *
+from ApplicationEngine.src.Physics.Primatives._2D.Collider2D import Collider2D
 from ApplicationEngine.src.Physics.Primatives._2D.Line2D import Line2D
 from ApplicationEngine.src.Physics.Primatives._2D.Circle import Circle
 from ApplicationEngine.src.Physics.Primatives._2D.AABB import AABB
@@ -425,6 +426,24 @@ class IntersectionDetector2D:
         interval2 : Vec2 = IntersectionDetector2D.getInterval(b2, axis)
 
         return (interval2.x <= interval1.y) and (interval1.x <= interval2.y)
+    @overload
+    @staticmethod
+    def getoverlapOnAxis(b1 : AABB, b2 : AABB, axis : Vec2) -> tuple[Vec2, Vec2]:...
+    @overload
+    @staticmethod
+    def getoverlapOnAxis(b1 : Box2D, b2 : AABB, axis : Vec2) -> tuple[Vec2, Vec2]:...
+    @overload
+    @staticmethod
+    def getoverlapOnAxis(b1 : AABB, b2 : Box2D, axis : Vec2) -> tuple[Vec2, Vec2]:...
+    @overload
+    @staticmethod
+    def getoverlapOnAxis(b1 : Box2D, b2 : Box2D, axis : Vec2) -> tuple[Vec2, Vec2]:...
+    @staticmethod
+    def getoverlapOnAxis(b1 : Union[AABB,Box2D], b2 : Union[AABB,Box2D], axis : Vec2) -> tuple[Vec2, Vec2]:
+        interval1 : Vec2 = IntersectionDetector2D.getInterval(b1, axis)
+        interval2 : Vec2 = IntersectionDetector2D.getInterval(b2, axis)
+
+        return  interval1, interval2
 
     @staticmethod
     def AABBAndAABB(box1 : AABB, box2 : AABB) -> bool:

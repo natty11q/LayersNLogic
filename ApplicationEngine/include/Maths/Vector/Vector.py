@@ -448,7 +448,8 @@ class Vec2(_Vector):
         super().__init__(x, y)
         self._OnUpdate()
     
-    
+    def perpendicular(self) -> Vec2:
+        return Vec2(self.y, - self.x).normalize()
         
     def _OnUpdate(self) -> None:
         self.x : float = self._m_vec[0]

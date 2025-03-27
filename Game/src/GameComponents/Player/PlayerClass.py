@@ -115,8 +115,8 @@ class PlayerState(Enum):
 
 
 class Player(LNLEngine.GameObject2D):
-    def __init__(self, position: Vec2 = Vec2(),  name : str = ""):
-        super().__init__(position, mass = 70.0)
+    def __init__(self, position: Vec2 = Vec2(), mass : float = 70 , name : str = ""):
+        super().__init__(position, mass = mass)
         # self.SetAttribure(PlayerInputHandlerAttribute)
 
         # self.SetAttribure(AffectedByGravityAttribute)
@@ -129,10 +129,13 @@ class Player(LNLEngine.GameObject2D):
         self.Colour = Vec4(0,0,255,255)
         # self._World_Position = Vec3(7
 
+        # self.width = random.randint(50,200)
+        # self.height = random.randint(120,300)
         self.width = 100
-        self.height = 100
+        self.height = 150
 
-        self.speed  = 100
+        self.speed  = Vec2(500, 0)
+        self.jump   = Vec2(0, 5000)
 
 
         self.InPortalColision = False
@@ -161,7 +164,8 @@ class Player(LNLEngine.GameObject2D):
                                                                      framerate=24,
                                                                      repeat= True)
 
-        tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Walk.jpeg", True)
+        # tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Walk.jpeg", True)
+        tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Run.png", True)
         r = 4
         c = 1
         s = 0.32
@@ -180,6 +184,15 @@ class Player(LNLEngine.GameObject2D):
                                                                      self.width,self.height, 
                                                                      framerate=24,
                                                                      repeat= True)
+        tex = LNLEngine.Texture("Game/Assets/Sprites/guyjump.png", True)
+        r = 5
+        c = 1
+        s = 0.9
+        guyJump = LNLEngine.SpriteAnimation.LoadFromSpritesheet(tex,
+                                                                     r, c,
+                                                                     self.width,self.height, 
+                                                                     framerate=24,
+                                                                     repeat= True)
 
 
 
@@ -189,6 +202,7 @@ class Player(LNLEngine.GameObject2D):
             "walking"   : guyWalk,
             "shooting"  : guyShoot,
             "whiping"   : guyWhip,
+            "jumping"   : guyJump,
         }
         self.currentBody : SpriteAnimation = self.animations["standing"]
 
@@ -200,12 +214,16 @@ class Player(LNLEngine.GameObject2D):
         for kcode in LNLEngine.KEY_MAP:
             self.keys[kcode] = 0
 
-        c1 : LNLEngine.Circle = LNLEngine.Circle()
-        c1.setRadius(self.width / 2)
+        c1 : LNLEngine.Collider2D = LNLEngine.Box2D()
+        # c1 : LNLEngine.Collider2D = LNLEngine.AABB()
+        # c1 : LNLEngine.Collider2D = LNLEngine.Circle()
+        c1.setSize( Vec2(self.width, self.height) )
+        # c1.setRadius( self.width / 2 )
         c1.setRigidBody(self.body)
         self.body.setCollider(c1)
         self.body.linearDamping = 0.8
-        LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(self.body, False)
+        LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(self.body, True)
+        # LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(self.body, False)
 
     def _OnUpdate(self, deltatime : float):
         # LNLEngine.LNL_LogEngineInfo(self._World_Position)
@@ -226,14 +244,14 @@ class Player(LNLEngine.GameObject2D):
                 inputVector += Vec2(-1, 0)
 
             if self.keys.get(LNLEngine.KEY_MAP['up']):
-                inputVector += Vec2(0, 1)
+                inputVector += Vec2(0, -1)
 
             if self.keys.get(LNLEngine.KEY_MAP['down']):
-                inputVector += Vec2(0, -1)
+                inputVector += Vec2(0, 1)
 
 
         inputVector = inputVector.normalize()
-        force += inputVector * self.speed * self.body.getMass()
+        force += Vec2(inputVector[0] * self.speed[0] * self.body.getMass(), inputVector[1] * self.jump[1] * self.body.getMass())
         self.body.addForce(force)
 
 
@@ -260,6 +278,9 @@ class Player(LNLEngine.GameObject2D):
         
         if self.playerState == PlayerState.shooting:
             self.currentBody : SpriteAnimation = self.animations["whiping"]
+
+        if self.playerState == PlayerState.jumping:
+            self.currentBody : SpriteAnimation = self.animations["jumping"]
 
 
         self.currentBody.Update(deltatime)

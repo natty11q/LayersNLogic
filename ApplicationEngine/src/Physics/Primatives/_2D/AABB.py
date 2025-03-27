@@ -3,7 +3,7 @@ from ApplicationEngine.src.Physics.RigidBody.RigidBody2D import *
 from ApplicationEngine.src.Physics.Primatives._2D.Collider2D import *
 
 class AABB(Collider2D):
-    def __init__(self, _min: Vec2, _max: Vec2):
+    def __init__(self, _min: Vec2 = Vec2(0,0), _max: Vec2 = Vec2(1,1)):
         """ Axis Aligned Bounding Box
 
         Args:
@@ -30,7 +30,7 @@ class AABB(Collider2D):
     
     def setSize(self, size : Vec2):
         self._size = Vec2(*size.get_p())
-        self._halfSize = self._size
+        self._halfSize = self._size / 2
 
     def getMax(self) -> Vec2:
         """get the top right corner of the AABB collider"""

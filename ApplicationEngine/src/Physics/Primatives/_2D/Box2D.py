@@ -2,8 +2,8 @@ from ApplicationEngine.src.Physics.RigidBody.RigidBody2D import *
 
 from ApplicationEngine.src.Physics.Primatives._2D.Collider2D import *
 
-class Box2D:
-    def __init__(self, _min: Vec2, _max: Vec2):
+class Box2D(Collider2D):
+    def __init__(self, _min: Vec2 = Vec2(0,0), _max: Vec2 = Vec2(1,1)):
         """ Axis Aligned Bounding Box
 
         Args:
@@ -37,7 +37,7 @@ class Box2D:
     
     def setSize(self, size : Vec2):
         self._size = Vec2(*size.get_p())
-        self._halfSize = self._size * 0.5
+        self._halfSize = self._size / 2
 
     def getVertices(self) -> list[Vec2]:
 
@@ -47,9 +47,9 @@ class Box2D:
 
         vertices : list [Vec2] = [
             Vec2(_min.x,_min.y),
-            Vec2(_min.x,_max.y),
             Vec2(_max.x,_min.y),
             Vec2(_max.x,_max.y),
+            Vec2(_min.x,_max.y),
         ]
 
 

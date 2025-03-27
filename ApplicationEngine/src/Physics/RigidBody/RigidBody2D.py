@@ -1,5 +1,5 @@
 from ApplicationEngine.include.Maths.Maths import *
-
+from enum import Enum, auto
 
 from typing import overload
 
@@ -8,6 +8,15 @@ from ApplicationEngine.src.Physics.Primatives._2D.Collider2D import *
 class Transform:
     def __init__(self):
         self.position : Vec2
+
+
+class ShapeType(Enum):
+    Circle  = auto()
+    AABB    = auto()
+    Box2D   = auto()
+    Polygon = auto()
+
+
 
 
 class RigidBody2D:
@@ -26,10 +35,16 @@ class RigidBody2D:
 
         self.forceAccum : Vec2 = Vec2()
 
-        self.ixedRotation : bool = False
+        self.fixedRotation : bool = False
 
         self.mass = 0.0
         self.inverseMass = 0.0
+
+        self.density = 0.0
+        self.area = 0.0
+
+
+        self.isStatic : bool = False
 
         self.collider : Collider2D | None = None
 
@@ -40,6 +55,7 @@ class RigidBody2D:
 
         acceleration : Vec2 = self.forceAccum * self.inverseMass
         self.linearVelocity.add(acceleration.multiply(dt))
+        self.linearVelocity *= (1 - self.linearDamping * dt)
 
         self.position.add(self.linearVelocity * dt)
 
@@ -93,12 +109,15 @@ class RigidBody2D:
         return self.mass
     
     def getinverseMass(self) -> float:
-        return self.mass
+        # return self.mass
+        return self.inverseMass
     
     def setMass(self, newMass): 
         self.mass = newMass
         if self.mass != 0.0:
             self.inverseMass = 1.0 / newMass
+        else:
+            self.inverseMass = 0
 
     
     def addForce(self, force : Vec2):

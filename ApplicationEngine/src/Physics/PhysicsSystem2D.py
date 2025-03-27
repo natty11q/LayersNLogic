@@ -5,8 +5,9 @@ from ApplicationEngine.src.Core.Utility.Temporal import *
 
 from ApplicationEngine.src.Physics.Forces.Gravity2D import *
 
-from ApplicationEngine.src.Physics.RigidBody.CollisionManifold import *
+from ApplicationEngine.src.Physics.RigidBody.CollisionManifold import CollisionManifold
 from ApplicationEngine.src.Physics.RigidBody.Collisions import *
+from ApplicationEngine.src.Physics.RigidBody.IntersectionDetector2D import *
 
 from ApplicationEngine.src.Physics.Primatives._2D.Collider2D import *
 
@@ -38,13 +39,14 @@ class PhysicsSystem2D:
         size = len(self.rigidBodies)
 
         for i in range(size):
-            for j in range(size):
-                if i == j: continue
+            for j in range(i+1, size):
+                # if i == j: continue
 
                 result : CollisionManifold = CollisionManifold()
 
                 r1 : RigidBody2D = self.rigidBodies[i]
                 r2 : RigidBody2D = self.rigidBodies[j]
+
                 c1 : Collider2D | None = r1.getCollider()
                 c2 : Collider2D | None = r2.getCollider()
 
@@ -54,6 +56,27 @@ class PhysicsSystem2D:
                 if result and result.isColliding():
                     self.bodies1.append(r1)
                     self.bodies2.append(r2)
+
+                    percent = 0.2   # usually between 0.2 and 0.8, fraction of penetration to correct per frame.
+                    slop = 0.01     # small penetration allowance (to avoid jittering).
+
+                    total_inverse_mass = r1.getinverseMass() + r2.getinverseMass()
+                    if total_inverse_mass == 0:
+                        return
+
+                    # Compute the amount of penetration to correct.
+                    correction_magnitude = max(result.depth - slop, 0.0) / total_inverse_mass * percent
+                    correction = result.normal * correction_magnitude
+
+                    
+                    if r1.hasInfiniteMass():
+                        r2.setPosition( r2.getPosition() + correction * total_inverse_mass )
+                    elif not r2.hasInfiniteMass():
+                        r1.setPosition( r1.getPosition() - correction * total_inverse_mass )
+                    else:
+                        r1.setPosition( r1.getPosition() - correction * r1.inverseMass )
+                        r2.setPosition( r2.getPosition() + correction * r2.inverseMass )
+
                     self.collisions.append(result)
 
         # find any collisions    
@@ -91,16 +114,16 @@ class PhysicsSystem2D:
         
         e : float = min(a.getCoefficientOfRestitution(), b.getCoefficientOfRestitution())
 
-        numerator : float = (-(1.0/ e) * relativeVel.dot(relativeNormal))
+        numerator : float = (-(1.0 + e) * relativeVel.dot(relativeNormal))
 
         j : float = numerator / invMassSum
 
-        if len(m.getContactPoints()) > 0 and j != 0.0:
-            j /= len(m.getContactPoints())
+        # if len(m.getContactPoints()) > 0 and j != 0.0:
+        #     j /= len(m.getContactPoints())
         
         impulse : Vec2 = relativeNormal * j
-        a.setVelocity( a.getVelocity() + (impulse * invMass1 * -1) )
-        b.setVelocity( b.getVelocity() + (impulse * invMass2 *  1) )
+        a.setVelocity( a.getVelocity() + (impulse * invMass1) *  -1)
+        b.setVelocity( b.getVelocity() + (impulse * invMass2) *  1)
 
 
 

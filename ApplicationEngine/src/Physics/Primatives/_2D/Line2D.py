@@ -1,9 +1,9 @@
 from ApplicationEngine.include.Maths.Maths import *
+from ApplicationEngine.src.Physics.Primatives._2D.Collider2D import *
 
 
 
-
-class Line2D:
+class Line2D(Collider2D):
     def __init__(self, start: Vec2, end : Vec2):
         self.start = start
         self.end = end
