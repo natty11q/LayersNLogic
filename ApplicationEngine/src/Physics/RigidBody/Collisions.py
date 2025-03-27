@@ -135,7 +135,71 @@ class Collisions_temp:
 
         return (True, collision_axis, collision_depth, [])
 
-
+    @staticmethod
+    def SAT_circle_polygon(circle_center: Vec2, radius: float, vertices: list[Vec2]) -> tuple[bool, Vec2, float, list[Vec2]]:
+        """
+        Applies the Separating Axis Theorem to detect collision between a circle and a convex polygon.
+        
+        Parameters:
+          circle_center: Vec2, the center of the circle.
+          radius: float, the circle's radius.
+          vertices: list of Vec2, vertices of the convex polygon (counterclockwise order).
+        
+        Returns a tuple:
+          (collision: bool, collision_normal: Vec2, penetration_depth: float, contact_points: list[Vec2])
+        """
+        min_overlap = sys.float_info.max
+        collision_axis = Vec2(0, 0)
+        n = len(vertices)
+        
+        # Test each polygon edge's normal as a potential separating axis.
+        for i in range(n):
+            current = vertices[i]
+            nxt = vertices[(i + 1) % n]
+            edge = nxt - current
+            axis = Vec2(-edge.y, edge.x).normalize()  # Get a perpendicular (normal) axis.
+            
+            # Project the polygon onto the axis.
+            minA, maxA = Collisions_temp.project_polygon(vertices, axis)
+            # Project the circle: its projection is center dot axis ± radius.
+            circle_proj = circle_center.dot(axis)
+            circle_min = circle_proj - radius
+            circle_max = circle_proj + radius
+            
+            # Compute overlap on this axis.
+            overlap = min(maxA, circle_max) - max(minA, circle_min)
+            if overlap < 0:
+                # Separating axis found – no collision.
+                return (False, Vec2(0, 0), 0.0, [])
+            if overlap < min_overlap:
+                min_overlap = overlap
+                collision_axis = axis
+        
+        # Additionally, test the axis from the circle center to the closest polygon vertex.
+        closest = min(vertices, key=lambda v: (v - circle_center).length_squared())
+        axis2 = (closest - circle_center).normalize()
+        minA2, maxA2 = Collisions_temp.project_polygon(vertices, axis2)
+        circle_proj2 = circle_center.dot(axis2)
+        circle_min2 = circle_proj2 - radius
+        circle_max2 = circle_proj2 + radius
+        overlap2 = min(maxA2, circle_max2) - max(minA2, circle_min2)
+        if overlap2 < 0:
+            return (False, Vec2(0, 0), 0.0, [])
+        if overlap2 < min_overlap:
+            min_overlap = overlap2
+            collision_axis = axis2
+        
+        # Ensure the collision normal points from the polygon (assumed static) to the circle.
+        centroid_polygon = Collisions_temp.compute_centroid(vertices)
+        direction = circle_center - centroid_polygon
+        if direction.dot(collision_axis) < 0:
+            collision_axis = collision_axis * -1
+        
+        penetration_depth = min_overlap
+        # For contact points, as a simple approximation, take the point on the circle's boundary along the negative collision normal.
+        contact = circle_center - collision_axis * radius
+        
+        return (True, collision_axis, penetration_depth, [contact])
 
 class Collisions:
 

@@ -57,7 +57,7 @@ class PhysicsSystem2D:
                     self.bodies1.append(r1)
                     self.bodies2.append(r2)
 
-                    percent = 0.2   # usually between 0.2 and 0.8, fraction of penetration to correct per frame.
+                    percent = 0.18   # usually between 0.2 and 0.8, fraction of penetration to correct per frame.
                     slop = 0.01     # small penetration allowance (to avoid jittering).
 
                     total_inverse_mass = r1.getinverseMass() + r2.getinverseMass()
