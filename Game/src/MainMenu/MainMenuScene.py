@@ -12,13 +12,8 @@ class MainMenuScene(LNLEngine.Scene):
 
         self.gameWindow = LNLEngine.Game.Get().GetWindow()
 
-        LNLEngine.Renderer.SetClearColour(LNLEngine.Vec4(0.15,0.1,0.2,1.0))
-
-
         self.ScreenShader = LNLEngine.ScreenShader()
         # self.ScreenShader2 = LNLEngine.ScreenShader()
-        self.ParticleShader = LNLEngine.ScreenShader(FragmentShader="ApplicationEngine/src/Object/Shaders/ParticleShader.frag", FragmentShaderIsPath=True)
-
         # ========== sprite load : )==============
         # tex = LNLEngine.Texture("Game/Assets/Menu/theguyfull.png", True)
         # self.TestSprite = LNLEngine.Sprite(tex, Vec2(0, 0) , self.gameWindow.GetWidth(),  self.gameWindow.GetHeight())
@@ -50,15 +45,17 @@ class MainMenuScene(LNLEngine.Scene):
                                         )
 
 
+        # self.StartButton.AddOnClickkHandler(print, ["THE BUTTOMN WAS PRESS"])
         self.StartButton.AddOnClickkHandler(LNLEngine.Game.Get().GetSceneManager().set_active_scene, ["mainScene"])
 
 
-        self.ParalaxDistance : float = 10
+        self.ParalaxDistance : float = 20
 
 
 
         tex = LNLEngine.Texture("Game/Assets/Menu/clearMenuLayer.png", True)
         self.MenuClearLayer = LNLEngine.Sprite(tex, Vec2(0, 0) , self.gameWindow.GetWidth(),  self.gameWindow.GetHeight())
+        
         tex = LNLEngine.Texture("Game/Assets/Menu/theGuyHD.png", True)
         self.basePos = Vec2(0, -self.ParalaxDistance)
         self.MenuTheGuyLayer = LNLEngine.Sprite(tex, self.basePos , self.gameWindow.GetWidth() + 2*self.ParalaxDistance ,  self.gameWindow.GetHeight() + 2*self.ParalaxDistance)
