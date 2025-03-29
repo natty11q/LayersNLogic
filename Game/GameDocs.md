@@ -3,10 +3,10 @@
 [Portals Example 2]: ../Docs/img/portalExample_2.png "Portals Example post block"
 [External input 1]: ../Docs/img/ExternalInput_1.png "External input pre made"
 
-
+<head>
 <style>
-* {
-  /* color: orange; */
+    * {
+        /* color: orange; */
   text-align:center;
 }
 
@@ -16,6 +16,7 @@ h3, h2 {
 
 </style>
 
+</head>
 
 <div>
 

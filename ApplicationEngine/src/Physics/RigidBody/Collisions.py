@@ -566,9 +566,11 @@ class Collisions:
         poly_vertices = polygon.getVertices()
 
         # Use the SAT-based polygon intersection method you have.
-        collision, normal, depth, contactPoints = Collisions.IntersectPolygons(aabb_vertices, poly_vertices)
-        if not collision:
-            return result  # No collision
+        features : tuple[bool, Vec2 | None, float | None, list[Vec2]] = Collisions_temp.SAT_collision(aabb_vertices,poly_vertices)
+        if not features[0]:
+            return result
+
+        collision , normal , depth , contactPoints = features
 
         # Build the collision manifold from the SAT result.
         result = CollisionManifold(normal, depth) #type: ignore

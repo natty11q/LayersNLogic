@@ -431,7 +431,7 @@ class TestLayer(LNLEngine.Layer):
 
         tex0 = Texture("Game/Assets/Sprites/environ/grassfull.png", True)
         tex1 = Texture("Game/Assets/Sprites/environ/rocksfull.png", True)
-        chunk = TileChunk(Vec2(-100,10),Vec2(1000, 10), tex0, tex1)
+        chunk = TileChunk(Vec2(-10,10),Vec2(20, 10), tex0, tex1)
 
         self.tiles.append(chunk)
         # for i in range(20):

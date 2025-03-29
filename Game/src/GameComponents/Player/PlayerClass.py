@@ -222,8 +222,8 @@ class Player(LNLEngine.GameObject2D):
         for kcode in LNLEngine.KEY_MAP:
             self.keys[kcode] = 0
 
-        c1 : LNLEngine.Collider2D = LNLEngine.Box2D()
-        # c1 : LNLEngine.Collider2D = LNLEngine.AABB()
+        # c1 : LNLEngine.Collider2D = LNLEngine.Box2D()
+        c1 : LNLEngine.Collider2D = LNLEngine.AABB()
         # c1 : LNLEngine.Collider2D = LNLEngine.Circle()
         c1.setSize( Vec2(self.width, self.height) )
         # c1.setRadius( self.width / 2 )
