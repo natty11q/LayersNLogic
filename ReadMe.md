@@ -12,3 +12,12 @@ after this is complete the program can be run. either via the command
 or by running the `./run.py` file
 
 the final option is to use the mainapp executable (note that this is just to launch the python app and does not contain any compiled code relevant to the runtime of the application)
+
+
+
+
+# engine [LogicEngine]:
+[Logic Engine Documentation](./ApplicationEngine/EngineDocs.md "Logic Engine Documentation")
+
+# game [Layers and Logic]:
+[Layers And Logic Documentation](./Game/GameDocs.md "Layers And Logic Documentation")
