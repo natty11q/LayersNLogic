@@ -69,6 +69,10 @@ class GameObject(GameObjectBase):
     def Deactivate(self): self.__Active = False
     def IsActive(self) -> bool: return self.__Active
     
+
+    def BeginPlay(self): ...
+    def EndPlay(self): ...
+
     def Draw(self): ... 
 
 
@@ -92,12 +96,26 @@ class GameObject(GameObjectBase):
 
 
 class GameObject2D(GameObject):
-    def __init__(self, position : Vec2 = Vec2(), mass : float = 100.0):
+    def __init__(self, position : Vec2 = Vec2(), mass : float = 1.0):
         super().__init__()
         self.body : RigidBody2D = RigidBody2D()
         
         self.body.setTransform(position)
         self.body.setMass(mass)
+        self.body.addCollisionListener(self._OnCollision)
+    
+    def BeginPlay(self):
+        super().BeginPlay()
+        PhysicsSystem2D.Get().addRigidbody(self.body, True)
+
+
+    def EndPlay(self):
+        super().EndPlay()
+        PhysicsSystem2D.Get().removeRigidbody(self.body)
+
+
+    def _OnCollision(self, body : RigidBody2D, other : RigidBody2D, impulse : Vec2, manifold : CollisionManifold):
+        ...
 
 
 

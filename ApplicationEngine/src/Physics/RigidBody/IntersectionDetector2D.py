@@ -34,8 +34,8 @@ class IntersectionDetector2D:
 
     @staticmethod
     def pointInAABB(point : Vec2, box : AABB):
-        _min = box.getMin()
-        _max = box.getMax()
+        _min = box.getLocalMin()
+        _max = box.getLocalMax()
 
 
         return point.x <= _max.x and _min.x <= point.x and \
@@ -103,8 +103,8 @@ class IntersectionDetector2D:
         unitVector[1] = (1.0 / unitVector.y) if unitVector.y != 0 else 0.0
 
 
-        _min = (box.getMin() - line.getStart()) * unitVector
-        _max = (box.getMax() - line.getStart()) * unitVector
+        _min = (box.getLocalMin() - line.getStart()) * unitVector
+        _max = (box.getLocalMax() - line.getStart()) * unitVector
 
         tmin : float = max(min(_min.x,_max.x),min(_min.y,_max.y))
         tmax : float = min(max(_min.x,_max.x),max(_min.y,_max.y))
@@ -202,8 +202,8 @@ class IntersectionDetector2D:
             unitVector[1] = (1.0 / unitVector.y) if unitVector.y != 0 else 0.0
 
 
-            _min = (colider.getMin() - ray.getOrigin()) * unitVector
-            _max = (colider.getMax() - ray.getOrigin()) * unitVector
+            _min = (colider.getLocalMin() - ray.getOrigin()) * unitVector
+            _max = (colider.getLocalMax() - ray.getOrigin()) * unitVector
 
             tmin : float = max(min(_min.x,_max.x),min(_min.y,_max.y))
             tmax : float = min(max(_min.x,_max.x),max(_min.y,_max.y))
@@ -306,8 +306,8 @@ class IntersectionDetector2D:
 
     @staticmethod
     def circleAndAABB(circle : Circle, box : AABB) -> bool:
-        _min : Vec2 = box.getMin()
-        _max : Vec2 = box.getMax()
+        _min : Vec2 = box.getLocalMin()
+        _max : Vec2 = box.getLocalMax()
 
         closestPointToCircle : Vec2 = Vec2(*circle.getCentre().get_p())
 
@@ -380,8 +380,8 @@ class IntersectionDetector2D:
         vertices : list [Vec2] = []
 
         if isinstance(rect , AABB):
-            _min = rect.getMin()
-            _max = rect.getMax()
+            _min = rect.getLocalMin()
+            _max = rect.getLocalMax()
 
             vertices : list [Vec2] = [
                 Vec2(_min.x, _min.y), Vec2(_min.x, _max.y),

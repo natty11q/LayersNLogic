@@ -1,8 +1,8 @@
 
 from ApplicationEngine.include.Maths.Maths import *
-# from ApplicationEngine.include.Maths.Quaternion.Quaternion import Quat
 from ApplicationEngine.include.Maths.Vector.Vector import Vec3
-from ApplicationEngine.src.Window.Window import *
+
+# from ApplicationEngine.src.Window.Window import *
 
 
 
@@ -48,8 +48,8 @@ class Camera:
     def _OnUpdate(self, deltatime : float):
         ...
         
-    def HandleInputs(self, deltatime : float, window : Window):
-        ...
+    # def HandleInputs(self, deltatime : float, window : Window):
+    #     ...
         
     def SetPosition(self, position : Vec3):
         self._m_Position = position
@@ -70,10 +70,11 @@ class Camera:
         # print("===================")
         # print(translate(Matrix.Mat4(), self._m_Position).getData())
         
-        transform : Matrix.Mat4 = toMat4(self._m_Rotation) * translate(Matrix.Mat4(), self._m_Position)
-        self._m_ViewMatrix = inverse(transform.to(Matrix.Mat4)).to(Matrix.Mat4)
-        self._m_ViewProjectionMatrix = self._m_ViewMatrix * self._m_ProjectionMatrix
+        # transform : Matrix.Mat4 = toMat4(self._m_Rotation) * translate(Matrix.Mat4(), self._m_Position)
+        # self._m_ViewMatrix = inverse(transform.to(Matrix.Mat4)).to(Matrix.Mat4)
+        # self._m_ViewProjectionMatrix = self._m_ViewMatrix * self._m_ProjectionMatrix
     
+        ...
     
     def _RecalculateProjectionMatrix(self):
         pass
@@ -93,6 +94,37 @@ class PesrpectiveCamera(Camera):
 
 
 class OrthographicCamera(Camera):
-    def __init__(self, width : int, height : int, left : float, right : float, bottom : float, top : float):
-        self._m_ProjectionMatrix = Matrix.ortho(left,right,bottom,top,-1.0,1.0)
+    def __init__(self, left : float, right : float, bottom : float, top : float):
+        self._m_ProjectionMatrix : Mat4 = Matrix.ortho(left,right,bottom,top,-1.0,1.0)
+        # self._m_ViewMatrix : Mat4 = Mat4()
+
+        # self._m_ViewProjectionMatrix : Mat4 = Mat4()
+
+        self._m_Position : Vec3  = Vec3()
+        self._m_OrthoRotation : float = 0.0
         self._RecalculateViewMatrix()
+
+    
+    def SetPosition(self, position: Vec3):
+        return super().SetPosition(position)
+   
+    def SetOrthoRotation(self, rotation : float):
+        self._m_OrthoRotation = rotation
+        self._RecalculateViewMatrix()
+
+
+    def _RecalculateViewMatrix(self):
+
+        ## 
+        transform : Mat4 = Matrix.rotate(Mat4(), self._m_OrthoRotation, Vec3(0, 0, 1)) * Matrix.translate(Mat4() , self._m_Position).transpose()
+
+        self._m_ViewMatrix = transform.inverse()
+        self._m_ViewProjectionMatrix = self._m_ProjectionMatrix * self._m_ViewMatrix
+
+
+
+    def GetPosition(self):
+        return super().GetPosition()
+
+    def GetOrthoRotation(self):
+        return self._m_OrthoRotation

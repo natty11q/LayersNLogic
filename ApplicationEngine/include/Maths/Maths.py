@@ -12,11 +12,12 @@ from typing import Union
 
 ## TODO : change to * imports with LNLM namespace
 # class LNLMaths:
-def translate(mat : Matrix.Mat4 , vec : Matrix.Vec3) -> Matrix.Mat4:
-    retMat = mat.copy()
-    for r in range(3):
-        retMat[r , 3] = vec[r]
-    return retMat
+
+# def translate(mat : Matrix.Mat4 , vec : Matrix.Vec3) -> Matrix.Mat4:
+#     retMat = mat.copy()
+#     for r in range(3):
+#         retMat[r , 3] = vec[r]
+#     return retMat
 
 def toMat4(q : Quat.Quat) -> Matrix.Mat4:
     x, y, z, w = q.x, q.y, q.z, q.w

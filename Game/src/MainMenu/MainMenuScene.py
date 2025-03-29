@@ -60,7 +60,10 @@ class MainMenuScene(LNLEngine.Scene):
         self.basePos = Vec2(0, -self.ParalaxDistance)
         self.MenuTheGuyLayer = LNLEngine.Sprite(tex, self.basePos , self.gameWindow.GetWidth() + 2*self.ParalaxDistance ,  self.gameWindow.GetHeight() + 2*self.ParalaxDistance)
 
-        LNLEngine.pygame.mixer.music.load("Game/Assets/Audio/Online Lobby.mp3")
+
+
+        LNLEngine.pygame.mixer.music.set_volume(0.2)
+        LNLEngine.pygame.mixer.music.load("Game/Assets/Audio/MenuAudio.mp3")
         # LNLEngine.pygame.mixer.music.load("Game/Assets/Audio/MenuAudio.mp3")
         LNLEngine.pygame.mixer.music.play()
 

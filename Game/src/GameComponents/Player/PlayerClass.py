@@ -135,8 +135,16 @@ class Player(LNLEngine.GameObject2D):
         self.height = 150
 
         self.speed  = Vec2(500, 0)
-        self.jump   = Vec2(0, 5000)
+        self.jump   = Vec2(0, 50000)
 
+        self.direction : float = 1
+
+        self.inAir : bool = False
+
+
+        self.lives      : int = 0
+        self.health     : float = 0
+        self.maxHealth  : float = 0
 
         self.InPortalColision = False
         self.InPortalColisionOnFrame = False
@@ -222,8 +230,12 @@ class Player(LNLEngine.GameObject2D):
         c1.setRigidBody(self.body)
         self.body.setCollider(c1)
         self.body.linearDamping = 0.8
-        LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(self.body, True)
+
+
+    def BeginPlay(self):
+        super().BeginPlay()
         # LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(self.body, False)
+            
 
     def _OnUpdate(self, deltatime : float):
         # LNLEngine.LNL_LogEngineInfo(self._World_Position)
@@ -239,15 +251,16 @@ class Player(LNLEngine.GameObject2D):
         if self.bound:
             if self.keys.get(LNLEngine.KEY_MAP['right']):
                 inputVector += Vec2(1, 0)
-
+                self.direction = 1
             if self.keys.get(LNLEngine.KEY_MAP['left']):
                 inputVector += Vec2(-1, 0)
+                self.direction = -1
 
-            if self.keys.get(LNLEngine.KEY_MAP['up']):
-                inputVector += Vec2(0, -1)
+            # if self.keys.get(LNLEngine.KEY_MAP['up']):
+            #     inputVector += Vec2(0, -1)
 
-            if self.keys.get(LNLEngine.KEY_MAP['down']):
-                inputVector += Vec2(0, 1)
+            # if self.keys.get(LNLEngine.KEY_MAP['down']):
+            #     inputVector += Vec2(0, 1)
 
 
         inputVector = inputVector.normalize()
@@ -290,14 +303,24 @@ class Player(LNLEngine.GameObject2D):
     def _OnEvent(self, event : LNLEngine.Event):
         if event.GetName() == "KeyDown":
             self.keys[event.keycode] = 1
+
+            if self.bound:
+                if event.keycode == LNLEngine.KEY_MAP["space"]:
+                    self.body.addForce( -1 * self.jump * self.body.getMass())
         if event.GetName() == "KeyUp":
             self.keys[event.keycode] = 0
     
+
+    def _OnCollision(self, body : LNLEngine.RigidBody2D, other: LNLEngine.RigidBody2D, impulse: Vec2, manifold: LNLEngine.CollisionManifold):
+        if other.hasInfiniteMass():
+            ...
+
+
     def Draw(self):
 
         # LNLEngine.Quad(Vec2(self._World_Position[0],self._World_Position[1]), self.width, self.height, self.Colour).Draw()
         # LNLEngine.Renderer.DrawTriangle([pos,pos2 , Vec2(200,400)], Vec4(100, 200, 255, 255))
         # LNLEngine.Renderer.DrawTriangle([Vec2(200,10),Vec2(100,800) , Vec2(700,4)], Vec4(100, 200, 80, 255))
 
-        self.currentBody.setPos(self.body.getPosition() )
+        self.currentBody.setPos(self.body.getCollider().getLocalMin())# type: ignore
         self.currentBody.Draw()

@@ -17,11 +17,10 @@ class ShapeType(Enum):
     Polygon = auto()
 
 
-
-
 class RigidBody2D:
 
     def __init__(self):
+        self._collisionListeners = []
         
         self.rawTransform : Transform | None = None
 
@@ -32,6 +31,11 @@ class RigidBody2D:
         self.angularVelocity : float = 0.0
         self.linearDamping  : float = 0.0
         self.angularDamping  : float = 0.0
+
+
+        # self.frictionCoefficient : float = 0.0
+        self.staticFriction : float = 0.0
+        self.dynamicFriction : float = 0.0
 
         self.forceAccum : Vec2 = Vec2()
 
@@ -49,6 +53,17 @@ class RigidBody2D:
         self.collider : Collider2D | None = None
 
         self.COR = 1.0 # coeff of restitution
+
+    def addCollisionListener(self, listener):
+        self._collisionListeners.append(listener)
+
+    def removeCollisionListener(self, listener):
+        self._collisionListeners.remove(listener)
+
+    def _notifyCollision(self, other_body, impulse : Vec2, manifold):
+        for listener in self._collisionListeners:
+            listener(self, other_body, impulse, manifold)
+
 
     def physicsUpdate(self, dt : float):
         if self.mass == 0.0: return  ## using 0 mass objects as infinite mass objects as there is no impl for 0 mass 
@@ -134,3 +149,9 @@ class RigidBody2D:
         return self.COR
     def setCoefficientOfRestitution(self, cor : float):
         self.COR = cor
+
+
+    def getFrictionCoefficient(self):
+        return self.frictionCoefficient
+    def setFrictionCoefficient(self, mu : float):
+        self.frictionCoefficient = mu

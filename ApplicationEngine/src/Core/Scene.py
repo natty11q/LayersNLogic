@@ -32,6 +32,14 @@ class Scene:
 
         AddEventListener( self.OnEvent )
 
+    def BeginPlay(self):
+        for obj in self.objects:
+            obj.BeginPlay()
+
+    def EndPlay(self):
+        for obj in self.objects:
+            obj.EndPlay()
+
     def AddObject(self, obj : GameObject):
         self.objects.append(obj)
     

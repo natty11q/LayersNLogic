@@ -8,6 +8,8 @@ from ApplicationEngine.src.Graphics.Renderer.VertexArray import *
 from ApplicationEngine.src.Graphics.Renderer.ShaderProgram import *
 from ApplicationEngine.src.Graphics.Renderer.Texture import *
 
+from ApplicationEngine.src.Graphics.Camera.Camera import *
+
 
 from OpenGL.GL import * # type: ignore
 

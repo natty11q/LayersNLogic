@@ -13,13 +13,18 @@ from ApplicationEngine.src.Graphics.Renderer.Texture import Texture
 
 
 class Renderer:
+
+    class __SceneData:
+        def __init__(self):
+            self.ViewProjectionMatrix : Mat4 = Mat4()
     
+    _m_sceneData = __SceneData()
     __Objects = []
     
 
     @staticmethod
     def BeginScene(camera : Camera):
-        pass 
+        Renderer._m_sceneData.ViewProjectionMatrix = camera.GetViewMatrix()
    
     @staticmethod
     def EndScene():
@@ -28,6 +33,11 @@ class Renderer:
     @staticmethod
     def Submit(shader : Shader, vertexArray: VertexArray):
         #modify for defered rendering
+
+        shader.Bind()
+        shader.SetUniformMatrix4("u_ViewProjection",Renderer._m_sceneData.ViewProjectionMatrix)
+
+        vertexArray.Bind()
         RenderCommand.DrawIndexed(shader, vertexArray)
     
 
@@ -38,6 +48,9 @@ class Renderer:
 
     @staticmethod
     def SubmitImidiate(shader : Shader, vertexArray: VertexArray):
+        shader.Bind()
+        shader.SetUniformMatrix4("u_ViewProjection",Renderer._m_sceneData.ViewProjectionMatrix)
+        
         vertexArray.Bind()
         RenderCommand.DrawIndexed(shader,vertexArray)
     

@@ -10,7 +10,7 @@ from ApplicationEngine.include.Maths.Maths import *
 class Sprite(GameObject):
     def __init__(self, SpriteSheet : Texture, position : Vec2 , width : float, height : float, UVs : tuple[Vec2, Vec2] = (Vec2(0.0,1.0), Vec2(1.0,0.0)) ):
         super().__init__()
-        
+
         from ApplicationEngine.src.Core.Game import Game
 
         self.GameWindow = Game.Get().GetWindow()
@@ -71,6 +71,8 @@ class Sprite(GameObject):
             uniform vec2 u_SpriteDimensions;
             uniform vec3 u_ScreenDimensions;
 
+            uniform mat4 u_ViewProjection;
+
             out vec2 CurrentPosition;
             out vec2 TextureCoordinate;
 
@@ -91,7 +93,7 @@ class Sprite(GameObject):
 
                 CurrentPosition = transformed_position;
                 TextureCoordinate = a_TexCoord;
-                gl_Position = vec4(CurrentPosition, 0.0 , 1.0);
+                gl_Position = u_ViewProjection * vec4(CurrentPosition, 0.0 , 1.0);
             }
         """
         SPRITE_FRAGMENT_SHADER = """
@@ -169,7 +171,7 @@ class Sprite(GameObject):
             Renderer.CustomRendererCommand(glBlendFunc, [GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA])
             Renderer.CustomRendererCommand(glDepthMask, [GL_FALSE])
             
-        Renderer.Submit(self.SpriteShader, self.VertexArray)
+        Renderer.SubmitImidiate(self.SpriteShader, self.VertexArray)
 
         if self.SheetTexture.hasTransparent:
             Renderer.CustomRendererCommand(glDepthMask, [GL_TRUE])

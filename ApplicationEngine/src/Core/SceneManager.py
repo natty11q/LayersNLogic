@@ -12,7 +12,12 @@ class SceneManager:
         if name not in self.scenes.keys():
             LNL_LogEngineError(f"attempted to set scene [{name}] as active, but the scene [{name}] has not been added")
             return
+         # end the play of the currently actice scene before changing it
+        if self.activeScene:
+            self.activeScene.EndPlay()
+
         self.activeScene = self.scenes.get(name)
+        self.activeScene.BeginPlay() # type: ignore
     
     def OnEvent(self, e : Event):
         if self.activeScene:

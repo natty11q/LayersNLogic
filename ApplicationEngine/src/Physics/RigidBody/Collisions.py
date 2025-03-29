@@ -474,8 +474,8 @@ class Collisions:
     @staticmethod
     def findCollisionFeatures_AABBAndAABB(a: AABB, b: AABB) -> CollisionManifold:
         result = CollisionManifold()
-        a_min, a_max = a.getMin(), a.getMax()
-        b_min, b_max = b.getMin(), b.getMax()
+        a_min, a_max = a.getLocalMin(), a.getLocalMax()
+        b_min, b_max = b.getLocalMin(), b.getLocalMax()
 
         overlap_x = (min(a_max.x, b_max.x) - max(a_min.x, b_min.x))
         overlap_y = (min(a_max.y, b_max.y) - max(a_min.y, b_min.y))
@@ -499,8 +499,8 @@ class Collisions:
     def findCollisionFeatures_AABBAndCircle(aabb: AABB, circle: Circle) -> CollisionManifold:
         result = CollisionManifold()
         closestPoint = Vec2(
-            max(aabb.getMin().x, min(circle.getCentre().x, aabb.getMax().x)),
-            max(aabb.getMin().y, min(circle.getCentre().y, aabb.getMax().y))
+            max(aabb.getLocalMin().x, min(circle.getCentre().x, aabb.getLocalMax().x)),
+            max(aabb.getLocalMin().y, min(circle.getCentre().y, aabb.getLocalMax().y))
         )
 
         distance = circle.getCentre() - closestPoint
@@ -514,6 +514,67 @@ class Collisions:
 
         return result
 
+    # @staticmethod
+    # def findCollisionFeatures_AABBAndAABB(a: AABB, b: AABB) -> CollisionManifold:
+    #     result = CollisionManifold()
+    #     a_min, a_max = a.getMin(), a.getMax()
+    #     b_min, b_max = b.getMin(), b.getMax()
+
+    #     overlap_x = min(a_max.x, b_max.x) - max(a_min.x, b_min.x)
+    #     overlap_y = min(a_max.y, b_max.y) - max(a_min.y, b_min.y)
+
+    #     if overlap_x <= 0 or overlap_y <= 0:
+    #         return result  # no collision
+
+    #     depth = min(overlap_x, overlap_y)
+    #     # Choose normal: if overlap_x < overlap_y, collision is on x-axis, else y-axis.
+    #     if overlap_x < overlap_y:
+    #         normal = Vec2(1, 0)
+    #         # Ensure the normal points from 'a' to 'b'
+    #         if a.getRigidBody().getPosition().x > b.getRigidBody().getPosition().x:
+    #             normal = normal * -1
+    #     else:
+    #         normal = Vec2(0, 1)
+    #         if a.getRigidBody().getPosition().y > b.getRigidBody().getPosition().y:
+    #             normal = normal * -1
+
+    #     result = CollisionManifold(normal, depth)
+    #     # Use the midpoint between the AABBs' centers as a simple contact point
+    #     contact = (a.getRigidBody().getPosition() + b.getRigidBody().getPosition()) * 0.5
+    #     result.addContactPoint(contact)
+    #     return result
+
+
+    @staticmethod
+    def findCollisionFeatures_AABBAndBox2D(aabb: AABB, polygon: Box2D) -> CollisionManifold:
+        """
+        Performs collision detection between an AABB and a polygon collider.
+        Assumes the polygon collider has a getVertices() method returning a list of Vec2.
+        """
+        result = CollisionManifold()
+        # Convert the AABB to a polygon (4 vertices)
+        a_min = aabb.getLocalMin()
+        a_max = aabb.getLocalMax()
+        aabb_vertices = [
+            Vec2(a_min.x, a_min.y),
+            Vec2(a_max.x, a_min.y),
+            Vec2(a_max.x, a_max.y),
+            Vec2(a_min.x, a_max.y)
+        ]
+
+        # Retrieve vertices from the polygon collider.
+        poly_vertices = polygon.getVertices()
+
+        # Use the SAT-based polygon intersection method you have.
+        collision, normal, depth, contactPoints = Collisions.IntersectPolygons(aabb_vertices, poly_vertices)
+        if not collision:
+            return result  # No collision
+
+        # Build the collision manifold from the SAT result.
+        result = CollisionManifold(normal, depth) #type: ignore
+        for cp in contactPoints:
+            result.addContactPoint(cp)
+        return result
 
     @staticmethod
     def findCollisionFeatures(a : Collider2D, b : Collider2D) -> CollisionManifold:
@@ -538,6 +599,12 @@ class Collisions:
             return Collisions.findCollisionFeatures_AABBAndCircle(a, b)
         elif isinstance(a, Circle) and isinstance(b, AABB):
             manifold = Collisions.findCollisionFeatures_AABBAndCircle(b, a)
+            manifold.normal = manifold.normal * -1
+            return manifold
+        elif isinstance(a, AABB) and isinstance(b, Box2D):
+            return Collisions.findCollisionFeatures_AABBAndBox2D(a, b)
+        elif isinstance(a, Box2D) and isinstance(b, AABB):
+            manifold = Collisions.findCollisionFeatures_AABBAndBox2D(b, a)
             manifold.normal = manifold.normal * -1
             return manifold
         else :

@@ -142,7 +142,8 @@ class Game:
         self._m_SceneManager : SceneManager = SceneManager()
 
         # self._m_PhysicsSystem2D : PhysicsSystem2D = PhysicsSystem2D(Vec2(0.0, -9.81 * 30))
-        self._m_PhysicsSystem2D : PhysicsSystem2D = PhysicsSystem2D(Vec2(0.0, 9.81 * 30))
+        self._m_PhysicsSystem2D : PhysicsSystem2D = PhysicsSystem2D(Vec2(0.0, 9.81 * 300))
+        PhysicsSystem2D._s_Instance = self._m_PhysicsSystem2D
 
         AddEventListener(self.__HandleEvents)
 

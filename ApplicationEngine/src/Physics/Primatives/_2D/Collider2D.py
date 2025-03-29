@@ -1,5 +1,5 @@
 from ApplicationEngine.include.Maths.Maths import *
-from ApplicationEngine.src.Object.Object import *
+# from ApplicationEngine.src.Object.Object import *
 
 
 class Collider2D:

@@ -19,7 +19,7 @@ class AABB(Collider2D):
         self._rigidBody : RigidBody2D = RigidBody2D()
 
 
-    def getMin(self) -> Vec2:
+    def getLocalMin(self) -> Vec2:
         """get the bottom left corner of the AABB collider"""
         return self._rigidBody.getPosition() - self._halfSize  # position will be the centre of the collider
 
@@ -32,7 +32,7 @@ class AABB(Collider2D):
         self._size = Vec2(*size.get_p())
         self._halfSize = self._size / 2
 
-    def getMax(self) -> Vec2:
+    def getLocalMax(self) -> Vec2:
         """get the top right corner of the AABB collider"""
         return self._rigidBody.getPosition() + self._halfSize
     

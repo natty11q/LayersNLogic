@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from ApplicationEngine.src.Physics.Forces.ForceRegistry import *
 from ApplicationEngine.include.Maths.Maths import *
 from ApplicationEngine.src.Core.Utility.Temporal import *
@@ -12,6 +14,8 @@ from ApplicationEngine.src.Physics.RigidBody.IntersectionDetector2D import *
 from ApplicationEngine.src.Physics.Primatives._2D.Collider2D import *
 
 class PhysicsSystem2D:
+    _s_Instance : PhysicsSystem2D | None = None
+
     def __init__(self, gravity : Vec2):
 
         self.forceRegistry : ForceRegistry   = ForceRegistry()
@@ -22,8 +26,17 @@ class PhysicsSystem2D:
         self.bodies2 : list[RigidBody2D] = []
         self.collisions : list[CollisionManifold] = []
 
-        self.inpulseIterations = 6
+        self.inpulseIterations = 4
 
+        PhysicsSystem2D._s_Instance = self
+    
+    @staticmethod
+    def Get() -> PhysicsSystem2D:
+        if PhysicsSystem2D._s_Instance:
+            return PhysicsSystem2D._s_Instance
+        else:
+            LNL_LogEngineError("No physics system initialised")
+            assert False
 
     def update(self, dt : float):
         self.fixedUpdate()
@@ -57,8 +70,8 @@ class PhysicsSystem2D:
                     self.bodies1.append(r1)
                     self.bodies2.append(r2)
 
-                    percent = 0.18   # usually between 0.2 and 0.8, fraction of penetration to correct per frame.
-                    slop = 0.01     # small penetration allowance (to avoid jittering).
+                    percent = 0.6   # usually between 0.2 and 0.8, fraction of penetration to correct per frame.
+                    slop = -0.1     # small penetration allowance (to avoid jittering).
 
                     total_inverse_mass = r1.getinverseMass() + r2.getinverseMass()
                     if total_inverse_mass == 0:
@@ -122,8 +135,19 @@ class PhysicsSystem2D:
         #     j /= len(m.getContactPoints())
         
         impulse : Vec2 = relativeNormal * j
+
+        # frictionForce : Vec2 = Vec2()
+
+        # aproxCoefficient = math.sqrt( ( a.getFrictionCoefficient() + b.getFrictionCoefficient() ) / 2 )
+
+        # fMax = aproxCoefficient * a.getVelocity().dot(m.normal)
+        # frictionForce =  * m.normal
+
         a.setVelocity( a.getVelocity() + (impulse * invMass1) *  -1)
         b.setVelocity( b.getVelocity() + (impulse * invMass2) *  1)
+
+        a._notifyCollision(b, impulse, m)
+        b._notifyCollision(a, impulse, m)
 
 
 
@@ -132,4 +156,10 @@ class PhysicsSystem2D:
 
         if addGravity:
             self.forceRegistry.add(body, self.gravity)
+        # body.init()
+
+    def removeRigidbody(self, body : RigidBody2D):
+        self.rigidBodies.remove(body)
+
+        self.forceRegistry.remove(body, self.gravity)
         # body.init()
