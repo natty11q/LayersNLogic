@@ -39,10 +39,22 @@ class AffectedByGravityAttribute(LNLEngine.ObjectAttribute):
 
 class CanTravelThroughPortals(LNLEngine.ObjectAttribute):
     # InPortalColision = False
+    CollisionRegistry : dict[ LNLEngine.GameObjectBase, dict [str, bool] ]= {}
+    @staticmethod
+    def Attrib_OnAttach(obj: LNLEngine.GameObjectBase):
+        CanTravelThroughPortals.CollisionRegistry[obj] = {"onframe" : False, "current" : False}
 
     @staticmethod
     def Attrib_OnUpdate(obj : Player): # type: ignore
         ...
+    
+    @staticmethod
+    def Attrib_OnPhysicsUpdate(obj: LNLEngine.GameObjectBase):
+        if not CanTravelThroughPortals.CollisionRegistry[obj]["onframe"]:
+            CanTravelThroughPortals.CollisionRegistry[obj]["current"] = False
+
+
+        CanTravelThroughPortals.CollisionRegistry[obj]["onframe"] = False
         # handle Portal here 
         # LNLEngine.LNL_LogInfo("checking Portal collision 1")
 
@@ -96,7 +108,44 @@ class CanTravelThroughPortals(LNLEngine.ObjectAttribute):
         #             obj.body.setVelocity( Vec3(*oV.get_p()).toVec2() )
 
         #         obj.InPortalColisionOnFrame = True
-                
+    
+    @staticmethod
+    def Attrib_OnContact(obj: LNLEngine.GameObjectBase, body: LNLEngine.RigidBody2D, otherOwner: LNLEngine.GameObjectBase, otherBody: LNLEngine.RigidBody2D):
+        if not isinstance(otherOwner, Portal):
+            return
+        
+        portal = otherOwner
+        if not portal.IsActive():
+            return
+        
+
+        CanTravelThroughPortals.CollisionRegistry[obj]["onframe"] = True
+        if not LNLEngine.IntersectionDetector2D.pointInBox2D(body.getPosition(), otherBody.getCollider()): #type: ignore
+            return
+        
+
+        if CanTravelThroughPortals.CollisionRegistry[obj]["current"]: # check if currently in a portal collision
+            return
+        
+        positionOffset : Vec2 = body.getPosition() - otherBody.getPosition()
+
+        totalRotation = portal.body.getRotation() + portal.GetDestination().body.getRotation() - (math.pi)
+
+        currentPos = body.getPosition()
+        currentVel = body.getVelocity()
+
+        currentRot = body.getRotation()
+
+        updatedPositionOffset = LNLEngine.LNLMAths.rotate_vec2(positionOffset, Vec2(0,0), math.degrees(totalRotation))
+
+        newPos : Vec2 = currentPos - portal.body.getPosition() + portal.GetDestination().body.getPosition() + updatedPositionOffset
+        newVel = LNLEngine.LNLMAths.rotate_vec2(currentVel, Vec2(0,0), math.degrees(totalRotation))
+
+        body.setTransform(newPos)
+        body.setVelocity(newVel)
+
+        CanTravelThroughPortals.CollisionRegistry[obj]["current"] = True
+
 
 
 
@@ -114,7 +163,12 @@ class PlayerState(Enum):
     jumping     = auto()
     landing     = auto()
 
-
+class Enemy:
+    def __init__(self, position: Vec2, mass : float = 20 , name : str = ""):
+        ...
+    
+    def Draw(self):
+        ...
 
 class Player(LNLEngine.GameObject2D):
     def __init__(self, position: Vec2 = Vec2(), mass : float = 70 , name : str = ""):
@@ -122,7 +176,7 @@ class Player(LNLEngine.GameObject2D):
         # self.SetAttribure(PlayerInputHandlerAttribute)
 
         # self.SetAttribure(AffectedByGravityAttribute)
-        # self.SetAttribure(CanTravelThroughPortals)
+        self.SetAttribure(CanTravelThroughPortals)
         self.name = name
         self.bound = False
 
@@ -145,8 +199,8 @@ class Player(LNLEngine.GameObject2D):
 
 
         self.lives      : int = 0
-        self.health     : float = 0
-        self.maxHealth  : float = 0
+        self.health     : float = 3
+        self.maxHealth  : float = 5
 
         self.InPortalColision = False
         self.InPortalColisionOnFrame = False
@@ -314,9 +368,8 @@ class Player(LNLEngine.GameObject2D):
     
 
     def _OnCollision(self, body : LNLEngine.RigidBody2D, otherOwner : LNLEngine.GameObject2D, otherBody: LNLEngine.RigidBody2D, impulse: Vec2, manifold: LNLEngine.CollisionManifold):
-        if otherBody.hasInfiniteMass():
-            ...
-
+        if isinstance(otherOwner , Enemy):
+            self.health -= 1.0
 
     def Draw(self):
 
@@ -328,3 +381,25 @@ class Player(LNLEngine.GameObject2D):
         # self.currentBody.setPos(self.body.getPosition() - Vec2(math.sqrt(self.body.getCollider()._radius), math.sqrt(self.body.getCollider()._radius)))# type: ignore
         self.currentBody.setRot(self.body.getRotation()) # type: ignore
         self.currentBody.Draw()
+
+class PlayerHud(LNLEngine.GameObject):
+    def __init__(self, playerRef : Player, scale : int = 1):
+        super().__init__()
+        healthTexture = Texture("Game/Assets/Sprites/LNL_Health_positive.png", True)
+        self.healthSprite = Sprite(healthTexture, Vec2(0,0), WorldGrid.GRID_SIZE / 4, WorldGrid.GRID_SIZE / 4)
+        
+        damageTexture = Texture("Game/Assets/Sprites/LNL_Health_negative.png", True)
+        self.damageSprite = Sprite(damageTexture, Vec2(0,0), WorldGrid.GRID_SIZE / 4, WorldGrid.GRID_SIZE / 4)
+
+        self.playerRef = playerRef
+
+    def Draw(self):
+        # TODO : modify huds to use a seperate camera so that the position moves with everything
+        for i in range( int(self.playerRef.maxHealth) ):
+            if i < self.playerRef.health:
+                self.healthSprite.SetPos(Vec2(i * (WorldGrid.GRID_SIZE / 2) ,0))
+                self.healthSprite.Draw()
+            else:
+                self.damageSprite.SetPos(Vec2(i * (WorldGrid.GRID_SIZE / 2) ,0))
+                self.damageSprite.Draw()
+        return super().Draw()

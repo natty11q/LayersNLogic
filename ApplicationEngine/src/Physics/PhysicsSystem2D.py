@@ -81,14 +81,14 @@ class PhysicsSystem2D:
                     correction_magnitude = max(result.depth - slop, 0.0) / total_inverse_mass * percent
                     correction = result.normal * correction_magnitude
 
-                    
-                    if r1.hasInfiniteMass():
-                        r2.setPosition( r2.getPosition() + correction * total_inverse_mass )
-                    elif not r2.hasInfiniteMass():
-                        r1.setPosition( r1.getPosition() - correction * total_inverse_mass )
-                    else:
-                        r1.setPosition( r1.getPosition() - correction * r1.inverseMass )
-                        r2.setPosition( r2.getPosition() + correction * r2.inverseMass )
+                    if r1.isActor and r2.isActor:
+                        if r1.hasInfiniteMass():
+                            r2.setPosition( r2.getPosition() + correction * total_inverse_mass )
+                        elif not r2.hasInfiniteMass():
+                            r1.setPosition( r1.getPosition() - correction * total_inverse_mass )
+                        else:
+                            r1.setPosition( r1.getPosition() - correction * r1.inverseMass )
+                            r2.setPosition( r2.getPosition() + correction * r2.inverseMass )
 
                     self.collisions.append(result)
 

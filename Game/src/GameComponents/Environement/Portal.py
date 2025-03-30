@@ -6,7 +6,7 @@ import math
 from ApplicationEngine.include.Maths.Vector.Vector import Vec2, Vec3, Vec4
 from ApplicationEngine.include.Maths.Matrix.Matrix import Mat2, Mat3, Mat4
 
-
+from Game.src.World.World import *
 # class Portal(LNLEngine.GameObject):
 #     portals : list[Portal] = []
     
@@ -145,8 +145,73 @@ from ApplicationEngine.include.Maths.Matrix.Matrix import Mat2, Mat3, Mat4
 
 
 class Portal(LNLEngine.GameObject2D):
-    def __init__(self, position):
-        ...
+    def __init__(self, position : Vec2, roatation : float = 0.0, Destination : Portal | None = None):
+        super().__init__(position, 0.0, roatation)
+
+        self.rotation : float = roatation
+        
+        tex : LNLEngine.Texture = LNLEngine.Texture("Game/Assets/Sprites/PortalDeactivated.png", True)
+        self.drawOffset = -1 * Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE / 2)
+        self.sprite = LNLEngine.Sprite(tex, 
+                                       position - Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE / 2),
+                                       WorldGrid.GRID_SIZE,
+                                       WorldGrid.GRID_SIZE
+                                    )
+        
+        if Destination is None or not isinstance(Destination, Portal):
+            self._DestinationPortal : Portal = self
+        else:
+            self._DestinationPortal = Destination
+
+        c = self.InitCollider()
+        self.body.setCollider(c)
+
+    def InitCollider(self):
+        c1 = LNLEngine.Box2D()
+        c1.setSize(Vec2(10,WorldGrid.GRID_SIZE))
+
+        c1.setRigidBody(self.body)
+        return c1
+
+    def BeginPlay(self):
+        self.body.isActor = False
+        LNLEngine.PhysicsSystem2D.Get().addRigidbody(self.body, False)
+
+    def checkLink(self):
+        """checks to see if a portal is connected to another distinct one"""
+        return self._DestinationPortal is not self
+        
+
+    def LinkPortal(self, newPortal : Portal):
+        if isinstance(self._DestinationPortal, Portal):
+            tex1 : LNLEngine.Texture = LNLEngine.Texture("Game/Assets/Sprites/PortalActivatedBlue.png", True)
+            self.sprite = LNLEngine.Sprite(tex1, 
+                                        self.body.getPosition() - Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE / 2),
+                                        WorldGrid.GRID_SIZE,
+                                        WorldGrid.GRID_SIZE
+                                        )
+
+
+            tex2 : LNLEngine.Texture = LNLEngine.Texture("Game/Assets/Sprites/PortalActivatedOrange.png", True)
+            newPortal.sprite = LNLEngine.Sprite(tex2, 
+                                        self.body.getPosition() - Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE / 2),
+                                        WorldGrid.GRID_SIZE,
+                                        WorldGrid.GRID_SIZE
+                                        )
+
+            self._DestinationPortal = newPortal
+            newPortal.SetDestination(self)
+        else:
+            self._DestinationPortal = self
+
+    def SetDestination(self, destPortal : Portal):
+        self._DestinationPortal = destPortal
+    
+    def GetDestination(self) -> Portal:
+        return self._DestinationPortal
     
     def Draw(self):
-        ...
+        self.sprite.SetPos(self.body.getPosition() + self.drawOffset)
+        self.sprite.SetRot(self.rotation)
+
+        self.sprite.Draw()

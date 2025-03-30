@@ -331,6 +331,7 @@ class TestLayer(LNLEngine.Layer):
 
         self.TestCamera = OrthographicCamera(-5.0, 5.0, -1.0, 1.0)
 
+        self.SceneManager = LNLEngine.Game.Get().GetSceneManager()
 
 
 
@@ -342,20 +343,19 @@ class TestLayer(LNLEngine.Layer):
         # player3 = Player(Vec2(300,200), 7, "player2")
 
 
-        # self.portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
-        # self.portal2 = Portal(Vec2(0, 20), Vec2(200, 500) , Vec4(20,150,255,255))
+        self.portal1 = Portal(Vec2(800, 450),0)
+        self.portal2 = Portal(Vec2(100, 450),math.pi)
+        
 
-        # self.portal1.LinkPortal(self.portal2)
+        self.portal1.LinkPortal(self.portal2)
 
         # LNLEngine.Renderer.Enable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
 
 
 
-        self.SceneManager = LNLEngine.Game.Get().GetSceneManager()
+        mainScene : LNLEngine.Scene = LNLEngine.Scene("mainScene")
         
 
-        # mainScene.AddObject(self.portal1)
-        # mainScene.AddObject(self.portal2)
 
         # groundBody : LNLEngine.RigidBody2D = LNLEngine.RigidBody2D()
         # groundBody.setTransform(Vec2( self.gameWindow.GetWidth()/2, self.gameWindow.GetHeight() - 200))
@@ -373,12 +373,14 @@ class TestLayer(LNLEngine.Layer):
         # # LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(groundBody, True)
         # LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(groundBody, False)
 
-        mainScene : LNLEngine.Scene = LNLEngine.Scene("mainScene")
         self.ScreenShader = LNLEngine.ScreenShader(FragmentShader= "ApplicationEngine/src/Object/Shaders/cloudShader.frag", FragmentShaderIsPath=True)
         # self.ScreenShader = LNLEngine.ScreenShader(FragmentShader= "ApplicationEngine/src/Object/Shaders/ScreenShaderRaymarch.frag", FragmentShaderIsPath=True)
         
         mainScene.AddObject(self.ScreenShader)
+        mainScene.AddObject(self.portal1)
+        mainScene.AddObject(self.portal2)
         mainScene.AddObject(self.player)
+        mainScene.AddObject(PlayerHud(self.player))
         
         # mainScene.AddObject(player2)
         # mainScene.AddObject(player3)
@@ -480,7 +482,7 @@ class TestLayer(LNLEngine.Layer):
 
             if event.keycode == LNLEngine.KEY_MAP['f'] and self.bullet_TTL <= 0:
                 self.bullet_TTL = self.bullet_TTL_MAX
-                self.bulletPos = self.player.body.getPosition()
+                self.bulletPos = self.player.body.getPosition() + Vec2(0,-50) 
 
         if event.GetName() == "KeyUp":
             self.keys[event.keycode] = 0

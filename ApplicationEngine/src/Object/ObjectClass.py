@@ -98,11 +98,11 @@ class GameObject(GameObjectBase):
 
 
 class GameObject2D(GameObject):
-    def __init__(self, position : Vec2 = Vec2(), mass : float = 1.0):
+    def __init__(self, position : Vec2 = Vec2(), mass : float = 1.0, rotation : float = 0.0):
         super().__init__()
         self.body : RigidBody2D = RigidBody2D()
         
-        self.body.setTransform(position)
+        self.body.setTransform(position, rotation)
         self.body.setMass(mass)
         self.body.setOwner(self)
 
