@@ -324,7 +324,7 @@ class TestLayer(LNLEngine.Layer):
 
         self.camera : LNLEngine.PesrpectiveCamera = LNLEngine.PesrpectiveCamera(self.gameWindow.GetWidth(),self.gameWindow.GetHeight())
 
-        cube = Cube(rotation= Quat.Quat(0.33608,0.16351,0,0.92476), scale=1.5)
+        # cube = Cube(rotation= Quat.Quat(0.33608,0.16351,0,0.92476), scale=1.5)
         # self.Cube2 = Cube()
 
 
@@ -342,10 +342,10 @@ class TestLayer(LNLEngine.Layer):
         # player3 = Player(Vec2(300,200), 7, "player2")
 
 
-        self.portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
-        self.portal2 = Portal(Vec2(0, 20), Vec2(200, 500) , Vec4(20,150,255,255))
+        # self.portal1 = Portal(Vec2(300, 500), Vec2(900, 100) , Vec4(255,150,20,255))
+        # self.portal2 = Portal(Vec2(0, 20), Vec2(200, 500) , Vec4(20,150,255,255))
 
-        self.portal1.LinkPortal(self.portal2)
+        # self.portal1.LinkPortal(self.portal2)
 
         # LNLEngine.Renderer.Enable(LNLEngine.RenderSettings.LL_SG_WIREFRAME_MODE_ENABLED)
 
@@ -353,7 +353,6 @@ class TestLayer(LNLEngine.Layer):
 
         self.SceneManager = LNLEngine.Game.Get().GetSceneManager()
         
-        mainScene : LNLEngine.Scene = LNLEngine.Scene("mainScene")
 
         # mainScene.AddObject(self.portal1)
         # mainScene.AddObject(self.portal2)
@@ -374,6 +373,11 @@ class TestLayer(LNLEngine.Layer):
         # # LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(groundBody, True)
         # LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(groundBody, False)
 
+        mainScene : LNLEngine.Scene = LNLEngine.Scene("mainScene")
+        self.ScreenShader = LNLEngine.ScreenShader(FragmentShader= "ApplicationEngine/src/Object/Shaders/cloudShader.frag", FragmentShaderIsPath=True)
+        # self.ScreenShader = LNLEngine.ScreenShader(FragmentShader= "ApplicationEngine/src/Object/Shaders/ScreenShaderRaymarch.frag", FragmentShaderIsPath=True)
+        
+        mainScene.AddObject(self.ScreenShader)
         mainScene.AddObject(self.player)
         
         # mainScene.AddObject(player2)
@@ -387,7 +391,6 @@ class TestLayer(LNLEngine.Layer):
         self.SceneManager.add_scene(MainMenuScene())
         self.SceneManager.set_active_scene("MainMenu")
 
-        self.ScreenShader = LNLEngine.ScreenShader()
 
 
         tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Stand.png")
@@ -431,7 +434,7 @@ class TestLayer(LNLEngine.Layer):
 
         tex0 = Texture("Game/Assets/Sprites/environ/grassfull.png", True)
         tex1 = Texture("Game/Assets/Sprites/environ/rocksfull.png", True)
-        chunk = TileChunk(Vec2(-10,10),Vec2(20, 10), tex0, tex1)
+        chunk = TileChunk(Vec2(-1,8),Vec2(50, 2), tex0, tex1)
 
         self.tiles.append(chunk)
         # for i in range(20):
@@ -539,11 +542,11 @@ class TestLayer(LNLEngine.Layer):
 
         self.SceneManager.update(deltatime)
 
+        # self.ScreenShader.Draw()
 
         LNLEngine.Renderer.BeginScene(self.TestCamera)
-        self.ScreenShader.Draw()
+
         LNLEngine.Renderer.Submit(self.shader ,self.m_vertexArray)
-    
         self.SceneManager.Draw()
 
         # self.testPhsicsComponent.Draw()

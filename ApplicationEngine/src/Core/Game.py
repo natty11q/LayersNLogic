@@ -273,8 +273,8 @@ class Game:
         self._m_PhysicsSystem2D.update(1 / Temporal.LLEngineTime.TickRate())
         # LNL_LogEngineTrace("Physics update called")
 
-    def _OnEvent(self , event  : Event) -> None:
-        LNL_LogEngineTrace(f"Event occured of type : {event.GetName()}")
+    def _OnEvent(self , event  : Event) -> None:...
+        # LNL_LogEngineTrace(f"Event occured of type : {event.GetName()}")
     
     def __StartPhysicsThread(self):
         self.__PhysicsThread.start()

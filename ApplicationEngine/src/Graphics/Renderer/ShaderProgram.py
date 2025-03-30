@@ -105,6 +105,7 @@ class Shader:
             return self._m_RendererID 
         # Create shader program
         self._m_RendererID = glCreateProgram() # type: ignore
+        LNL_LogWarning("created shader with id: ", self._m_RendererID)
 
         glAttachShader(self._m_RendererID, vertex_shader)
         glAttachShader(self._m_RendererID, fragment_shader)
@@ -135,7 +136,9 @@ class Shader:
 
 
     def Bind(self):
-        glUseProgram(self._m_RendererID)
+        from ApplicationEngine.src.Graphics.Renderer.RenderCommand import RenderCommand
+        RenderCommand.BindShader(self._m_RendererID)
+        # glUseProgram(self._m_RendererID)
     def UnBind(self):
         glUseProgram(0)
     def Delete(self):

@@ -23,7 +23,7 @@
         "Fatal"     : "91m" 
     },
 
-    "LNL_CURRENT_DEBUG_MINIMUM_LEVEL" : 2
+    "LNL_CURRENT_DEBUG_MINIMUM_LEVEL" : 0
 
     
 }

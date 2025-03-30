@@ -35,7 +35,8 @@ class SpriteAnimation(GameObject):
 
         self.displayWhenComplete = displayWhenComplete
 
-        self.position : Vec2 = Vec2()
+        self.position : Vec2    = Vec2()
+        self.rotation : float   = 0.0
 
         self.baseWidth  = baseWidth
         self.baseHeight = baseHeight
@@ -48,6 +49,7 @@ class SpriteAnimation(GameObject):
         self.setWidth(self.baseWidth)
         self.setHeight(self.baseHeight)
         self.setPos(self.position)
+        self.setRot(self.rotation)
 
 
 
@@ -90,7 +92,11 @@ class SpriteAnimation(GameObject):
         for sprite in self.sprites:
             sprite.SetPos(position)
         
-        
+    def setRot(self, rotation : float):
+        self.rotation = rotation
+        for sprite in self.sprites:
+            sprite.SetRot(rotation)
+
     def setWidth(self, width):
         self.baseWidth = width
         for sprite in self.sprites:

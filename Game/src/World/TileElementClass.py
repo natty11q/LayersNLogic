@@ -77,7 +77,7 @@ class TileChunk(LNLEngine.GameObject2D):
         if bodyTexture:
             self.bodySprite = LNLEngine.Sprite = LNLEngine.Sprite(bodyTexture,
                                           gridPosition * WorldGrid.GRID_SIZE,
-                                          gridSize.x * WorldGrid.GRID_SIZE, gridSize.y * WorldGrid.GRID_SIZE
+                                          WorldGrid.GRID_SIZE, WorldGrid.GRID_SIZE
                                           )
             
         c1 = self._InitCollider(gridSize * WorldGrid.GRID_SIZE)
@@ -103,8 +103,8 @@ class TileChunk(LNLEngine.GameObject2D):
         """
 
 
-        # c1 = LNLEngine.Box2D()
-        c1 = LNLEngine.AABB()
+        c1 = LNLEngine.Box2D()
+        # c1 = LNLEngine.AABB()
         c1.setRigidBody(self.body)
         c1.setSize(size)
 
@@ -112,19 +112,19 @@ class TileChunk(LNLEngine.GameObject2D):
     
 
     def Draw(self):
-        # for x in range(int(self.size.x)):
-        #     for y in range(int(self.size.y)):
-        #         # TODO: cange the shader uniform setup to run in the update so that i can just change the pos 
-        #         self.topSprite.SetPos(
-        #             self.body.getCollider().getLocalMin() + Vec2(x * WorldGrid.GRID_SIZE, y * WorldGrid.GRID_SIZE) ) #type: ignore
-        #         self.bodySprite.SetPos(
-        #             self.body.getCollider().getLocalMin() + Vec2(x * WorldGrid.GRID_SIZE, y * WorldGrid.GRID_SIZE) ) #type: ignore
-        #         if y == 0:
-        #             self.topSprite.Draw()
-        #         else:
-        #             self.bodySprite.Draw()
+        for x in range(int(self.size.x)):
+            for y in range(int(self.size.y)):
+                # TODO: cange the shader uniform setup to run in the update so that i can just change the pos 
+                self.topSprite.SetPos(
+                    self.body.getCollider().getLocalMin() + Vec2(x * WorldGrid.GRID_SIZE, y * WorldGrid.GRID_SIZE) ) #type: ignore
+                self.bodySprite.SetPos(
+                    self.body.getCollider().getLocalMin() + Vec2(x * WorldGrid.GRID_SIZE, y * WorldGrid.GRID_SIZE) ) #type: ignore
+                if y == 0:
+                    self.topSprite.Draw()
+                else:
+                    self.bodySprite.Draw()
          
-        self.topSprite.SetWidth(self.size.x * WorldGrid.GRID_SIZE)
-        self.topSprite.SetHeight(self.size.y * WorldGrid.GRID_SIZE)
+        # self.topSprite.SetWidth(self.size.x * WorldGrid.GRID_SIZE)
+        # self.topSprite.SetHeight(self.size.y * WorldGrid.GRID_SIZE)
 
-        self.topSprite.Draw()
+        # self.topSprite.Draw()

@@ -9,7 +9,7 @@ from ApplicationEngine.src.Object.GameObjectAttributes import *
 from ApplicationEngine.src.Event.EventHandler import *
 
 
-import inspect
+# import inspect
 from ApplicationEngine.src.Physics.LNL_Physics import *
 
 
@@ -34,7 +34,7 @@ class GameObject(GameObjectBase):
     def __init__(self, *eat_args, **eat_kwargs):
         self._World_Position : Vec3 = Vec3()
 
-        self.__Attributes : list [ObjectAttribute.__class__] = []
+        self._Attributes : list [ObjectAttribute.__class__] = []
         self.__Active : bool = True ## toggles wether an object is active in the editor and if physics is enabled for that object.
         
         self.id = LNL_IDGenerator.get_id()
@@ -59,11 +59,11 @@ class GameObject(GameObjectBase):
 
  
     def SetAttribure(self, attrib : ObjectAttribute.__class__):
-        self.__Attributes.append(attrib)
+        self._Attributes.append(attrib)
         attrib.Attrib_OnAttach(self)
 
     def RemoveAttribure(self, attrib : ObjectAttribute.__class__):
-        self.__Attributes.remove(attrib)
+        self._Attributes.remove(attrib)
         attrib.Attrib_OnDetach(self)
         
         
@@ -87,12 +87,12 @@ class GameObject(GameObjectBase):
     
     
     def Update(self, deltatime : float):
-        for attribute in self.__Attributes:
+        for attribute in self._Attributes:
             attribute.Attrib_OnUpdate(self)
         self._OnUpdate(deltatime)
     
     def PhysicsUpdate(self, tickTime : float):
-        for attribute in self.__Attributes:
+        for attribute in self._Attributes:
             attribute.Attrib_OnPhysicsUpdate(self)
         self._OnPhysicsUpdate(tickTime)
 
@@ -104,8 +104,10 @@ class GameObject2D(GameObject):
         
         self.body.setTransform(position)
         self.body.setMass(mass)
-        self.body.addCollisionListener(self._OnCollision)
         self.body.setOwner(self)
+
+        self.body.addCollisionListener(self.OnCollision) # when colliding with another physics object
+        self.body.addContactListener(self.OnContact) # when colliding with a non tangible object eg : portals which dont move in response to physics or impart a force on the player yet require a collision check
     
     def BeginPlay(self):
         super().BeginPlay()
@@ -117,8 +119,19 @@ class GameObject2D(GameObject):
         PhysicsSystem2D.Get().removeRigidbody(self.body)
 
 
-    def _OnCollision(self, body : RigidBody2D, otherOwner : GameObject2D, otherBody : RigidBody2D, impulse : Vec2, manifold : CollisionManifold):
-        ...
+    def _OnCollision(self, body : RigidBody2D, otherOwner : GameObject2D, otherBody : RigidBody2D, impulse : Vec2, manifold : CollisionManifold): ...
+    
+    def OnCollision(self, body : RigidBody2D, otherOwner : GameObject2D, otherBody : RigidBody2D, impulse : Vec2, manifold : CollisionManifold):
+        for attribute in self._Attributes:
+            attribute.Attrib_OnCollision(self, body, otherOwner, otherBody, impulse, manifold)
+        self._OnCollision(body, otherOwner, otherBody, impulse, manifold)
+
+    def _OnContact(self, body, otherOwner, otherBody): ...
+
+    def OnContact(self, body, otherOwner, otherBody):
+        for attribute in self._Attributes:
+            attribute.Attrib_OnContact(self, body, otherOwner, otherBody)
+        self._OnContact(body, otherOwner, otherBody)
 
 
 

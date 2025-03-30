@@ -172,4 +172,5 @@ vec4 mainImage()
 void main()
 {
     FragColor = mainImage();
+    // FragColor = vec4(0.2);
 }

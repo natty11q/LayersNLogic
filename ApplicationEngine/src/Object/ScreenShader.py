@@ -9,7 +9,7 @@ from ApplicationEngine.src.Core.Utility.Temporal import *
 
 class ScreenShader(GameObject):
 
-    def __init__(self, VertexShader : str | None = None, FragmentShader : str | None = None, VertexShaderIsPath : bool = False, FragmentShaderIsPath : bool = False):
+    def __init__(self, VertexShader : str | None = None, FragmentShader : str | None = None, VertexShaderIsPath : bool = False, FragmentShaderIsPath : bool = False , texture : Texture | None = None):
         super().__init__()
         vertices = [
             # Positions        # UVs
@@ -120,15 +120,19 @@ class ScreenShader(GameObject):
 
         self.Shader = Shader(self.VertexShader, self.FragmentShader)
 
-        self.Texture = Texture("ApplicationEngine/src/Object/Textures/testImage3.png")
+        self.hasTexture = False
+
+        if texture:
+            self.Texture = texture
+            self.hasTexture = True
 
 
         self.Campos_xy = Vec2()
     
 
-    def _OnEvent(self, event: Event):
-        DefaultFragmentShader = get_file_contents("ApplicationEngine/src/Object/Shaders/ScreenShaderRaymarch.frag")
-        self.Shader.RecompileShader(self.DefaultVertexShader, DefaultFragmentShader)
+    # def _OnEvent(self, event: Event):
+    #     DefaultFragmentShader = get_file_contents("ApplicationEngine/src/Object/Shaders/ScreenShaderRaymarch.frag")
+    #     self.Shader.RecompileShader(self.DefaultVertexShader, DefaultFragmentShader)
 
     def SetUniformFloat(self, type : ShaderDataType , name : str, value ):
         ...
@@ -145,7 +149,9 @@ class ScreenShader(GameObject):
         
         self.Shader.SetUniformFloat("aspectRatios", 900/600) # temporary Values , TODO : make it get the canvas dimensions
 
-        self.Texture.Bind()
-        self.Shader.SetUniformInt("texture0", 0)
+        if self.hasTexture:
+            self.Texture.Bind()
+            self.Shader.SetUniformInt("diffuse0", 0)
+            self.Shader.SetUniformInt("texture0", 0)
         
         Renderer.Submit(self.Shader, self.VertexArray)

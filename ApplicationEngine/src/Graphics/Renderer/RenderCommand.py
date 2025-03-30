@@ -52,6 +52,11 @@ class RenderCommand():
     def DrawIndexed( shader: Shader, vertexArray : VertexArray) -> None:
         RenderCommand.s_RendererAPI.DrawIndexed(shader, vertexArray)
     
+
+    @staticmethod
+    def BindShader(ID : int) -> None:
+        return RenderCommand.s_RendererAPI.BindShader(ID)
+
     @staticmethod
     def GetUniformLocation(ID : int, UniformName : str) -> int:
         return RenderCommand.s_RendererAPI.GetUniformLocation(ID, UniformName)

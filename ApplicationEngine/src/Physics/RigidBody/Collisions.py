@@ -566,11 +566,12 @@ class Collisions:
         poly_vertices = polygon.getVertices()
 
         # Use the SAT-based polygon intersection method you have.
-        features : tuple[bool, Vec2 | None, float | None, list[Vec2]] = Collisions_temp.SAT_collision(aabb_vertices,poly_vertices)
-        if not features[0]:
+        features : tuple[bool, Vec2 | None, float | None, list[Vec2]] = Collisions_temp.SAT_collision(aabb_vertices, poly_vertices)
+        collision , normal , depth , contactPoints = features
+        
+        if not collision:
             return result
 
-        collision , normal , depth , contactPoints = features
 
         # Build the collision manifold from the SAT result.
         result = CollisionManifold(normal, depth) #type: ignore
@@ -583,13 +584,8 @@ class Collisions:
         
         if isinstance(a ,Circle) and isinstance(b, Circle):
             return Collisions.findCollisionFeatures_CircleAndCircle(a , b)
-        
-        elif isinstance(a ,Box2D) and isinstance(b, Box2D):
-            return Collisions.findCollisionFeatures_BoxAndBox(a , b)
-        
         elif isinstance(a ,Box2D) and isinstance(b, Circle):
             return Collisions.findCollisionFeatures_BoxAndCircle(a , b)
-        
         elif isinstance(a ,Circle) and isinstance(b, Box2D):
             manifold = Collisions.findCollisionFeatures_BoxAndCircle(b, a)
             manifold.normal = manifold.normal * -1  # Reverse normal for correct direction
@@ -603,11 +599,15 @@ class Collisions:
             manifold = Collisions.findCollisionFeatures_AABBAndCircle(b, a)
             manifold.normal = manifold.normal * -1
             return manifold
+        
+        elif isinstance(a ,Box2D) and isinstance(b, Box2D):
+            return Collisions.findCollisionFeatures_BoxAndBox(a , b)
         elif isinstance(a, AABB) and isinstance(b, Box2D):
             return Collisions.findCollisionFeatures_AABBAndBox2D(a, b)
         elif isinstance(a, Box2D) and isinstance(b, AABB):
             manifold = Collisions.findCollisionFeatures_AABBAndBox2D(b, a)
             manifold.normal = manifold.normal * -1
             return manifold
+        
         else :
             assert False and "not implemented"

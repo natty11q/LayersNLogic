@@ -71,7 +71,7 @@ class PhysicsSystem2D:
                     self.bodies2.append(r2)
 
                     percent = 0.6   # usually between 0.2 and 0.8, fraction of penetration to correct per frame.
-                    slop = -0.1     # small penetration allowance (to avoid jittering).
+                    slop = 0.1     # small penetration allowance (to avoid jittering).
 
                     total_inverse_mass = r1.getinverseMass() + r2.getinverseMass()
                     if total_inverse_mass == 0:
@@ -101,8 +101,13 @@ class PhysicsSystem2D:
                 for j in range(jSize):
                     r1 : RigidBody2D = self.bodies1[i]
                     r2 : RigidBody2D = self.bodies2[i]
+                    
 
-                    self.applyInpulse(r1, r2, self.collisions[i])
+                    r1._notifyContact(r2.getOwner(), r2)
+                    r2._notifyContact(r1.getOwner(), r1)
+
+                    if r1.isActor and r2.isActor:
+                        self.applyInpulse(r1, r2, self.collisions[i])
 
         # resolve collisions
 

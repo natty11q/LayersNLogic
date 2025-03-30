@@ -186,41 +186,107 @@ class SimpleGUiRendererAPI(RendererAPI):
             }
         )
 
+    def BindShader(self, ID) -> None:
+        glUseProgram(ID) # <= important to bind here also for getting uniform locations ingame
+
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.BindShader,
+                "ID" : ID
+            }
+        )
+
     # TODO : Change this to return int
     def GetUniformLocation(self, ID : int, UniformName : str) -> int:
         return glGetUniformLocation(ID, UniformName)
     
 
     def SetUniformInt(self, UniformLocation : int, value : int) -> None:
-        glUniform1i(UniformLocation, value)
-
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.SetUniformInt,
+                "uniformLocation" : UniformLocation,
+                "value" : value
+            }
+        )
     def SetUniformFloat(self, UniformLocation : int, value : float) -> None:
-        glUniform1f(UniformLocation, value)
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.SetUniformFloat,
+                "uniformLocation" : UniformLocation,
+                "value" : value
+            }
+        )
     
     
     def SetUniformVec2(self, UniformLocation : int, value : Vec2) -> None:
-        glUniform2f(UniformLocation, value[0], value[1])
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.SetUniformVec2,
+                "uniformLocation" : UniformLocation,
+                "value" : value.get_p()
+            }
+        )
+        # glUniform2f(UniformLocation, value[0], value[1])
     
     
     def SetUniformVec3(self, UniformLocation : int, value : Vec3) -> None:
-        glUniform3f(UniformLocation, value[0], value[1], value[2])
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.SetUniformVec3,
+                "uniformLocation" : UniformLocation,
+                "value" : value.get_p()
+            }
+        )
+        # glUniform3f(UniformLocation, value[0], value[1], value[2])
     
     
     def SetUniformVec4(self, UniformLocation : int, value : Vec4) -> None:
-        glUniform4f(UniformLocation, value[0], value[1], value[2], value[3])
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.SetUniformVec4,
+                "uniformLocation" : UniformLocation,
+                "value" : value.get_p()
+            }
+        )
+        # glUniform4f(UniformLocation, value[0], value[1], value[2], value[3])
 
     
     
     def SetUniformMat2(self, UniformLocation : int, value : Mat2) -> None:
-        glUniformMatrix2fv(UniformLocation, 1, GL_FALSE, value.nparr())
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.SetUniformMat2,
+                "uniformLocation" : UniformLocation,
+                "transpose" : GL_FALSE,
+                "value" : value.nparr()
+            }
+        )
+        # glUniformMatrix2fv(UniformLocation, 1, GL_FALSE, value.nparr())
     
     
     def SetUniformMat3(self, UniformLocation : int, value : Mat3) -> None:
-        glUniformMatrix3fv(UniformLocation, 1, GL_FALSE, value.nparr())
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.SetUniformMat3,
+                "uniformLocation" : UniformLocation,
+                "transpose" : GL_FALSE,
+                "value" : value.nparr()
+            }
+        )
+        # glUniformMatrix3fv(UniformLocation, 1, GL_FALSE, value.nparr())
     
 
     def SetUniformMat4(self, UniformLocation : int, value : Mat4) -> None:
-        glUniformMatrix4fv(UniformLocation, 1, GL_FALSE, value.nparr())
+        self._DrawQueue.append(
+            {
+                "type" : CommandType.SetUniformMat4,
+                "uniformLocation" : UniformLocation,
+                "transpose" : GL_FALSE,
+                "value" : value.nparr()
+            }
+        )
+        # glUniformMatrix4fv(UniformLocation, 1, GL_FALSE, value.nparr())
     
 
     def BindTexture(self, tex_id : int):
@@ -309,6 +375,46 @@ class SimpleGUiRendererAPI(RendererAPI):
 
         for element in self._DrawQueue:
             eType = element["type"]
+
+
+            # ======== shaders ====
+
+            if eType == CommandType.BindShader:
+                glUseProgram(element["ID"])
+
+            elif eType == CommandType.SetUniformInt:
+                glUniform1i(element["uniformLocation"], element["value"])
+            elif eType == CommandType.SetUniformFloat:
+                glUniform1f(element["uniformLocation"], element["value"])
+
+
+
+            elif eType == CommandType.SetUniformVec2:
+                x, y =  element["value"]
+                glUniform2f(element["uniformLocation"],x , y)
+
+            elif eType == CommandType.SetUniformVec3:
+                x, y, z = element["value"]
+                glUniform3f(element["uniformLocation"], x, y, z)
+
+            elif eType == CommandType.SetUniformVec4:
+                x, y, z, w =  element["value"]
+                glUniform4f(element["uniformLocation"], x, y, z, w)
+
+
+            elif eType == CommandType.SetUniformMat2:
+                glUniformMatrix2fv(element["uniformLocation"], 1, element["transpose"], element["value"])
+            elif eType == CommandType.SetUniformMat3:
+                glUniformMatrix3fv(element["uniformLocation"], 1, element["transpose"], element["value"])
+            elif eType == CommandType.SetUniformMat4:
+                glUniformMatrix4fv(element["uniformLocation"], 1, element["transpose"], element["value"])
+
+
+
+
+
+
+            # =========
             
             if eType == CommandType.Enable:
                 glEnable(element["value"])

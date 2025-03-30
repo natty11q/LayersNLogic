@@ -26,6 +26,7 @@ class CommandType(Enum):
     DrawIndexed     = auto()
     GetUniformLocation = auto()
     SetUniformInt   = auto()
+    SetUniformFloat = auto()
     SetUniformVec2  = auto()
     SetUniformVec3  = auto()
     SetUniformVec4  = auto()
@@ -35,6 +36,7 @@ class CommandType(Enum):
     DrawTriangle    = auto()
     DrawCircle      = auto()
     BindTexture     = auto()
+    BindShader      = auto()
     CustomCommand   = auto()
 
 class RendererAPI(ABC): ## abstract class only
@@ -92,6 +94,9 @@ class RendererAPI(ABC): ## abstract class only
     @abstractmethod
     def GetUniformLocation(self, ID : int, UniformName : str) -> int: ...
     
+    @abstractmethod
+    def BindShader(self, ID) -> None: ...
+
     @abstractmethod
     def SetUniformInt(self, UniformLocation : int, value : int) -> None: ...
 

@@ -8,6 +8,8 @@ from ApplicationEngine.include.Maths.Maths import *
 
 
 class Sprite(GameObject):
+    s_SpriteShader : Shader | None = None
+
     def __init__(self, SpriteSheet : Texture, position : Vec2 , width : float, height : float, UVs : tuple[Vec2, Vec2] = (Vec2(0.0,1.0), Vec2(1.0,0.0)) ):
         super().__init__()
 
@@ -68,6 +70,7 @@ class Sprite(GameObject):
             layout(location = 1) in vec2 a_TexCoord;
 
             uniform vec2 u_SpritePosition;
+            uniform float u_SpriteRotation;
             uniform vec2 u_SpriteDimensions;
             uniform vec3 u_ScreenDimensions;
 
@@ -78,11 +81,21 @@ class Sprite(GameObject):
 
             void main()
             {
+                vec2 pos = a_Pos;
+
+                float Cosr = cos(u_SpriteRotation);
+                float Sinr = sin(u_SpriteRotation);
+
+                // mat2 rotationMatrix = mat2(Cosr, -Sinr, Sinr,  Cosr);
+
+                // Apply the rotation
+                // pos = rotationMatrix * pos;
+
                 float scale_x = u_SpriteDimensions.x / u_ScreenDimensions.x;
                 float scale_y = u_SpriteDimensions.y / u_ScreenDimensions.y;
 
                 
-                vec2 transformed_position = vec2(a_Pos.x + 1.0, a_Pos.y - 1.0); // transform top left to origin for scaling
+                vec2 transformed_position = vec2(pos.x + 1.0, pos.y - 1.0); // transform top left to origin for scaling
                 transformed_position = vec2(transformed_position.x * scale_x , transformed_position.y * scale_y);
 
                 vec2 Transform = vec2(u_SpritePosition.x / u_ScreenDimensions.x, -u_SpritePosition.y / u_ScreenDimensions.y);
@@ -125,16 +138,18 @@ class Sprite(GameObject):
             }
         """
 
-
-        self.SpriteShader : Shader = Shader(SPRITE_VERTEX_SHADER, SPRITE_FRAGMENT_SHADER)
+        if not Sprite.s_SpriteShader:
+            Sprite.s_SpriteShader = Shader(SPRITE_VERTEX_SHADER, SPRITE_FRAGMENT_SHADER)
         self.SheetTexture : Texture = SpriteSheet
 
         self.flipped_lr = False
         self.flipped_ud = False
 
         self.SpritePos : Vec2 = position
+        self.SpriteRot : float = 0.0 # rotation in radians
 
     def SetPos(self, position : Vec2): self.SpritePos = position
+    def SetRot(self, rotation : float): self.SpriteRot = rotation
     def SetWidth(self, new_W : float): self.spriteWidth = new_W
     def SetHeight(self, new_H : float): self.spriteHeight = new_H
 
@@ -155,24 +170,28 @@ class Sprite(GameObject):
         w_width   = self.GameWindow.GetWidth()
         w_height  = self.GameWindow.GetHeight()
 
-        self.SpriteShader.Bind()
+        if Sprite.s_SpriteShader:
+            Sprite.s_SpriteShader.Bind()
 
 
-        self.SpriteShader.SetUniformVec2("u_SpritePosition", self.SpritePos)
-        self.SpriteShader.SetUniformVec2("u_SpriteDimensions", Vec2(self.spriteWidth, self.spriteHeight))
-        self.SpriteShader.SetUniformVec3("u_ScreenDimensions", Vec3(w_width, w_height, (w_width/w_height)))
+            Sprite.s_SpriteShader.SetUniformVec2("u_SpritePosition", self.SpritePos)
+            Sprite.s_SpriteShader.SetUniformFloat("u_SpriteRotation", self.SpriteRot)
 
-        self.SpriteShader.SetUniformInt("flipped_lr", int(self.flipped_lr))
-        self.SheetTexture.Bind()
-        self.SpriteShader.SetUniformInt("SpriteSheet", 0)
+            Sprite.s_SpriteShader.SetUniformVec2("u_SpriteDimensions", Vec2(self.spriteWidth, self.spriteHeight))
+            Sprite.s_SpriteShader.SetUniformVec3("u_ScreenDimensions", Vec3(w_width, w_height, (w_width/w_height)))
 
-        if self.SheetTexture.hasTransparent:
-            RenderCommand.Enable(GL_BLEND)
-            Renderer.CustomRendererCommand(glBlendFunc, [GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA])
-            Renderer.CustomRendererCommand(glDepthMask, [GL_FALSE])
+            Sprite.s_SpriteShader.SetUniformInt("flipped_lr", int(self.flipped_lr))
             
-        Renderer.SubmitImidiate(self.SpriteShader, self.VertexArray)
+            self.SheetTexture.Bind()
+            Sprite.s_SpriteShader.SetUniformInt("SpriteSheet", 0)
 
-        if self.SheetTexture.hasTransparent:
-            Renderer.CustomRendererCommand(glDepthMask, [GL_TRUE])
-            RenderCommand.Disable(GL_BLEND)
+            if self.SheetTexture.hasTransparent:
+                RenderCommand.Enable(GL_BLEND)
+                Renderer.CustomRendererCommand(glBlendFunc, [GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA])
+                Renderer.CustomRendererCommand(glDepthMask, [GL_FALSE])
+                
+            Renderer.SubmitImidiate(Sprite.s_SpriteShader, self.VertexArray)
+
+            if self.SheetTexture.hasTransparent:
+                Renderer.CustomRendererCommand(glDepthMask, [GL_TRUE])
+                RenderCommand.Disable(GL_BLEND)

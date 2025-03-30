@@ -42,58 +42,60 @@ class CanTravelThroughPortals(LNLEngine.ObjectAttribute):
 
     @staticmethod
     def Attrib_OnUpdate(obj : Player): # type: ignore
+        ...
         # handle Portal here 
         # LNLEngine.LNL_LogInfo("checking Portal collision 1")
-        for portal in Portal.portals:
-            ## getting the halfway point between the vertices {simple impl for now to keep it simple}
 
-            # LNLEngine.LNL_LogInfo("checking Portal collision ")
-            # collided = False
-            # if portal.intersectsPoint(obj._World_Position):
-            #     collided = True
-            # if portal.intersectsPoint(obj._World_Position + Vec3(obj.width)):
-            #     collided = True
-            # if portal.intersectsPoint(obj._World_Position + Vec3(0, obj.height)):
-            #     collided = True
-            # if portal.intersectsPoint(obj._World_Position + Vec3(obj.width, obj.height)):
-            #     collided = True
+        # for portal in Portal.portals:
+        #     ## getting the halfway point between the vertices {simple impl for now to keep it simple}
+
+        #     # LNLEngine.LNL_LogInfo("checking Portal collision ")
+        #     # collided = False
+        #     # if portal.intersectsPoint(obj._World_Position):
+        #     #     collided = True
+        #     # if portal.intersectsPoint(obj._World_Position + Vec3(obj.width)):
+        #     #     collided = True
+        #     # if portal.intersectsPoint(obj._World_Position + Vec3(0, obj.height)):
+        #     #     collided = True
+        #     # if portal.intersectsPoint(obj._World_Position + Vec3(obj.width, obj.height)):
+        #     #     collided = True
             
-            if portal.intersectsQuad([obj._World_Position.toVec2().get_p(), 
-                                      (obj._World_Position.toVec2() + Vec2(obj.width)).get_p(),
-                                    (obj._World_Position.toVec2() + Vec2(0, obj.height)).get_p()
-                                    ,(obj._World_Position.toVec2() + Vec2(obj.width, obj.height)).get_p()]):
+        #     if portal.intersectsQuad([obj._World_Position.toVec2().get_p(), 
+        #                               (obj._World_Position.toVec2() + Vec2(obj.width)).get_p(),
+        #                             (obj._World_Position.toVec2() + Vec2(0, obj.height)).get_p()
+        #                             ,(obj._World_Position.toVec2() + Vec2(obj.width, obj.height)).get_p()]):
 
                 
-                # input()
-                LNLEngine.LNL_LogInfo("Portal collision ")
-                LNLEngine.LNL_LogInfo("lkinked? : ", portal.checkLink())
+        #         # input()
+        #         LNLEngine.LNL_LogInfo("Portal collision ")
+        #         LNLEngine.LNL_LogInfo("lkinked? : ", portal.checkLink())
 
-                if portal.checkLink() and not obj.InPortalColision and not obj.InPortalColisionOnFrame:                    
-                    LNLEngine.LNL_LogInfo("Portal teleportation ")
+        #         if portal.checkLink() and not obj.InPortalColision and not obj.InPortalColisionOnFrame:                    
+        #             LNLEngine.LNL_LogInfo("Portal teleportation ")
 
-                    offset : Vec2 = obj._World_Position.toVec2() - portal.vertices[0]
+        #             offset : Vec2 = obj._World_Position.toVec2() - portal.vertices[0]
 
-                    dest : Portal = portal.GetDestination()
+        #             dest : Portal = portal.GetDestination()
 
-                    normalisedDistRationOut_y : float = (offset.dot(portal.tangent.get_normalized()) * portal.tangent).length() / portal.alongVec.length()
-                    normalisedDistRationOut_x : float = (offset.dot(portal.normal.get_normalized()) * portal.normal).length()  / portal.normal.length()
+        #             normalisedDistRationOut_y : float = (offset.dot(portal.tangent.get_normalized()) * portal.tangent).length() / portal.alongVec.length()
+        #             normalisedDistRationOut_x : float = (offset.dot(portal.normal.get_normalized()) * portal.normal).length()  / portal.normal.length()
 
-                    destOffsetOut = (dest.alongVec * normalisedDistRationOut_y) + (dest.normal * normalisedDistRationOut_x)
-                    # destCenter = dest.vertices[0] + (dest.vertices[1] - dest.vertices[0]).multiply(0.5)
-                    obj._World_Position = LNLEngine.Vec3(destOffsetOut[0] - (obj.width/2), destOffsetOut[1] - (obj.height/2))
+        #             destOffsetOut = (dest.alongVec * normalisedDistRationOut_y) + (dest.normal * normalisedDistRationOut_x)
+        #             # destCenter = dest.vertices[0] + (dest.vertices[1] - dest.vertices[0]).multiply(0.5)
+        #             obj._World_Position = LNLEngine.Vec3(destOffsetOut[0] - (obj.width/2), destOffsetOut[1] - (obj.height/2))
                     
 
-                   # normal should be normalised but i am dividing jsut in case 
-                   # angle is in radians
-                    angleRot = math.acos(portal.normal.dot(dest.normal) / (portal.normal.length() * dest.normal.length()))
-                    oV = Vec2(obj.body.getVelocity()[0], obj.body.getVelocity()[1]) * Mat2([
-                                                                        [math.cos(-angleRot) , -math.sin(-angleRot)],
-                                                                        [math.sin(-angleRot) , math.cos(-angleRot)]
-                                                                            ])
+        #            # normal should be normalised but i am dividing jsut in case 
+        #            # angle is in radians
+        #             angleRot = math.acos(portal.normal.dot(dest.normal) / (portal.normal.length() * dest.normal.length()))
+        #             oV = Vec2(obj.body.getVelocity()[0], obj.body.getVelocity()[1]) * Mat2([
+        #                                                                 [math.cos(-angleRot) , -math.sin(-angleRot)],
+        #                                                                 [math.sin(-angleRot) , math.cos(-angleRot)]
+        #                                                                     ])
                     
-                    obj.body.setVelocity( Vec3(*oV.get_p()).toVec2() )
+        #             obj.body.setVelocity( Vec3(*oV.get_p()).toVec2() )
 
-                obj.InPortalColisionOnFrame = True
+        #         obj.InPortalColisionOnFrame = True
                 
 
 
@@ -222,11 +224,11 @@ class Player(LNLEngine.GameObject2D):
         for kcode in LNLEngine.KEY_MAP:
             self.keys[kcode] = 0
 
-        # c1 : LNLEngine.Collider2D = LNLEngine.Box2D()
-        c1 : LNLEngine.Collider2D = LNLEngine.AABB()
+        c1 : LNLEngine.Collider2D = LNLEngine.Box2D()
+        # c1 : LNLEngine.Collider2D = LNLEngine.AABB()
         # c1 : LNLEngine.Collider2D = LNLEngine.Circle()
         c1.setSize( Vec2(self.width, self.height) )
-        # c1.setRadius( self.width / 2 )
+        # c1.setRadius( self.height / 2 )
         c1.setRigidBody(self.body)
         self.body.setCollider(c1)
         self.body.linearDamping = 0.8
@@ -323,4 +325,6 @@ class Player(LNLEngine.GameObject2D):
         # LNLEngine.Renderer.DrawTriangle([Vec2(200,10),Vec2(100,800) , Vec2(700,4)], Vec4(100, 200, 80, 255))
 
         self.currentBody.setPos(self.body.getCollider().getLocalMin())# type: ignore
+        # self.currentBody.setPos(self.body.getPosition() - Vec2(math.sqrt(self.body.getCollider()._radius), math.sqrt(self.body.getCollider()._radius)))# type: ignore
+        self.currentBody.setRot(self.body.getRotation()) # type: ignore
         self.currentBody.Draw()

@@ -20,7 +20,8 @@ class ShapeType(Enum):
 class RigidBody2D:
 
     def __init__(self):
-        self._collisionListeners = []
+        self._contactListeners = []
+        self._collisionResponseListeners = []
         
         self.rawTransform : Transform | None = None
 
@@ -49,6 +50,7 @@ class RigidBody2D:
 
 
         self.isStatic : bool = False
+        self.isActor  : bool = True
 
         self.collider : Collider2D | None = None
 
@@ -61,15 +63,27 @@ class RigidBody2D:
     def getOwner(self) -> object | None:
         return self.owner
 
+
     def addCollisionListener(self, listener):
-        self._collisionListeners.append(listener)
+        self._collisionResponseListeners.append(listener)
 
     def removeCollisionListener(self, listener):
-        self._collisionListeners.remove(listener)
+        self._collisionResponseListeners.remove(listener)
 
     def _notifyCollision(self, otherOwner : object , other_body, impulse : Vec2, manifold):
-        for listener in self._collisionListeners:
+        for listener in self._collisionResponseListeners:
             listener(self, otherOwner, other_body, impulse, manifold)
+
+
+    def addContactListener(self, listener):
+        self._contactListeners.append(listener)
+
+    def removeContactListener(self, listener):
+        self._contactListeners.remove(listener)
+
+    def _notifyContact(self, otherOwner : object , other_body):
+        for listener in self._contactListeners:
+            listener(self, otherOwner, other_body)
 
 
     def physicsUpdate(self, dt : float):
@@ -116,7 +130,9 @@ class RigidBody2D:
         return self.linearVelocity
 
     def getRotation(self) -> float:
+        """returns the rotation in radians"""
         return self.rotation
+    
     def setRotation(self, newRotation): 
         self.rotation = newRotation
 
