@@ -146,8 +146,8 @@ class PhysicsSystem2D:
         a.setVelocity( a.getVelocity() + (impulse * invMass1) *  -1)
         b.setVelocity( b.getVelocity() + (impulse * invMass2) *  1)
 
-        a._notifyCollision(b, impulse, m)
-        b._notifyCollision(a, impulse, m)
+        a._notifyCollision(b.getOwner(), b, impulse, m)
+        b._notifyCollision(a.getOwner(), a, impulse, m)
 
 
 

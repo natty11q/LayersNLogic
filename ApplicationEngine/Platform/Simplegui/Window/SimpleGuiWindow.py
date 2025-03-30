@@ -72,33 +72,34 @@ class SimpleGUIWindow(Window):
 
     def pygame_event_callback(self):
         for event in self.windowEvents:
+            # do NOT print in release. it tanks the fps
             if (event.type == pygame.QUIT):  # pylint: disable=no-member  # noqa
                     self.frame.stop()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                print("mbtn down", event.pos, event.button , event.touch)
+                # print("mbtn down", event.pos, event.button , event.touch)
                 e = MouseButtonDownEvent()
                 e.button = event.button
                 e.x = event.pos[0] - self.frame._canvas_x_offset
                 e.y = event.pos[1] - self.frame._canvas_y_offset
-                print("modPos down", e.x, e.y)
+                # print("modPos down", e.x, e.y)
                 sendEvent(e)
                 # self.firstclick = True
 
             elif event.type == pygame.MOUSEBUTTONUP:
-                print("mbtn up", event.pos, event.button , event.touch)
+                # print("mbtn up", event.pos, event.button , event.touch)
                 e = MouseButtonUpEvent()
                 e.button = event.button
                 e.x = event.pos[0] - self.frame._canvas_x_offset
                 e.y = event.pos[1] - self.frame._canvas_y_offset
                 sendEvent(e)
-                print("modPos up", e.x, e.y)
+                # print("modPos up", e.x, e.y)
             
             elif event.type == pygame.MOUSEMOTION:
                 e = MouseMovedEvent()
                 e.x = event.pos[0] - self.frame._canvas_x_offset
                 e.y = event.pos[1] - self.frame._canvas_y_offset
                 sendEvent(e)
-                print("modPos moved", e.x, e.y)
+                # print("modPos moved", e.x, e.y)
 
             elif event.type == pygame.KEYDOWN:
                 e = KeyDownEvent()

@@ -23,7 +23,7 @@ EngineFileManager.SetEnginePath("EngineRoot" , EngineRoot)
 EngineFileManager.SetEnginePath("EngineBase" , os.path.join( str(EngineFileManager.GetEnginePath("EngineRoot")), "ApplicationEngine") )
 EngineFileManager.SetEnginePath("EngineSettingsRoot" , os.path.join( str(EngineFileManager.GetEnginePath("EngineBase")) , "Settings"))
 
-print ("ESR : ", EngineFileManager.GetEnginePath("EngineSettingsRoot"))
+LNL_LogEngineInfo("ESR : ", EngineFileManager.GetEnginePath("EngineSettingsRoot"))
 
 from ApplicationEngine.src.Core.Core import *
 

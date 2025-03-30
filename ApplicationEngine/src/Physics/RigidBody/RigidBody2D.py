@@ -54,15 +54,22 @@ class RigidBody2D:
 
         self.COR = 1.0 # coeff of restitution
 
+        self.owner : object = None
+    
+    def setOwner(self, newOwner : object):
+        self.owner = newOwner
+    def getOwner(self) -> object | None:
+        return self.owner
+
     def addCollisionListener(self, listener):
         self._collisionListeners.append(listener)
 
     def removeCollisionListener(self, listener):
         self._collisionListeners.remove(listener)
 
-    def _notifyCollision(self, other_body, impulse : Vec2, manifold):
+    def _notifyCollision(self, otherOwner : object , other_body, impulse : Vec2, manifold):
         for listener in self._collisionListeners:
-            listener(self, other_body, impulse, manifold)
+            listener(self, otherOwner, other_body, impulse, manifold)
 
 
     def physicsUpdate(self, dt : float):

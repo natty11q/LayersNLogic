@@ -25,5 +25,5 @@ class VertexArray:
                 from ApplicationEngine.Platform.Simplegui.Renderer.SimpleGuiVertexArray import SimpleGuiVertexArray
                 return SimpleGuiVertexArray()
             case _:
-                print(f"Unimplemented Api for vertex array : {api}")
+                LNL_LogEngineError(f"Unimplemented Api for vertex array : {api}")
                 raise Exception()

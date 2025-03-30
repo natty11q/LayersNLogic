@@ -37,7 +37,7 @@ def LoadJson(pathToJson : str) -> dict [str, object] | None:
         dict : json data
     """
     if (not os.path.exists(pathToJson)):
-        print("Failed to load json from path : ", pathToJson , "  |  " ,os.path.abspath(pathToJson))
+        LNL_LogEngineError("Failed to load json from path : ", pathToJson , "  |  " ,os.path.abspath(pathToJson))
         return {}
     
     with open(pathToJson , "r") as jsonFile:

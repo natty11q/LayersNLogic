@@ -311,8 +311,8 @@ class Player(LNLEngine.GameObject2D):
             self.keys[event.keycode] = 0
     
 
-    def _OnCollision(self, body : LNLEngine.RigidBody2D, other: LNLEngine.RigidBody2D, impulse: Vec2, manifold: LNLEngine.CollisionManifold):
-        if other.hasInfiniteMass():
+    def _OnCollision(self, body : LNLEngine.RigidBody2D, otherOwner : LNLEngine.GameObject2D, otherBody: LNLEngine.RigidBody2D, impulse: Vec2, manifold: LNLEngine.CollisionManifold):
+        if otherBody.hasInfiniteMass():
             ...
 
 

@@ -268,7 +268,7 @@ class SimpleGUiRendererAPI(RendererAPI):
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.fbo_texture, 0)
 
         if glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE:
-            print("Error: Framebuffer is not complete!")
+            LNL_LogEngineError("Error: Framebuffer is not complete!")
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     
 

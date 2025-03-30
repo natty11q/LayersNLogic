@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # from ApplicationEngine.include.Window.Window import *
 from ApplicationEngine.include.Maths.Maths import *
 from ApplicationEngine.src.Graphics.Renderer.Renderer import Renderer
@@ -103,6 +105,7 @@ class GameObject2D(GameObject):
         self.body.setTransform(position)
         self.body.setMass(mass)
         self.body.addCollisionListener(self._OnCollision)
+        self.body.setOwner(self)
     
     def BeginPlay(self):
         super().BeginPlay()
@@ -114,7 +117,7 @@ class GameObject2D(GameObject):
         PhysicsSystem2D.Get().removeRigidbody(self.body)
 
 
-    def _OnCollision(self, body : RigidBody2D, other : RigidBody2D, impulse : Vec2, manifold : CollisionManifold):
+    def _OnCollision(self, body : RigidBody2D, otherOwner : GameObject2D, otherBody : RigidBody2D, impulse : Vec2, manifold : CollisionManifold):
         ...
 
 
