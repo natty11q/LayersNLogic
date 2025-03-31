@@ -343,8 +343,9 @@ class TestLayer(LNLEngine.Layer):
         # player3 = Player(Vec2(300,200), 7, "player2")
 
 
-        self.portal1 = Portal(Vec2(800, 450),0)
-        self.portal2 = Portal(Vec2(100, 450),math.pi)
+        self.portal1 = Portal(Vec2(800, 400),math.pi/2)
+        # self.portal2 = Portal(Vec2(100, 400),math.pi)
+        self.portal2 = Portal(Vec2(100, 400),math.pi/2)
         
 
         self.portal1.LinkPortal(self.portal2)

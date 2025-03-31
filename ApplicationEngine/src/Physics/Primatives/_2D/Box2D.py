@@ -57,7 +57,7 @@ class Box2D(Collider2D):
             for i in range(len(vertices)):
 
                 # TODO: impl rotation
-                vertices[i] = LNLMAths.rotate_vec2(vertices[i], self._rigidBody.getPosition(), self._rigidBody.getRotation())
+                vertices[i] = LNLMAths.rotate_vec2(vertices[i], self._rigidBody.getPosition(), math.degrees(self._rigidBody.getRotation()) )
 
         return vertices
     

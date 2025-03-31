@@ -72,7 +72,8 @@ class Sprite(GameObject):
             uniform vec2 u_SpritePosition;
             uniform float u_SpriteRotation;
             uniform vec2 u_SpriteDimensions;
-            uniform vec3 u_ScreenDimensions;
+            uniform vec2 u_ScreenDimensions;
+            uniform float u_AspectRatio;
 
             uniform mat4 u_ViewProjection;
 
@@ -86,10 +87,11 @@ class Sprite(GameObject):
                 float Cosr = cos(u_SpriteRotation);
                 float Sinr = sin(u_SpriteRotation);
 
-                // mat2 rotationMatrix = mat2(Cosr, -Sinr, Sinr,  Cosr);
+                mat2 rotationMatrix = mat2(Cosr, -Sinr, Sinr,  Cosr);
 
-                // Apply the rotation
-                // pos = rotationMatrix * pos;
+                //Apply the rotation
+                pos = rotationMatrix * pos;
+                // u_ScreenDimensions = rotationMatrix * u_ScreenDimensions;
 
                 float scale_x = u_SpriteDimensions.x / u_ScreenDimensions.x;
                 float scale_y = u_SpriteDimensions.y / u_ScreenDimensions.y;
@@ -178,7 +180,8 @@ class Sprite(GameObject):
             Sprite.s_SpriteShader.SetUniformFloat("u_SpriteRotation", self.SpriteRot)
 
             Sprite.s_SpriteShader.SetUniformVec2("u_SpriteDimensions", Vec2(self.spriteWidth, self.spriteHeight))
-            Sprite.s_SpriteShader.SetUniformVec3("u_ScreenDimensions", Vec3(w_width, w_height, (w_width/w_height)))
+            Sprite.s_SpriteShader.SetUniformVec2("u_ScreenDimensions", Vec2(w_width, w_height))
+            Sprite.s_SpriteShader.SetUniformFloat("u_AspectRatio", (w_width/w_height))
 
             Sprite.s_SpriteShader.SetUniformInt("flipped_lr", int(self.flipped_lr))
             

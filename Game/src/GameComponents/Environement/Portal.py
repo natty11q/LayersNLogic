@@ -155,7 +155,7 @@ class Portal(LNLEngine.GameObject2D):
         self.sprite = LNLEngine.Sprite(tex, 
                                        position - Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE / 2),
                                        WorldGrid.GRID_SIZE,
-                                       WorldGrid.GRID_SIZE
+                                       WorldGrid.GRID_SIZE * 2
                                     )
         
         if Destination is None or not isinstance(Destination, Portal):
@@ -165,11 +165,12 @@ class Portal(LNLEngine.GameObject2D):
 
         c = self.InitCollider()
         self.body.setCollider(c)
+        self.body.setRotation(self.rotation)
 
     def InitCollider(self):
         c1 = LNLEngine.Box2D()
-        c1.setSize(Vec2(10,WorldGrid.GRID_SIZE))
-
+        c1.setSize(Vec2(20,WorldGrid.GRID_SIZE * 2))
+    
         c1.setRigidBody(self.body)
         return c1
 
@@ -188,7 +189,7 @@ class Portal(LNLEngine.GameObject2D):
             self.sprite = LNLEngine.Sprite(tex1, 
                                         self.body.getPosition() - Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE / 2),
                                         WorldGrid.GRID_SIZE,
-                                        WorldGrid.GRID_SIZE
+                                        WorldGrid.GRID_SIZE * 2
                                         )
 
 
@@ -196,7 +197,7 @@ class Portal(LNLEngine.GameObject2D):
             newPortal.sprite = LNLEngine.Sprite(tex2, 
                                         self.body.getPosition() - Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE / 2),
                                         WorldGrid.GRID_SIZE,
-                                        WorldGrid.GRID_SIZE
+                                        WorldGrid.GRID_SIZE * 2
                                         )
 
             self._DestinationPortal = newPortal
@@ -209,9 +210,11 @@ class Portal(LNLEngine.GameObject2D):
     
     def GetDestination(self) -> Portal:
         return self._DestinationPortal
-    
-    def Draw(self):
+
+    def _OnUpdate(self, deltatime: float):
         self.sprite.SetPos(self.body.getPosition() + self.drawOffset)
         self.sprite.SetRot(self.rotation)
+        self.body.setRotation(self.rotation)
 
+    def Draw(self):
         self.sprite.Draw()
