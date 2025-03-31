@@ -1,7 +1,7 @@
 import ApplicationEngine.AppEngine as LNLEngine
 
 from ApplicationEngine.include.Maths.Maths import *
-import Game.src.Level.LevelClass as Level
+# import Game.src.Level.TutorialLevel as Level
 from Game.src.MainMenu.UI.ButtonClass import *
 
 

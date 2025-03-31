@@ -33,10 +33,14 @@ class Scene:
         AddEventListener( self.OnEvent )
 
     def BeginPlay(self):
+        if self.levelManager.activeLevel:
+            self.levelManager.activeLevel.BeginPlay()
         for obj in self.objects:
             obj.BeginPlay()
 
     def EndPlay(self):
+        if self.levelManager.activeLevel:
+           self.levelManager.activeLevel.EndPlay()
         for obj in self.objects:
             obj.EndPlay()
 
@@ -50,7 +54,7 @@ class Scene:
         ...
     
     def OnEvent(self, e : Event):
-        ...
+        self.levelManager.OnEvent(e)
 
     def Update(self, dt : float):
         if self.sceneType not in [SceneType.Menu]:

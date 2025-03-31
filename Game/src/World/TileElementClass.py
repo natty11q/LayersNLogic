@@ -75,7 +75,7 @@ class TileChunk(LNLEngine.GameObject2D):
         self.bodySprite : LNLEngine.Sprite = self.topSprite
 
         if bodyTexture:
-            self.bodySprite = LNLEngine.Sprite = LNLEngine.Sprite(bodyTexture,
+            self.bodySprite : LNLEngine.Sprite = LNLEngine.Sprite(bodyTexture,
                                           gridPosition * WorldGrid.GRID_SIZE,
                                           WorldGrid.GRID_SIZE, WorldGrid.GRID_SIZE
                                           )

@@ -13,8 +13,9 @@ import math
 
 
 # from Game.src.MainMenu.MainMenuLayer import *
+from Game.src.Level.TutorialLevel import *
 from Game.src.MainMenu.MainMenuScene import *
-from Game.src.World.World import *
+# from Game.src.World.World import *
 
 class MovingSquare(LNLEngine.Quad):
     def __init__(self, topLeft: LNLEngine.Vec2, width: float, height: float, colour: LNLEngine.Vec4):
@@ -377,11 +378,14 @@ class TestLayer(LNLEngine.Layer):
         self.ScreenShader = LNLEngine.ScreenShader(FragmentShader= "ApplicationEngine/src/Object/Shaders/cloudShader.frag", FragmentShaderIsPath=True)
         # self.ScreenShader = LNLEngine.ScreenShader(FragmentShader= "ApplicationEngine/src/Object/Shaders/ScreenShaderRaymarch.frag", FragmentShaderIsPath=True)
         
-        mainScene.AddObject(self.ScreenShader)
-        mainScene.AddObject(self.portal1)
-        mainScene.AddObject(self.portal2)
+        # mainScene.AddObject(self.ScreenShader)
+        # mainScene.AddObject(self.portal1)
+        # mainScene.AddObject(self.portal2)
         mainScene.AddObject(self.player)
         mainScene.AddObject(PlayerHud(self.player))
+
+        mainScene.GetLevelManager().addLevel(TutorialLevel("Tutorial0"))
+        mainScene.GetLevelManager().setActiveLevel("Tutorial0")
         
         # mainScene.AddObject(player2)
         # mainScene.AddObject(player3)
@@ -433,13 +437,15 @@ class TestLayer(LNLEngine.Layer):
 
 
 
-        self.tiles : list [GameObject] = []
+        # self.tiles : list [GameObject] = []
 
-        tex0 = Texture("Game/Assets/Sprites/environ/grassfull.png", True)
-        tex1 = Texture("Game/Assets/Sprites/environ/rocksfull.png", True)
-        chunk = TileChunk(Vec2(-1,8),Vec2(50, 2), tex0, tex1)
+        # tex0 = Texture("Game/Assets/Sprites/environ/grassfull.png", True)
+        # tex1 = Texture("Game/Assets/Sprites/environ/rocksfull.png", True)
+        # chunk = TileChunk(Vec2(-1,8),Vec2(50, 2), tex0, tex1)
 
-        self.tiles.append(chunk)
+        # self.tiles.append(chunk)
+
+
         # for i in range(20):
         #     tex = Texture("Game/Assets/Sprites/environ/grassfull.png", True)
         #     t = Tile(tex, Vec2(i, 10))
@@ -459,8 +465,8 @@ class TestLayer(LNLEngine.Layer):
         #         t = Tile(tex, Vec2(i, 11 + j))
         #         self.tiles.append(t)
 
-        for tile in self.tiles:
-            mainScene.AddObject(tile)
+        # for tile in self.tiles:
+        #     mainScene.AddObject(tile)
         # self.testPhsicsComponent2 = TestPhysicsObject(Vec2(-20, -400),0)
 
 
@@ -532,7 +538,9 @@ class TestLayer(LNLEngine.Layer):
         
         # self.TestSquare.Update()
         # self.TestSquare.Draw()
-        self.testPhsicsComponent.Update(deltatime)
+
+        # self.testPhsicsComponent.Update(deltatime)
+        
         # self.testPhsicsComponent2.Update(deltatime)
         
         # self.guyWalk.Update(deltatime)
@@ -549,7 +557,7 @@ class TestLayer(LNLEngine.Layer):
 
         LNLEngine.Renderer.BeginScene(self.TestCamera)
 
-        LNLEngine.Renderer.Submit(self.shader ,self.m_vertexArray)
+        # LNLEngine.Renderer.Submit(self.shader ,self.m_vertexArray)
         self.SceneManager.Draw()
 
         # self.testPhsicsComponent.Draw()
@@ -622,7 +630,7 @@ class PortalsDemo(LNLEngine.Game):
                                             Vec4(*s_envElement["colour"].values())
                                         )
                         
-                        l.AddLevelComponent(c_type, ms)
+                        l.AddLevelComponent(ms,c_type)
                 
                 scene.GetLevelManager().addLevel(l)
 
