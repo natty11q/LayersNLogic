@@ -95,7 +95,7 @@ class PesrpectiveCamera(Camera):
 
 class OrthographicCamera(Camera):
     def __init__(self, left : float, right : float, bottom : float, top : float):
-        self._m_ProjectionMatrix : Mat4 = Matrix.ortho(left,right,bottom,top,-1.0,1.0)
+        self._m_ProjectionMatrix : Mat4 = Matrix.ortho(left,right,bottom,top,-1.0,1.0).inverse()
         # self._m_ViewMatrix : Mat4 = Mat4()
 
         # self._m_ViewProjectionMatrix : Mat4 = Mat4()

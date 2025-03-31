@@ -85,6 +85,10 @@ class LNLMAths:
 
         return Vec2(xp, yp)
     
+    @staticmethod
+    def reflectVec2(velocity : Vec2, axis : Vec2):
+        return velocity - 2.0 * velocity.dot(axis) * axis
+
 
 
     @staticmethod

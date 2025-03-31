@@ -52,7 +52,7 @@ class CanTravelThroughPortals(LNLEngine.ObjectAttribute):
         
         positionOffset : Vec2 = body.getPosition() - otherBody.getPosition()
 
-        totalRotation = portal.GetDestination().body.getRotation() -  portal.body.getRotation() - (math.pi)
+        totalRotation = portal.GetDestination().body.getRotation() -  portal.body.getRotation()
 
         currentPos = body.getPosition()
         currentVel = body.getVelocity()
@@ -63,7 +63,8 @@ class CanTravelThroughPortals(LNLEngine.ObjectAttribute):
 
         # newPos : Vec2 = currentPos - portal.body.getPosition() + portal.GetDestination().body.getPosition() + updatedPositionOffset
         newPos : Vec2 = currentPos - portal.body.getPosition() + portal.GetDestination().body.getPosition() 
-        newVel = LNLEngine.LNLMAths.rotate_vec2(currentVel, Vec2(0,0), math.degrees(totalRotation))
+        newVel = LNLEngine.LNLMAths.reflectVec2(currentVel , LNLEngine.LNLMAths.rotate_vec2(Vec2(1,0),Vec2(0,0),math.degrees(portal.rotation)).normalize())
+        newVel = LNLEngine.LNLMAths.rotate_vec2(newVel, Vec2(0,0), math.degrees(totalRotation))
 
         body.setTransform(newPos)
         body.setVelocity(newVel)

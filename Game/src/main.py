@@ -25,8 +25,6 @@ class MovingSquare(LNLEngine.Quad):
     def _OnUpdate(self, deltatime: float):
         self._topLeft = Vec2( self.RestPos.x + ( 300 * math.cos(LNLEngine.LLEngineTime.Time() * 2) ), self.RestPos.y + ( 300 * math.sin(LNLEngine.LLEngineTime.Time() * 2) ))
 
-
-
 class Cube(LNLEngine.GameObject):
     def __init__(self, scale : float= 1, rotation : Quat.Quat = Quat.Quat() ,position : Vec3 = Vec3(0,0,-100)):
         super().__init__()
@@ -252,85 +250,7 @@ class TestLayer(LNLEngine.Layer):
     def __init__(self, name="TestLayer"):
         super().__init__(name)
         self.gameWindow = LNLEngine.Game.Get().GetWindow()
-        
-        # =================================
-        # testSquareWidth = 100
-        # testSquareHeight = 100
-        
-        # self.TestSquare = MovingSquare(
-        #     LNLEngine.Vec2(
-        #         self.gameWindow.GetWidth() / 2 - (testSquareWidth/2),
-        #         self.gameWindow.GetHeight() / 2 - (testSquareHeight/2)
-        #     ),
-        #     testSquareWidth, testSquareHeight,
-        #     LNLEngine.Vec4(255,255,0,0)
-        # )
-        
-        LNLEngine.Renderer.SetClearColour(LNLEngine.Vec4(0.15,0.1,0.2,1.0))
-
-        VERTEX_SHADER = """
-            #version 330 core
-            layout(location = 0) in vec3 a_Pos;
-            layout(location = 1) in vec3 a_Col;
-            layout(location = 2) in vec3 a_Normal;
-
-            uniform mat4 u_ViewProjection;
-
-            out vec3 vertexColor;
-            void main() {
-                vertexColor = a_Col;
-                gl_Position = u_ViewProjection * vec4(a_Pos, 1.0);
-            }
-        """
-        FRAGMENT_SHADER = """
-            #version 330 core
-            in vec3 vertexColor;
-            out vec4 FragColor;
-            void main() {
-                FragColor = vec4(vertexColor, 1.0);
-            }
-        """
-        self.shader : LNLEngine.Shader = LNLEngine.Shader(VERTEX_SHADER, FRAGMENT_SHADER)
-
-        self.m_vertexArray = LNLEngine.VertexArray.Create()
-
-        vertices = [ 
-            # position          # colour        # normal
-            -0.5, -0.5, 0.0,    0.3, 0.2, 0.8,  0.0, 0.0, 1.0,
-             0.5, -0.5, 0.0,    0.8, 0.2, 0.3,  0.0, 0.0, 1.0,
-             0.5,  0.5, 0.0,    0.3, 0.8, 0.2,  0.0, 0.0, 1.0,
-            -0.5,  0.5, 0.0,    0.7, 0.4, 0.8,  0.0, 0.0, 1.0
-            ]
-        
-        VertexBuffer = LNLEngine.VertexBuffer.Create(vertices, LNLEngine.sizeof(LNLEngine.c_float) * len(vertices))
-
-        layout = LNLEngine.BufferLayout(
-            [
-                LNLEngine.BufferElement("a_pos", LNLEngine.ShaderDataType.Vec3),
-                LNLEngine.BufferElement("a_col", LNLEngine.ShaderDataType.Vec3),
-                LNLEngine.BufferElement("a_normal", LNLEngine.ShaderDataType.Vec3)
-            ]
-        )
-        VertexBuffer.SetLayout(layout)
-        self.m_vertexArray.AddVertexBuffer(VertexBuffer)
-
-
-        indices = [0 ,1 ,2, 
-                   2 ,3 ,0]
-        
-        IndexBuffer = LNLEngine.IndexBuffer.Create(indices , len(indices))
-
-        self.m_vertexArray.SetIndexBuffer(IndexBuffer)
-
-
-        self.camera : LNLEngine.PesrpectiveCamera = LNLEngine.PesrpectiveCamera(self.gameWindow.GetWidth(),self.gameWindow.GetHeight())
-
-        # cube = Cube(rotation= Quat.Quat(0.33608,0.16351,0,0.92476), scale=1.5)
-        # self.Cube2 = Cube()
-
-
-
-        self.TestCamera = OrthographicCamera(-5.0, 5.0, -1.0, 1.0)
+        self.TestCamera = OrthographicCamera(-5.0, 5.0, -5.0, 5.0)
 
         self.SceneManager = LNLEngine.Game.Get().GetSceneManager()
 
