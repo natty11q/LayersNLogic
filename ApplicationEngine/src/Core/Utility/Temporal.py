@@ -92,7 +92,7 @@ class LLEngineTime:
     __ScaledElapsedTime : float  = 0
     
     
-    __BASE_TICK_RATE : float = __TimeSettings.get("BASE_TICK_RATE",60)          # type: ignore
+    __BASE_TICK_RATE : float = __TimeSettings.get("BASE_TICK_RATE",25)          # type: ignore
     __TickRate : float = __BASE_TICK_RATE
     
     
@@ -276,6 +276,8 @@ class LLEngineTime:
     
     @staticmethod
     def PhysicsUpdate() -> None:
+        # LLEngineTime.__TickDelta = 1/20
+        # return 
 
         # restrict the frame rate
         LLEngineTime.__tickEnd = time.process_time()
