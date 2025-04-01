@@ -113,8 +113,8 @@ class Player(LNLEngine.GameObject2D):
 
 
         self.lives      : int = 0
-        self.health     : float = 3
-        self.maxHealth  : float = 5
+        self.health     : float = 2
+        self.maxHealth  : float = 100
 
 
         tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Stand.png", True)
@@ -278,8 +278,8 @@ class Player(LNLEngine.GameObject2D):
     
 
     def _OnCollision(self, body : LNLEngine.RigidBody2D, otherOwner : LNLEngine.GameObject2D, otherBody: LNLEngine.RigidBody2D, impulse: Vec2, manifold: LNLEngine.CollisionManifold):
-        if isinstance(otherOwner , Enemy):
-            self.health -= 1.0
+        if isinstance(otherOwner , Enemy): ...
+            # self.health -= Enemy.attack / Player.defence
 
     def Draw(self):
         self.currentBody.Draw()

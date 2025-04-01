@@ -262,9 +262,10 @@ class Game:
     
     def _OnPhysicsUpdate(self) -> None:
         #TODO: add seperate deltatime for physics system.
-        self._m_SceneManager.PhysicsUpdate(1 / Temporal.LLEngineTime.TickRate())
+        Temporal.LLEngineTime.PhysicsUpdate()
+        self._m_SceneManager.PhysicsUpdate(Temporal.LLEngineTime.TickDelta())
         
-        self._m_PhysicsSystem2D.update(1 / Temporal.LLEngineTime.TickRate())
+        self._m_PhysicsSystem2D.update(Temporal.LLEngineTime.TickDelta())
         # LNL_LogEngineTrace("Physics update called")
 
     def _OnEvent(self , event  : Event) -> None:...

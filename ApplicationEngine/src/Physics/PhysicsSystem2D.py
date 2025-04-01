@@ -42,8 +42,10 @@ class PhysicsSystem2D:
         self.fixedUpdate()
 
     def fixedUpdate(self):
-        frame_tick_delta = 1/LLEngineTime.TickRate() # just incase the tick rate is set on the main thread casing inconsitiency
-        
+        frame_tick_delta = LLEngineTime.TickDelta() # just incase the tick rate is set on the main thread casing inconsitiency
+
+        print(frame_tick_delta)
+
         self.bodies1.clear()
         self.bodies2.clear()
         self.collisions.clear()

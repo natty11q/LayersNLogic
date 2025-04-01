@@ -96,6 +96,9 @@ class LLEngineTime:
     __TickRate : float = __BASE_TICK_RATE
     
     
+    __TickDelta : float = 0
+    
+    
     
     __TickCount : int = 0
     __FrameCount : int = 0
@@ -120,6 +123,9 @@ class LLEngineTime:
 # init as this so that the first frame has a deltatime of 0 instead of a large number (due to time.time() - 0 on frame 1)
     __frameStart    : float  = time.process_time()
     __frameEnd      : float  = time.process_time()
+
+    __tickStart    : float  = time.process_time()
+    __tickEnd      : float  = time.process_time()
     
     # timers are handled with ids
     # Note :: Ids should never change until the function is complete
@@ -164,6 +170,10 @@ class LLEngineTime:
     @staticmethod
     def DeltaTime() -> float:
         return LLEngineTime.__Deltatime
+    
+    @staticmethod
+    def TickDelta() -> float:
+        return LLEngineTime.__TickDelta
     
     @staticmethod
     def Time() -> float:
@@ -266,6 +276,23 @@ class LLEngineTime:
     
     @staticmethod
     def PhysicsUpdate() -> None:
+
+        # restrict the frame rate
+        LLEngineTime.__tickEnd = time.process_time()
+        
+        # frameTime = Time.__frameEnd - Time.__frameStart
+        TargetTickTime = 1 / LLEngineTime.__TickRate
+
+
+        WaitExit = False
+        while time.process_time() - LLEngineTime.__tickStart < (TargetTickTime - LLEngineTime.__FRAME_SLEEP_ALLOWANCE) and not WaitExit:
+            WaitExit = LLEngineTime.CustomSleep()
+
+        LLEngineTime.__tickEnd = time.process_time()
+        LLEngineTime.__TickDelta        = LLEngineTime.__tickEnd - LLEngineTime.__tickStart
+
+        LLEngineTime.__tickStart = time.process_time()
+
         LLEngineTime.__UpdatePhysicsTimers()
     
     
