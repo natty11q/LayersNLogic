@@ -32,7 +32,7 @@ SQUARE_INDICES : list [int] = [
 class GameObject(GameObjectBase):
     
     def __init__(self, *eat_args, **eat_kwargs):
-        self._World_Position : Vec3 = Vec3()
+        # self._World_Position : Vec3 = Vec3()
 
         self._Attributes : list [ObjectAttribute.__class__] = []
         self.__Active : bool = True ## toggles wether an object is active in the editor and if physics is enabled for that object.

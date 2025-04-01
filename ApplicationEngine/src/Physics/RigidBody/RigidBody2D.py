@@ -57,6 +57,8 @@ class RigidBody2D:
         self.COR = 1.0 # coeff of restitution
 
         self.owner : object = None
+
+        self.StoredImpulse : Vec2 = Vec2()
     
     def setOwner(self, newOwner : object):
         self.owner = newOwner
@@ -161,6 +163,9 @@ class RigidBody2D:
     def addForce(self, force : Vec2):
         self.forceAccum += force
 
+    def addImpulse(self, impulse : Vec2):
+        self.StoredImpulse += impulse
+
     def setCollider(self, collider : Collider2D):
         self.collider = collider
     
@@ -178,3 +183,7 @@ class RigidBody2D:
         return self.frictionCoefficient
     def setFrictionCoefficient(self, mu : float):
         self.frictionCoefficient = mu
+
+
+    def GetStoredImpulse(self) -> Vec2:
+        return self.StoredImpulse

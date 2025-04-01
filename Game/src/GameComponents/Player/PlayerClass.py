@@ -7,69 +7,11 @@ from Game.src.GameComponents.Environement.Portal import *
 
 
 from ApplicationEngine.src.Graphics.SpriteAnimationClass import *
-
+from Game.src.GameComponents.CanTravelThroughPortals import *
 import math
 
 
 
-class CanTravelThroughPortals(LNLEngine.ObjectAttribute):
-    # InPortalColision = False
-    CollisionRegistry : dict[ LNLEngine.GameObjectBase, dict [str, bool] ]= {}
-    @staticmethod
-    def Attrib_OnAttach(obj: LNLEngine.GameObjectBase):
-        CanTravelThroughPortals.CollisionRegistry[obj] = {"onframe" : False, "current" : False}
-
-    @staticmethod
-    def Attrib_OnUpdate(obj : Player): # type: ignore
-        ...
-    
-    @staticmethod
-    def Attrib_OnPhysicsUpdate(obj: LNLEngine.GameObjectBase):
-        if not CanTravelThroughPortals.CollisionRegistry[obj]["onframe"]:
-            CanTravelThroughPortals.CollisionRegistry[obj]["current"] = False
-
-
-        CanTravelThroughPortals.CollisionRegistry[obj]["onframe"] = False
-
-
-    @staticmethod
-    def Attrib_OnContact(obj: LNLEngine.GameObjectBase, body: LNLEngine.RigidBody2D, otherOwner: LNLEngine.GameObjectBase, otherBody: LNLEngine.RigidBody2D):
-        if not isinstance(otherOwner, Portal):
-            return
-        
-        portal = otherOwner
-        if not portal.IsActive():
-            return
-        
-
-        CanTravelThroughPortals.CollisionRegistry[obj]["onframe"] = True
-        if not LNLEngine.IntersectionDetector2D.pointInBox2D(body.getPosition(), otherBody.getCollider()): #type: ignore
-            return
-        
-
-        if CanTravelThroughPortals.CollisionRegistry[obj]["current"]: # check if currently in a portal collision
-            return
-        
-        positionOffset : Vec2 = body.getPosition() - otherBody.getPosition()
-
-        totalRotation = portal.GetDestination().body.getRotation() -  portal.body.getRotation()
-
-        currentPos = body.getPosition()
-        currentVel = body.getVelocity()
-
-        currentRot = body.getRotation()
-
-        updatedPositionOffset = LNLEngine.LNLMAths.rotate_vec2(positionOffset, Vec2(0,0), math.degrees(totalRotation))
-
-        # newPos : Vec2 = currentPos - portal.body.getPosition() + portal.GetDestination().body.getPosition() + updatedPositionOffset
-        newPos : Vec2 = currentPos - portal.body.getPosition() + portal.GetDestination().body.getPosition() 
-        newVel = LNLEngine.LNLMAths.reflectVec2(currentVel , LNLEngine.LNLMAths.rotate_vec2(Vec2(1,0),Vec2(0,0),math.degrees(portal.rotation)).normalize())
-        newVel = LNLEngine.LNLMAths.rotate_vec2(newVel, Vec2(0,0), math.degrees(totalRotation))
-
-        body.setTransform(newPos)
-        body.setVelocity(newVel)
-
-        CanTravelThroughPortals.CollisionRegistry[obj]["current"] = True
 
 
 
@@ -105,7 +47,7 @@ class Player(LNLEngine.GameObject2D):
         self.height = 150
 
         self.speed  = Vec2(500, 0)
-        self.jump   = Vec2(0, 50000)
+        self.jump   = Vec2(0, 10000)
 
         self.direction : float = 1
 
@@ -209,7 +151,9 @@ class Player(LNLEngine.GameObject2D):
         inputVector : Vec2 = Vec2()
 
         if self.keys.get(LNLEngine.KEY_MAP['right']):
+
             inputVector += Vec2(1, 0)
+
             self.direction = 1
         if self.keys.get(LNLEngine.KEY_MAP['left']):
             inputVector += Vec2(-1, 0)
@@ -271,11 +215,26 @@ class Player(LNLEngine.GameObject2D):
         if event.GetName() == "KeyDown":
             self.keys[event.keycode] = 1
 
+            if event.keycode == LNLEngine.KEY_MAP["left"]:
+                    if self.body.getVelocity().x > 0:
+                        self.body.setVelocity(Vec2(0,self.body.getVelocity().y))
+            if event.keycode == LNLEngine.KEY_MAP["right"]:
+                    if self.body.getVelocity().x < 0:
+                        self.body.setVelocity(Vec2(0,self.body.getVelocity().y))
+                    
+
             if event.keycode == LNLEngine.KEY_MAP["space"]:
-                self.body.addForce( -1 * self.jump * self.body.getMass())
+                # self.body.addForce( -1 * self.jump * self.body.getMass())
+                self.body.addImpulse( -1 * self.jump * self.body.getMass())
         if event.GetName() == "KeyUp":
-            self.keys[event.keycode] = 0
+            self.keys[event.keycode] = 0 
     
+            if event.keycode == LNLEngine.KEY_MAP["left"]:
+                    self.body.setVelocity(Vec2(0,self.body.getVelocity().y))
+            if event.keycode == LNLEngine.KEY_MAP["right"]:                
+                    self.body.setVelocity(Vec2(0,self.body.getVelocity().y))
+                    
+
 
     def _OnCollision(self, body : LNLEngine.RigidBody2D, otherOwner : LNLEngine.GameObject2D, otherBody: LNLEngine.RigidBody2D, impulse: Vec2, manifold: LNLEngine.CollisionManifold):
         if isinstance(otherOwner , Enemy): ...

@@ -32,16 +32,16 @@ class TutorialLevel(LNLEngine.Level):
         chunk3 = TileChunk(Vec2(10,5),Vec2(2, 5), tex0, tex1)
 
         self.tiles.append(chunk0)
-        self.tiles.append(chunk1)
-        self.tiles.append(chunk2)
-        self.tiles.append(chunk3)
+        # self.tiles.append(chunk1)
+        # self.tiles.append(chunk2)
+        # self.tiles.append(chunk3)
 
         self.endComponent = LevelExitObject(Vec2(13 * WorldGrid.GRID_SIZE,6 * WorldGrid.GRID_SIZE), self.getOwner(), "Level0")
 
         self.AddLevelComponent(Background,"background")
         
-        self.AddLevelComponent(portal1)
-        self.AddLevelComponent(portal2)
+        # self.AddLevelComponent(portal1)
+        # self.AddLevelComponent(portal2)
         self.AddLevelComponent(self.endComponent, "ending")
 
         for tile in self.tiles:
