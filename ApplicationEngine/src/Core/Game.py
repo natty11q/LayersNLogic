@@ -142,7 +142,7 @@ class Game:
         self._m_SceneManager : SceneManager = SceneManager()
 
         # self._m_PhysicsSystem2D : PhysicsSystem2D = PhysicsSystem2D(Vec2(0.0, -9.81 * 30))
-        self._m_PhysicsSystem2D : PhysicsSystem2D = PhysicsSystem2D(Vec2(0.0, 9.81 * 100))
+        self._m_PhysicsSystem2D : PhysicsSystem2D = PhysicsSystem2D(Vec2(0.0, 9.81 * 400))
         AddEventListener(self.__HandleEvents)
 
         self.saveDir : str = ""

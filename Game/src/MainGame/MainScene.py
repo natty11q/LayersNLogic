@@ -14,8 +14,8 @@ class MainScene(LNLEngine.Scene):
     def __init__(self):
         super().__init__("MainScene")
 
-        Camera    = LNLEngine.OrthographicCamera(-5.0, 5.0, -5.0, 5.0)
-        HudCamera = LNLEngine.OrthographicCamera(-5.0, 5.0, -5.0, 5.0)
+        Camera    = LNLEngine.OrthographicCamera(-1.0, 1.0, -1.0, 1.0)
+        HudCamera = LNLEngine.OrthographicCamera(-1.0, 1.0, -1.0, 1.0)
 
         self.SetMainCamera(Camera)
         self.SetHudCamera(HudCamera)
@@ -29,7 +29,7 @@ class MainScene(LNLEngine.Scene):
 
         lm : LNLEngine.LevelManager = self.GetLevelManager()
 
-        lm.addLevel(TutorialLevel("Tutorial-0"))        
+        lm.addLevel(TutorialLevel("Tutorial-0" , self.player))        
         lm.addLevel(Level_0("Level-0"))
         lm.addLevel(Level_1("Level-1"))
         lm.addLevel(Level_2("Level-2"))

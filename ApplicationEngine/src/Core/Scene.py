@@ -56,8 +56,8 @@ class Scene:
 
     def BeginPlay(self):
         self._OnBegin()
-        if self.levelManager.activeLevel:
-            self.levelManager.activeLevel.BeginPlay()
+        # if self.levelManager.activeLevel:
+        #     self.levelManager.activeLevel.BeginPlay()
         for obj in self.objects:
             obj.BeginPlay()
 

@@ -19,6 +19,7 @@ class LevelManager(LevelManagerBase):
         if levelName not in self.levels.keys():
             LNL_LogEngineError(f"attempted to set level [{levelName}] as active, but the scene [{levelName}] has not been added")
             return
+        
         if self.activeLevel:
             self.activeLevel.EndPlay()
 

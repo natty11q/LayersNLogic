@@ -104,7 +104,7 @@ class Player(LNLEngine.GameObject2D):
         self.width = 100
         self.height = 150
 
-        self.speed  = Vec2(500, 0)
+        self.speed  = Vec2(900, 0)
         self.jump   = Vec2(0, 50000)
 
         self.direction : float = 1
@@ -266,6 +266,11 @@ class Player(LNLEngine.GameObject2D):
 
         # self.currentBody.setPos(self.body.getPosition() - Vec2(math.sqrt(self.body.getCollider()._radius), math.sqrt(self.body.getCollider()._radius)))# type: ignore
 
+    def SetPosition(self, pos : Vec2):
+        self.body.setPosition(pos)
+
+    def SetVelocity(self, vel : Vec2):
+        self.body.setVelocity(vel)
 
     def _OnEvent(self, event : LNLEngine.Event):
         if event.GetName() == "KeyDown":
