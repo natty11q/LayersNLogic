@@ -222,7 +222,7 @@ class Player(LNLEngine.GameObject2D):
                     if self.body.getVelocity().x < 0:
                         self.body.setVelocity(Vec2(0,self.body.getVelocity().y))
                     
-
+        
             if event.keycode == LNLEngine.KEY_MAP["space"]:
                 # self.body.addForce( -1 * self.jump * self.body.getMass())
                 self.body.addImpulse( -1 * self.jump * self.body.getMass())
