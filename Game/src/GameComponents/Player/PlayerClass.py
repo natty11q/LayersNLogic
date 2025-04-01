@@ -98,20 +98,9 @@ class Enemy:
 class Player(LNLEngine.GameObject2D):
     def __init__(self, position: Vec2 = Vec2(), mass : float = 70 , name : str = ""):
         super().__init__(position, mass = mass)
-        # self.SetAttribure(PlayerInputHandlerAttribute)
-
-        # self.SetAttribure(AffectedByGravityAttribute)
         self.SetAttribure(CanTravelThroughPortals)
         self.name = name
-        self.bound = False
 
-
-        # self.Velocity = Vec3()
-        self.Colour = Vec4(0,0,255,255)
-        # self._World_Position = Vec3(7
-
-        # self.width = random.randint(50,200)
-        # self.height = random.randint(120,300)
         self.width = 100
         self.height = 150
 
@@ -126,10 +115,6 @@ class Player(LNLEngine.GameObject2D):
         self.lives      : int = 0
         self.health     : float = 3
         self.maxHealth  : float = 5
-
-        self.InPortalColision = False
-        self.InPortalColisionOnFrame = False
-
 
 
         tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Stand.png", True)
@@ -215,33 +200,26 @@ class Player(LNLEngine.GameObject2D):
 
     def BeginPlay(self):
         super().BeginPlay()
-        # LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(self.body, False)
             
 
     def _OnUpdate(self, deltatime : float):
-        # LNLEngine.LNL_LogEngineInfo(self._World_Position)
-        self.InPortalColision = self.InPortalColisionOnFrame
-        self.InPortalColisionOnFrame = False
-        
+
         self.playerState : PlayerState = PlayerState.standing
-
         force : Vec2 = Vec2()
-
         inputVector : Vec2 = Vec2()
 
-        if self.bound:
-            if self.keys.get(LNLEngine.KEY_MAP['right']):
-                inputVector += Vec2(1, 0)
-                self.direction = 1
-            if self.keys.get(LNLEngine.KEY_MAP['left']):
-                inputVector += Vec2(-1, 0)
-                self.direction = -1
+        if self.keys.get(LNLEngine.KEY_MAP['right']):
+            inputVector += Vec2(1, 0)
+            self.direction = 1
+        if self.keys.get(LNLEngine.KEY_MAP['left']):
+            inputVector += Vec2(-1, 0)
+            self.direction = -1
 
-            # if self.keys.get(LNLEngine.KEY_MAP['up']):
-            #     inputVector += Vec2(0, -1)
+        # if self.keys.get(LNLEngine.KEY_MAP['up']):
+        #     inputVector += Vec2(0, -1)
 
-            # if self.keys.get(LNLEngine.KEY_MAP['down']):
-            #     inputVector += Vec2(0, 1)
+        # if self.keys.get(LNLEngine.KEY_MAP['down']):
+        #     inputVector += Vec2(0, 1)
 
 
         inputVector = inputVector.normalize()
@@ -277,26 +255,24 @@ class Player(LNLEngine.GameObject2D):
             self.currentBody : SpriteAnimation = self.animations["jumping"]
 
 
+        self.currentBody.setPos(self.body.getCollider().getLocalMin())# type: ignore
+        self.currentBody.setRot(self.body.getRotation()) # type: ignore
+        
         self.currentBody.Update(deltatime)
         self.currentBody.Play()
 
 
-        # LNLEngine.Quad(Vec2(self._World_Position[0],self._World_Position[1]), self.width, self.height, self.Colour).Draw()
-        # LNLEngine.Renderer.DrawTriangle([pos,pos2 , Vec2(200,400)], Vec4(100, 200, 255, 255))
-        # LNLEngine.Renderer.DrawTriangle([Vec2(200,10),Vec2(100,800) , Vec2(700,4)], Vec4(100, 200, 80, 255))
 
-        self.currentBody.setPos(self.body.getCollider().getLocalMin())# type: ignore
+
         # self.currentBody.setPos(self.body.getPosition() - Vec2(math.sqrt(self.body.getCollider()._radius), math.sqrt(self.body.getCollider()._radius)))# type: ignore
-        self.currentBody.setRot(self.body.getRotation()) # type: ignore
 
 
     def _OnEvent(self, event : LNLEngine.Event):
         if event.GetName() == "KeyDown":
             self.keys[event.keycode] = 1
 
-            if self.bound:
-                if event.keycode == LNLEngine.KEY_MAP["space"]:
-                    self.body.addForce( -1 * self.jump * self.body.getMass())
+            if event.keycode == LNLEngine.KEY_MAP["space"]:
+                self.body.addForce( -1 * self.jump * self.body.getMass())
         if event.GetName() == "KeyUp":
             self.keys[event.keycode] = 0
     

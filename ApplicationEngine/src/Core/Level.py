@@ -3,7 +3,7 @@ from ApplicationEngine.include.Common import *
 from ApplicationEngine.src.Object.Object import *
 
 class LevelManagerBase:
-    def setActiveLevel(self, levelName : str):
+    def SetActiveLevel(self, levelName : str):
         ...
 
 class Level():
@@ -11,7 +11,8 @@ class Level():
         self.name = name
         self.LevelObjects : dict[str, list[GameObject]] = {}
         self.__ownerLevelManager : LevelManagerBase | None = None
-    def setOwner(self, newOwner : LevelManagerBase):
+    
+    def SetOwner(self, newOwner : LevelManagerBase):
         self.__ownerLevelManager = newOwner
 
     def getOwner(self) -> LevelManagerBase | None:
@@ -38,7 +39,7 @@ class Level():
     def RemoveLevelComponent(self, component, type):
         ...
     def OnEvent(self, e : Event): ...
-    
+
     def OnUpdate(self, deltatime): ...
 
     def Update(self, deltatime : float):

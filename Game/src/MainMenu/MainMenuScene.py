@@ -46,7 +46,7 @@ class MainMenuScene(LNLEngine.Scene):
 
 
         # self.StartButton.AddOnClickkHandler(print, ["THE BUTTOMN WAS PRESS"])
-        self.StartButton.AddOnClickkHandler(LNLEngine.Game.Get().GetSceneManager().set_active_scene, ["mainScene"])
+        self.StartButton.AddOnClickkHandler(LNLEngine.Game.Get().GetSceneManager().SetActiveScene, ["MainScene"])
 
 
         self.ParalaxDistance : float = 20
@@ -91,3 +91,7 @@ class MainMenuScene(LNLEngine.Scene):
         self.ParalaxVector = self.ParalaxDistance * Vec2( ((-self.gameWindow.GetWidth() / 2) + LNLEngine.Mouse.GetPos()[0]) / (self.gameWindow.GetWidth() / 2) ,
                                                           ((-self.gameWindow.GetHeight() / 2) + LNLEngine.Mouse.GetPos()[1] ) / (self.gameWindow.GetHeight() / 2) )
         self.MenuTheGuyLayer.SetPos(self.basePos - self.ParalaxVector)
+
+        LNLEngine.Renderer.Clear()
+        self.Draw()
+        self.DrawUI()

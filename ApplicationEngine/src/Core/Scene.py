@@ -18,7 +18,9 @@ class SceneType(Enum):
     Game = auto()
 
 
-
+class SceneManagerBase:
+    def SetActiveScene(self, sceneName : str):
+        ...
 
 
 class Scene:
@@ -28,11 +30,32 @@ class Scene:
         self.UIElements : list[GameObject] = []  # List of GameObject instances
         self.levelManager : LevelManager = LevelManager()
 
+        self.__mainCamera : Camera = OrthographicCamera()
+        self.__hudCamera  : Camera = OrthographicCamera()
+
         self.sceneType : SceneType = SceneType.Undef
+        self.__ownerSceneManager : SceneManagerBase | None = None
+
 
         AddEventListener( self.OnEvent )
 
+
+    def SetMainCamera(self, camera : Camera):
+        self.__mainCamera = camera
+    def GetMainCamera(self, camera : Camera):
+        return self.__mainCamera
+
+
+    def SetHudCamera(self, camera : Camera):
+        self.__hudCamera = camera    
+    def GetHudCamera(self, camera : Camera):
+        return self.__hudCamera
+
+    def _OnBegin(self):
+        ...
+
     def BeginPlay(self):
+        self._OnBegin()
         if self.levelManager.activeLevel:
             self.levelManager.activeLevel.BeginPlay()
         for obj in self.objects:
@@ -44,9 +67,22 @@ class Scene:
         for obj in self.objects:
             obj.EndPlay()
 
+    def SetOwner(self, newOwner : SceneManagerBase):
+        self.__ownerSceneManager = newOwner
+
+    def GetOwner(self) -> SceneManagerBase | None:
+        return self.__ownerSceneManager
+
+    
+
     def AddObject(self, obj : GameObject):
         self.objects.append(obj)
-    
+
+
+    def AddUIElement(self, elm : GameObject):
+        self.UIElements.append(elm)
+
+
     def GetLevelManager(self):
         return self.levelManager
 
@@ -71,6 +107,19 @@ class Scene:
             obj.PhysicsUpdate(tickTime)
 
     def Draw(self):
+        Renderer.BeginScene(self.__mainCamera)
+        
         self.levelManager.Draw()
         for obj in self.objects:
             obj.Draw()
+
+        Renderer.EndScene()
+    
+    def DrawUI(self):
+        Renderer.BeginScene(self.__hudCamera)
+        
+        # self.levelManager.Draw()
+        for elm in self.UIElements:
+            elm.Draw()
+
+        Renderer.EndScene()

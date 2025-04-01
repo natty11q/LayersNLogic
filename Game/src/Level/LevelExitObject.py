@@ -10,18 +10,18 @@ import math
 
 
 class LevelExitObject(LNLEngine.GameObject2D):
-    def __init__(self, position : Vec2, levelManager : LNLEngine.LevelManager, nextLevelName : str = ""):
+    def __init__(self, position : Vec2, levelManager : LNLEngine.LevelManagerBase | None, nextLevelName : str = ""):
         super().__init__(position, 0.0, 0.0)
 
-        self.levelManager : LNLEngine.LevelManager
+        self.levelManager : LNLEngine.LevelManagerBase  | None = levelManager
         self.nextLevelName : str = nextLevelName
 
         self.overlap = False
 
 
-        tex = Texture("")
+        tex = Texture("Game/Assets/Sprites/LevelEndPortal.png", True)
         self.drawOffset = -(1/2) * Vec2(tex.tex_width, tex.tex_height)
-        self.sprite = Sprite(tex , position + self.drawOffset, tex.tex_width, tex.tex_height )
+        self.sprite = Sprite(tex , position + self.drawOffset, tex.tex_width, tex.tex_height  * 3)
 
 
         c = self.InitCollider(tex.tex_width, tex.tex_height)
@@ -30,33 +30,38 @@ class LevelExitObject(LNLEngine.GameObject2D):
 
     def InitCollider(self, w, h):
         c1 = LNLEngine.Box2D()
-        c1.setSize(Vec2(20,WorldGrid.GRID_SIZE * 2))
+        c1.setSize(Vec2(w, h))
     
         c1.setRigidBody(self.body)
         return c1
 
 
     def BeginPlay(self):
-        return super().BeginPlay()
+        self.body.isActor = False
+        LNLEngine.PhysicsSystem2D.Get().addRigidbody(self.body, False)
 
 
     def SetNextLevelName(self, nextLevel : str):
         self.nextLevelName = nextLevel
 
 
+    def SetLevelManager(self, levelManager : LNLEngine.LevelManagerBase | None):
+        self.levelManager = levelManager
+
     def changeLevel(self):
-        self.levelManager.setActiveLevel(self.nextLevelName)
+        if self.levelManager:
+            self.levelManager.SetActiveLevel(self.nextLevelName)
 
 
     def _OnEvent(self, event: LNLEngine.Event):
         if self.overlap:
             if event.GetName() == "KeyDown":
-                if event.keycode == LNLEngine.KEY_MAP["space"]:
+                if event.keycode == LNLEngine.KEY_MAP["up"]:
                     self.changeLevel()
-                    event._m_handled = True # no need to pass event further down to other handlers
+                    # event._m_handled = True # no need to pass event further down to other handlers
 
 
-    def OnCollision(self, body: LNLEngine.RigidBody2D, otherOwner: LNLEngine.GameObject2D, otherBody: LNLEngine.RigidBody2D, impulse: LNLEngine.Vec2, manifold: LNLEngine.CollisionManifold):
+    def OnContact(self, body, otherOwner, otherBody):
         self.overlap = False
         if isinstance(otherOwner, Player):
             self.overlap = True

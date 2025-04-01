@@ -4,7 +4,7 @@
     [
 
         {
-            "name" : "MainMenu_test",
+            "name" : "MainMenu",
             "type" :  "menu",
             "Elements" : [
                 {

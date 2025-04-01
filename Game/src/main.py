@@ -13,8 +13,9 @@ import math
 
 
 # from Game.src.MainMenu.MainMenuLayer import *
-from Game.src.Level.TutorialLevel import *
+from Game.src.Level.Levels import *
 from Game.src.MainMenu.MainMenuScene import *
+from Game.src.MainGame.MainScene import *
 # from Game.src.World.World import *
 
 class MovingSquare(LNLEngine.Quad):
@@ -175,7 +176,6 @@ class Cube(LNLEngine.GameObject):
         # LNLEngine.Renderer.Submit(self.m_vertexArray)
         LNLEngine.Renderer.DrawIndexed(self.shader, self.m_vertexArray)
 
-
 class TestPhysicsObject(LNLEngine.GameObject2D):
     def __init__(self, position: LNLEngine.Vec2 = Vec2(), mass: float = 100):
         super().__init__(position, mass)
@@ -249,95 +249,23 @@ class TestPhysicsObject(LNLEngine.GameObject2D):
 class TestLayer(LNLEngine.Layer):
     def __init__(self, name="TestLayer"):
         super().__init__(name)
-        self.gameWindow = LNLEngine.Game.Get().GetWindow()
         self.TestCamera = OrthographicCamera(-5.0, 5.0, -5.0, 5.0)
-
         self.SceneManager = LNLEngine.Game.Get().GetSceneManager()
 
+        self.SceneManager.AddScene(MainScene())
+        self.SceneManager.AddScene(MainMenuScene())
 
 
-        self.player  = Player(Vec2(0,0), 70,  "player1")
-        self.player.bound = True
-        self.player.body.setCoefficientOfRestitution(0.1)
-
-        # player2 = Player(Vec2(100,200), 7000, "player2")
-        # player3 = Player(Vec2(300,200), 7, "player2")
-        mainScene : LNLEngine.Scene = LNLEngine.Scene("mainScene")
-
-        self.ScreenShader = LNLEngine.ScreenShader(FragmentShader= "ApplicationEngine/src/Object/Shaders/cloudShader.frag", FragmentShaderIsPath=True)
-
-        mainScene.AddObject(self.player)
-        mainScene.AddObject(PlayerHud(self.player))
-
-        mainScene.GetLevelManager().addLevel(TutorialLevel("Tutorial0"))
-        mainScene.GetLevelManager().setActiveLevel("Tutorial0")
-        
-
-        self.SceneManager.add_scene(mainScene)
-        self.SceneManager.add_scene(MainMenuScene())
-        self.SceneManager.set_active_scene("MainMenu")
-
-
-        self.keys = {}
+        self.SceneManager.SetActiveScene("MainMenu")
 
 
 
-        bullet_tex  = LNLEngine.Texture("Game/Assets/Sprites/Bullet_Shot.jpeg", True)
-        topLeft_uv = Vec2(((1 / 6) * 1 ), 0 * 1)
-        bottomRight_uv = Vec2( ( (1 / 6) * 2 ), 1 * 1)
-        self.bulletSprite = LNLEngine.Sprite(bullet_tex, self.player.body.getPosition().toVec2() , (bullet_tex.tex_width / 6) / 3, bullet_tex.tex_height / 3, (topLeft_uv, bottomRight_uv))
-
-        self.bullet_TTL = 1
-        self.bullet_TTL_MAX = 0.3
-
-        self.bulletPos = Vec2(0,0)
-        self.bulletSpeed = 2500
-
-
-
-    def OnEvent(self, event: LNLEngine.Event):
-        if event.GetName() == "KeyDown":
-            self.keys[event.keycode] = 1
-            if event.keycode == LNLEngine.KEY_MAP['f'] and self.bullet_TTL <= 0:
-                self.bullet_TTL = self.bullet_TTL_MAX
-                self.bulletPos = self.player.body.getPosition() + Vec2(0,-50) 
-        if event.GetName() == "KeyUp":
-            self.keys[event.keycode] = 0
-
+    def OnEvent(self, event: LNLEngine.Event):...
 
 
 
     def OnUpdate(self, deltatime : float):
-        if self.keys.get(LNLEngine.KEY_MAP['D']):
-            self.TestCamera.SetPosition(self.TestCamera.GetPosition() + Vec3(5,0,0) * deltatime)
-        if self.keys.get(LNLEngine.KEY_MAP['A']):
-            self.TestCamera.SetPosition(self.TestCamera.GetPosition() - Vec3(5,0,0) * deltatime)
-        if self.keys.get(LNLEngine.KEY_MAP['W']):
-            self.TestCamera.SetPosition(self.TestCamera.GetPosition() + Vec3(0,5,0) * deltatime)
-        if self.keys.get(LNLEngine.KEY_MAP['S']):
-            self.TestCamera.SetPosition(self.TestCamera.GetPosition() - Vec3(0,5,0) * deltatime)
-        if self.keys.get(LNLEngine.KEY_MAP['E']):
-            self.TestCamera.SetOrthoRotation(self.TestCamera.GetOrthoRotation() - math.radians(5))
-        if self.keys.get(LNLEngine.KEY_MAP['Q']):
-            self.TestCamera.SetOrthoRotation(self.TestCamera.GetOrthoRotation() + math.radians(5))
-
-        if self.bullet_TTL > 0:
-            self.bulletPos += Vec2(self.player.direction * self.bulletSpeed, 0) * deltatime
-            self.bulletSprite.SetPos(self.bulletPos.toVec2())
-            self.bullet_TTL -= deltatime
-        
-        LNLEngine.Renderer.Clear()        
-        self.SceneManager.update(deltatime)
-
-        LNLEngine.Renderer.BeginScene(self.TestCamera)
-
-        self.SceneManager.Draw()
-
-        if self.bullet_TTL > 0:
-            self.bulletSprite.Draw()
-
-        LNLEngine.Renderer.EndScene()
-
+        self.SceneManager.Update(deltatime)
 
 class PortalsDemo(LNLEngine.Game):
     def __init__(self):
@@ -417,7 +345,7 @@ class PortalsDemo(LNLEngine.Game):
                 startupLevelName = firstLevelName
                 # startupLevelID = firstLevelID
 
-            scene.GetLevelManager().setActiveLevel(startupLevelName)
+            scene.GetLevelManager().SetActiveLevel(startupLevelName)
 
 
 

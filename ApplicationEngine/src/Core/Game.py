@@ -143,8 +143,6 @@ class Game:
 
         # self._m_PhysicsSystem2D : PhysicsSystem2D = PhysicsSystem2D(Vec2(0.0, -9.81 * 30))
         self._m_PhysicsSystem2D : PhysicsSystem2D = PhysicsSystem2D(Vec2(0.0, 9.81 * 300))
-        PhysicsSystem2D._s_Instance = self._m_PhysicsSystem2D
-
         AddEventListener(self.__HandleEvents)
 
         self.saveDir : str = ""
@@ -214,7 +212,7 @@ class Game:
         for scene in jsonData.get("Scenes", []):
             s = Scene(scene["name"])
             self._OnSceneLoad(scene, s)
-            self._m_SceneManager.add_scene(s)
+            self._m_SceneManager.AddScene(s)
             
             if scene["name"] == startupSceneName: 
                 exists = True
@@ -230,7 +228,7 @@ class Game:
             LNL_LogEngineWarning(f"Scene name :  {startupSceneName} , is not a scene in leveldata, selecting :  {firstSceneName}")
             startupSceneName = firstSceneName
         
-        self._m_SceneManager.set_active_scene(startupSceneName)
+        self._m_SceneManager.SetActiveScene(startupSceneName)
 
     def LoadEngineSettings(self, jsonPath : str):
         path = os.path.abspath(jsonPath)

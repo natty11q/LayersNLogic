@@ -11,15 +11,19 @@ class LevelManager(LevelManagerBase):
     def addLevel(self, level : Level):
         if level.name in self.levels.keys():
             LNL_LogEngineWarning(f"attempted to add level [{level.name}], level of the same name has already been added")
-        level.setOwner(self)
+        level.SetOwner(self)
         self.levels[level.name] = level
 
 
-    def setActiveLevel(self, levelName : str):
+    def SetActiveLevel(self, levelName : str):
         if levelName not in self.levels.keys():
             LNL_LogEngineError(f"attempted to set level [{levelName}] as active, but the scene [{levelName}] has not been added")
             return
+        if self.activeLevel:
+            self.activeLevel.EndPlay()
+
         self.activeLevel = self.levels[levelName]
+        self.activeLevel.BeginPlay()
     
     def GetActiveLevel(self) -> Level | None:
         return self.activeLevel
