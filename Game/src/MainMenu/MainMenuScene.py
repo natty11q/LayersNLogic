@@ -87,7 +87,6 @@ class MainMenuScene(LNLEngine.Scene):
 
 
     def _OnUpdate(self, dt):
-        LNLEngine.Renderer.Clear()
 
         self.ParalaxVector = self.ParalaxDistance * Vec2( ((-self.gameWindow.GetWidth() / 2) + LNLEngine.Mouse.GetPos()[0]) / (self.gameWindow.GetWidth() / 2) ,
                                                           ((-self.gameWindow.GetHeight() / 2) + LNLEngine.Mouse.GetPos()[1] ) / (self.gameWindow.GetHeight() / 2) )

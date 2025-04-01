@@ -95,7 +95,7 @@ class PesrpectiveCamera(Camera):
 
 class OrthographicCamera(Camera):
     def __init__(self, left : float, right : float, bottom : float, top : float):
-        self._m_ProjectionMatrix : Mat4 = Matrix.ortho(left,right,bottom,top,-1.0,1.0).inverse()
+        self._m_ProjectionMatrix : Mat4 = Matrix.ortho(left,right,bottom,top,-1.0,1.0)
         # self._m_ViewMatrix : Mat4 = Mat4()
 
         # self._m_ViewProjectionMatrix : Mat4 = Mat4()
@@ -116,10 +116,10 @@ class OrthographicCamera(Camera):
     def _RecalculateViewMatrix(self):
 
         ## 
-        transform : Mat4 = Matrix.rotate(Mat4(), self._m_OrthoRotation, Vec3(0, 0, 1)) * Matrix.translate(Mat4() , self._m_Position).transpose()
+        transform : Mat4 = Matrix.rotate(Mat4(), self._m_OrthoRotation, Vec3(0, 0, 1)).transpose() * Matrix.translate(Mat4() , self._m_Position).transpose()
 
         self._m_ViewMatrix = transform.inverse()
-        self._m_ViewProjectionMatrix = self._m_ProjectionMatrix * self._m_ViewMatrix
+        self._m_ViewProjectionMatrix = self._m_ProjectionMatrix.transpose() * self._m_ViewMatrix
 
 
 

@@ -185,10 +185,6 @@ class Game:
     
     
     def input_listener(self):
-        # while True:
-        #     for event in pygame.event.get():
-        #         if event.type == pygame.MOUSEMOTION:
-        #             LNL_LogEngineInfo("mouse position changed : " , event.x , event.y)
         LLEngineTime.CustomSleep()
 
     def Quit(self):

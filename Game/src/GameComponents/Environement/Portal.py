@@ -151,9 +151,9 @@ class Portal(LNLEngine.GameObject2D):
         self.rotation : float = roatation
         
         tex : LNLEngine.Texture = LNLEngine.Texture("Game/Assets/Sprites/PortalDeactivated.png", True)
-        self.drawOffset = -1 * Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE / 2)
+        self.drawOffset = -1 * Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE)
         self.sprite = LNLEngine.Sprite(tex, 
-                                       position - Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE / 2),
+                                       position - Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE),
                                        WorldGrid.GRID_SIZE,
                                        WorldGrid.GRID_SIZE * 2
                                     )
@@ -165,7 +165,6 @@ class Portal(LNLEngine.GameObject2D):
 
         c = self.InitCollider()
         self.body.setCollider(c)
-        self.body.setRotation(self.rotation)
 
     def InitCollider(self):
         c1 = LNLEngine.Box2D()
@@ -187,7 +186,7 @@ class Portal(LNLEngine.GameObject2D):
         if isinstance(self._DestinationPortal, Portal):
             tex1 : LNLEngine.Texture = LNLEngine.Texture("Game/Assets/Sprites/PortalActivatedBlue.png", True)
             self.sprite = LNLEngine.Sprite(tex1, 
-                                        self.body.getPosition() - Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE / 2),
+                                        self.body.getPosition() + self.drawOffset,
                                         WorldGrid.GRID_SIZE,
                                         WorldGrid.GRID_SIZE * 2
                                         )
@@ -195,7 +194,7 @@ class Portal(LNLEngine.GameObject2D):
 
             tex2 : LNLEngine.Texture = LNLEngine.Texture("Game/Assets/Sprites/PortalActivatedOrange.png", True)
             newPortal.sprite = LNLEngine.Sprite(tex2, 
-                                        self.body.getPosition() - Vec2(WorldGrid.GRID_SIZE / 2,WorldGrid.GRID_SIZE / 2),
+                                        self.body.getPosition() + self.drawOffset,
                                         WorldGrid.GRID_SIZE,
                                         WorldGrid.GRID_SIZE * 2
                                         )
