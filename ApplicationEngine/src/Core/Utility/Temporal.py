@@ -121,11 +121,11 @@ class LLEngineTime:
     __b_V_SYNC : bool = False
 
 # init as this so that the first frame has a deltatime of 0 instead of a large number (due to time.time() - 0 on frame 1)
-    __frameStart    : float  = time.process_time()
-    __frameEnd      : float  = time.process_time()
+    __frameStart    : float  = time.perf_counter()
+    __frameEnd      : float  = time.perf_counter()
 
-    __tickStart    : float  = time.process_time()
-    __tickEnd      : float  = time.process_time()
+    __tickStart    : float  = time.perf_counter()
+    __tickEnd      : float  = time.perf_counter()
     
     # timers are handled with ids
     # Note :: Ids should never change until the function is complete
@@ -246,18 +246,22 @@ class LLEngineTime:
         
         
         # restrict the frame rate
-        LLEngineTime.__frameEnd = time.process_time()
+        LLEngineTime.__frameEnd = time.perf_counter()
         
-        # frameTime = Time.__frameEnd - Time.__frameStart
         if not LLEngineTime.__b_FRAMERATE_UNCAPPED:
-            TargetFrameTime = (1/LLEngineTime.__f_TARGET_FRAME_RATE)
+            TargetFrameTime = 1 / LLEngineTime.__f_TARGET_FRAME_RATE
+            elapsed_time = LLEngineTime.__frameEnd - LLEngineTime.__frameStart
 
-    
-            WaitExit = False
-            while time.process_time() - LLEngineTime.__frameStart < (TargetFrameTime - LLEngineTime.__FRAME_SLEEP_ALLOWANCE) and not WaitExit:
-                WaitExit = LLEngineTime.CustomSleep()
+            # Sleep only if necessary
+            sleep_time = max(0, TargetFrameTime - elapsed_time - LLEngineTime.__FRAME_SLEEP_ALLOWANCE)
+            if sleep_time > 0:
+                if sleep_time > 0.002:  # Sleep only if delay is large enough
+                    time.sleep(sleep_time)
+                else:
+                    while time.perf_counter() - LLEngineTime.__frameEnd < sleep_time:
+                        pass  # Spin-wait for very short delays
 
-        LLEngineTime.__frameEnd = time.process_time()
+        LLEngineTime.__frameEnd = time.perf_counter()
         LLEngineTime.__Deltatime        = LLEngineTime.__frameEnd - LLEngineTime.__frameStart
         LLEngineTime.__ScaledDeltatime  = LLEngineTime.__Deltatime * LLEngineTime.__TimeScale
         LLEngineTime.__TotalElapsedTime     += LLEngineTime.__Deltatime
@@ -272,7 +276,7 @@ class LLEngineTime:
         LLEngineTime.__UpdateFPS()
         LLEngineTime.__UpdateTimers()
         
-        LLEngineTime.__frameStart = time.process_time()
+        LLEngineTime.__frameStart = time.perf_counter()
     
     @staticmethod
     def PhysicsUpdate() -> None:
@@ -280,20 +284,24 @@ class LLEngineTime:
         # return 
 
         # restrict the frame rate
-        LLEngineTime.__tickEnd = time.process_time()
+        LLEngineTime.__tickEnd = time.perf_counter()
         
         # frameTime = Time.__frameEnd - Time.__frameStart
         TargetTickTime = 1 / LLEngineTime.__TickRate
+        elapsed_time = LLEngineTime.__tickEnd - LLEngineTime.__tickStart
 
+        # WaitExit = False
+        # while time.process_time() - LLEngineTime.__tickStart < (TargetTickTime - LLEngineTime.__FRAME_SLEEP_ALLOWANCE) and not WaitExit:
+        #     WaitExit = LLEngineTime.CustomSleep()
 
-        WaitExit = False
-        while time.process_time() - LLEngineTime.__tickStart < (TargetTickTime - LLEngineTime.__FRAME_SLEEP_ALLOWANCE) and not WaitExit:
-            WaitExit = LLEngineTime.CustomSleep()
+        sleep_time = max(0, TargetTickTime - elapsed_time - LLEngineTime.__FRAME_SLEEP_ALLOWANCE)
+        if sleep_time > 0:
+            time.sleep(sleep_time)
 
-        LLEngineTime.__tickEnd = time.process_time()
+        LLEngineTime.__tickEnd = time.perf_counter()
         LLEngineTime.__TickDelta        = LLEngineTime.__tickEnd - LLEngineTime.__tickStart
 
-        LLEngineTime.__tickStart = time.process_time()
+        LLEngineTime.__tickStart = time.perf_counter()
 
         LLEngineTime.__UpdatePhysicsTimers()
     

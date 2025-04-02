@@ -56,7 +56,7 @@ class Player(LNLEngine.GameObject2D):
 
         self.lives      : int = 0
         self.health     : float = 2
-        self.maxHealth  : float = 100
+        self.maxHealth  : float = 5
 
 
         tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Stand.png", True)

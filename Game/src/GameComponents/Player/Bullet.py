@@ -14,9 +14,24 @@ class Bullet(LNLEngine.GameObject2D):
     def _init_(self,hitBox : Vec2|None):
         super().__init__() 
 
-        self.hitBox = Vec2(1,1) #Will add setter in case wanting to add other ammo types  
 
-        
+        c = self._InitCollider( Vec2(WorldGrid.GRID_SIZE / 2, 20) )
+        self.body.setCollider(c)
+
+
+        self.ttl : float = 0 # how long the bullet has left before it despawns
+
+    def _InitCollider(self, size : Vec2) -> LNLEngine.Collider2D:
+        c1 = LNLEngine.AABB()
+        c1.setRigidBody(self.body)
+        c1.setSize(size)
+
+        return c1
+    
+    def BeginPlay(self):
+        # bullets arent affected by gravity 
+        LNLEngine.Game.Get().GetPhysicsSystem2D().addRigidbody(self.body, False)
+
 
     def setHitBox(self, hBox : Vec2):
         self.hitBox = hBox
