@@ -62,6 +62,12 @@ class PhysicsSystem2D:
                 r1 : RigidBody2D = self.rigidBodies[i]
                 r2 : RigidBody2D = self.rigidBodies[j]
 
+                # r1.setVelocity( r1.getVelocity() + (r1.GetStoredImpulse() * r1.getinverseMass()))
+                # r2.setVelocity( r1.getVelocity() + (r1.GetStoredImpulse() * r1.getinverseMass()))
+
+                # r1.StoredImpulse = Vec2()
+                # r2.StoredImpulse = Vec2()
+
                 c1 : Collider2D | None = r1.getCollider()
                 c2 : Collider2D | None = r2.getCollider()
 

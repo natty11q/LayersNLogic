@@ -262,7 +262,6 @@ class Game:
     
     def _OnPhysicsUpdate(self) -> None:
         #TODO: add seperate deltatime for physics system.
-        Temporal.LLEngineTime.PhysicsUpdate()
         self._m_SceneManager.PhysicsUpdate(Temporal.LLEngineTime.TickDelta())
         
         self._m_PhysicsSystem2D.update(Temporal.LLEngineTime.TickDelta())
@@ -289,8 +288,9 @@ class Game:
 # private :
     def __PhysicsMainloop(self):
         while not self.stop_event_Phys.is_set():
+            Temporal.LLEngineTime.PhysicsUpdate()
+            # Temporal.time.sleep(1 / Temporal.LLEngineTime.TickRate())
             self._OnPhysicsUpdate()
-            Temporal.time.sleep(1 / Temporal.LLEngineTime.TickRate())
 
     def __HandleEvents(self, event : Event):
         
