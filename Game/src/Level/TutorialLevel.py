@@ -15,7 +15,7 @@ class TutorialLevel(LNLEngine.Level):
 
         self.player = player
 
-
+    def BeginPlay(self):
         Background = LNLEngine.ScreenShader(FragmentShader= "ApplicationEngine/src/Object/Shaders/cloudShader.frag", FragmentShaderIsPath=True)
         
         portal1 = Portal(Vec2(500, 400),math.pi/2)
@@ -24,7 +24,7 @@ class TutorialLevel(LNLEngine.Level):
         portal1.LinkPortal(portal2)
     
 
-        self.tiles : list [GameObject] = []
+        tiles : list [GameObject] = []
 
         tex0 = Texture("Game/Assets/Sprites/environ/grassfull.png")
         tex1 = Texture("Game/Assets/Sprites/environ/rocksfull.png")
@@ -34,25 +34,28 @@ class TutorialLevel(LNLEngine.Level):
         chunk2 = TileChunk(Vec2(5,3),   Vec2(2, 6),     tex0, tex1)
         chunk3 = TileChunk(Vec2(10,5),  Vec2(2, 5),     tex0, tex1)
 
-        self.tiles.append(chunk0)
-        # self.tiles.append(chunk1)
-        # self.tiles.append(chunk2)
-        # self.tiles.append(chunk3)
+        tiles.append(chunk0)
+        # tiles.append(chunk1)
+        # tiles.append(chunk2)
+        # tiles.append(chunk3)
 
-        self.endComponent = LevelExitObject(Vec2(17 * WorldGrid.GRID_SIZE,6 * WorldGrid.GRID_SIZE), self.getOwner(), "Level-0")
+        endComponent = LevelExitObject(Vec2(17 * WorldGrid.GRID_SIZE,6 * WorldGrid.GRID_SIZE), self.getOwner(), "Level-0")
 
         self.AddLevelComponent(Background,"background")
         
         # self.AddLevelComponent(portal1)
         # self.AddLevelComponent(portal2)
-        self.AddLevelComponent(self.endComponent, "ending")
+        self.AddLevelComponent(endComponent, "ending")
 
-        for tile in self.tiles:
+        for tile in tiles:
             self.AddLevelComponent(tile, "terrain")
-
-    def BeginPlay(self):
+        
+        
+        
+        
         super().BeginPlay()
-        self.endComponent.SetLevelManager(self.getOwner())
+        
+        endComponent.SetLevelManager(self.getOwner())
         if self.player:
             self.player.SetPosition(Vec2(0,-1000))
             LNL_LogFatal("ResetPos")

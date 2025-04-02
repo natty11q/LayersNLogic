@@ -7,9 +7,10 @@ from Game.src.GameComponents.Environement.Portal import *
 
 
 from ApplicationEngine.src.Graphics.SpriteAnimationClass import *
-from Game.src.GameComponents.CanTravelThroughPortals import *
+from Game.src.GameComponents.Environement.Attributes.CanTravelThroughPortals import *
 import math
 
+from Game.src.GameComponents.Environement.Environment import *
 
 
 
@@ -145,6 +146,7 @@ class Player(LNLEngine.GameObject2D):
             
 
     def _OnUpdate(self, deltatime : float):
+        self.Grounded = False
 
         self.playerState : PlayerState = PlayerState.standing
         force : Vec2 = Vec2()
@@ -243,9 +245,12 @@ class Player(LNLEngine.GameObject2D):
 
 
     def _OnCollision(self, body : LNLEngine.RigidBody2D, otherOwner : LNLEngine.GameObject2D, otherBody: LNLEngine.RigidBody2D, impulse: Vec2, manifold: LNLEngine.CollisionManifold):
-        self.Grounded = False
-        if isinstance(otherOwner , TileChunk):
+        if isinstance(otherOwner , (TileChunk, EnvironmentObject2D) ):
             self.Grounded = True
+            if isinstance(otherOwner , EnvironmentObject2D):
+                if isinstance(body.getCollider(), LNLEngine.Box2D):
+                    if body.position.y + 100 < otherBody.position.y: 
+                        body.linearVelocity = otherBody.linearVelocity
 
         if isinstance(otherOwner , Enemy): ...
             # self.health -= Enemy.attack / Player.defence

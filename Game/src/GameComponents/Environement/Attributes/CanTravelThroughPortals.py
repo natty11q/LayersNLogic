@@ -42,10 +42,10 @@ class CanTravelThroughPortals(LNLEngine.ObjectAttribute):
             return
         
 
-        CanTravelThroughPortals.CollisionRegistry[obj]["onframe"] = True
         if not LNLEngine.IntersectionDetector2D.pointInBox2D(body.getPosition(), otherBody.getCollider()): #type: ignore
             return
         
+        CanTravelThroughPortals.CollisionRegistry[obj]["onframe"] = True
 
         if CanTravelThroughPortals.CollisionRegistry[obj]["current"]: # check if currently in a portal collision
             return

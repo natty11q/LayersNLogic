@@ -1,12 +1,15 @@
 from Game.src.GameComponents.Environement.EnvironmentObject import * 
+from Game.src.GameComponents.Environement.Attributes.CanTravelThroughPortals import *
 
 
-class Box(EnvironmentObject2D):
+class LNLBox(EnvironmentObject2D):
     boxTexture = LNLEngine.Texture("",False)
     def __init__(self,mass : float ,dimensions : Vec2 = Vec2(1,1)):
         super().__init__(mass = mass) 
+
+        
         self.dimensions = dimensions * WorldGrid.GRID_SIZE  
-        self.sprite = LNLEngine.Sprite(Box.boxTexture, self.body.position - self.dimensions/2, self.dimensions.x, self.dimensions.y)
+        self.sprite = LNLEngine.Sprite(LNLBox.boxTexture, self.body.position - self.dimensions/2, self.dimensions.x, self.dimensions.y)
         
         self.colliders : list[LNLEngine.Collider2D] = [] 
         col1 = self._InitCollider(self.dimensions) 
@@ -35,3 +38,11 @@ class Box(EnvironmentObject2D):
         c1.setSize(size)
 
         return c1
+
+
+    def _OnUpdate(self, deltatime: float):
+        self.sprite.SetPos(self.body.getCollider().getLocalMin())# type: ignore
+        self.sprite.SetRot(self.body.getRotation()) # type: ignore
+        
+    def Draw(self):
+        self.sprite.Draw()

@@ -26,9 +26,10 @@ class Level():
 
     def EndPlay(self):
         for componentType in self.LevelObjects.keys():
-            for gameObj in self.LevelObjects[componentType]:
+            while len(self.LevelObjects[componentType]):
+                gameObj = self.LevelObjects[componentType].pop()
                 gameObj.EndPlay()
-
+                del gameObj
 
     def AddLevelComponent(self, component : GameObject, c_type: str = "default_componet_type"):
         if self.LevelObjects.get(c_type, None) is None:

@@ -21,9 +21,11 @@ class LevelManager(LevelManagerBase):
             return
         
         if self.activeLevel:
+            LNL_LogInfo(f"ended level : {self.activeLevel.name}")
             self.activeLevel.EndPlay()
 
         self.activeLevel = self.levels[levelName]
+        LNL_LogInfo(f"started level : {self.activeLevel.name}")
         self.activeLevel.BeginPlay()
     
     def GetActiveLevel(self) -> Level | None:

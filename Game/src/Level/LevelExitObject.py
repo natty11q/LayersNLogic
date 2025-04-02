@@ -26,7 +26,10 @@ class LevelExitObject(LNLEngine.GameObject2D):
 
         c = self.InitCollider(tex.tex_width, tex.tex_height)
         self.body.setCollider(c)
-
+        LNL_LogEngineInfo("Exit object created")
+    
+    def __del__(self):
+        LNL_LogEngineInfo("Exit object deleted")
 
     def InitCollider(self, w, h):
         c1 = LNLEngine.Box2D()
@@ -62,12 +65,12 @@ class LevelExitObject(LNLEngine.GameObject2D):
 
 
     def OnContact(self, body, otherOwner, otherBody):
-        self.overlap = False
         if isinstance(otherOwner, Player):
             self.overlap = True
 
         
     def _OnUpdate(self, deltatime: float):
+        self.overlap = False
         self.sprite.SetPos(self.body.getPosition() + self.drawOffset)
 
     def Draw(self):

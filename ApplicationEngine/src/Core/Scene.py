@@ -66,6 +66,7 @@ class Scene:
            self.levelManager.activeLevel.EndPlay()
         for obj in self.objects:
             obj.EndPlay()
+        self.objects.clear()
 
     def SetOwner(self, newOwner : SceneManagerBase):
         self.__ownerSceneManager = newOwner
