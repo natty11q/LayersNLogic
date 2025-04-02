@@ -444,7 +444,7 @@ class SimpleGUiRendererAPI(RendererAPI):
         LLEngineTime.Update()
         # self.pygame_event_callback()
         
-        self.SetupFbo(canvas._width, canvas._height)
+        # self.SetupFbo(canvas._width, canvas._height)
         for layer in RendererAPI._LayerStack:
             layer.OnUpdate(LLEngineTime.DeltaTime())
  
