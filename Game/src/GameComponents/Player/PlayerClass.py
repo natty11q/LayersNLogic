@@ -47,11 +47,11 @@ class Player(LNLEngine.GameObject2D):
         self.height = 150
 
         self.speed  = Vec2(900, 0)
-        self.jump   = Vec2(0, 50000)
+        self.jump   = Vec2(0, 1500)
 
         self.direction : float = 1
 
-        self.inAir : bool = False
+        self.inGrounded : bool = True
 
 
         self.lives      : int = 0
@@ -230,7 +230,8 @@ class Player(LNLEngine.GameObject2D):
         
             if event.keycode == LNLEngine.KEY_MAP["space"]:
                 # self.body.addForce( -1 * self.jump * self.body.getMass())
-                self.body.addImpulse( -1 * self.jump * self.body.getMass())
+                if self.Grounded:
+                    self.body.addImpulse( -1 * self.jump * self.body.getMass())
         if event.GetName() == "KeyUp":
             self.keys[event.keycode] = 0 
     
@@ -242,6 +243,10 @@ class Player(LNLEngine.GameObject2D):
 
 
     def _OnCollision(self, body : LNLEngine.RigidBody2D, otherOwner : LNLEngine.GameObject2D, otherBody: LNLEngine.RigidBody2D, impulse: Vec2, manifold: LNLEngine.CollisionManifold):
+        self.Grounded = False
+        if isinstance(otherOwner , TileChunk):
+            self.Grounded = True
+
         if isinstance(otherOwner , Enemy): ...
             # self.health -= Enemy.attack / Player.defence
 

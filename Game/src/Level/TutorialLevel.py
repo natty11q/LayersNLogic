@@ -29,7 +29,7 @@ class TutorialLevel(LNLEngine.Level):
         tex0 = Texture("Game/Assets/Sprites/environ/grassfull.png")
         tex1 = Texture("Game/Assets/Sprites/environ/rocksfull.png")
         
-        chunk0 = TileChunk(Vec2(-1,8),  Vec2(25, 2),    tex0, tex1)
+        chunk0 = TileChunk(Vec2(-10,8),  Vec2(40, 2),    tex0, tex1)
         chunk1 = TileChunk(Vec2(-1,3),  Vec2(2, 6),     tex0, tex1)
         chunk2 = TileChunk(Vec2(5,3),   Vec2(2, 6),     tex0, tex1)
         chunk3 = TileChunk(Vec2(10,5),  Vec2(2, 5),     tex0, tex1)
@@ -39,7 +39,7 @@ class TutorialLevel(LNLEngine.Level):
         # self.tiles.append(chunk2)
         # self.tiles.append(chunk3)
 
-        self.endComponent = LevelExitObject(Vec2(13 * WorldGrid.GRID_SIZE,6 * WorldGrid.GRID_SIZE), self.getOwner(), "Level-0")
+        self.endComponent = LevelExitObject(Vec2(17 * WorldGrid.GRID_SIZE,6 * WorldGrid.GRID_SIZE), self.getOwner(), "Level-0")
 
         self.AddLevelComponent(Background,"background")
         
@@ -54,7 +54,7 @@ class TutorialLevel(LNLEngine.Level):
         super().BeginPlay()
         self.endComponent.SetLevelManager(self.getOwner())
         if self.player:
-            self.player.SetPosition(Vec2(0,0))
+            self.player.SetPosition(Vec2(0,-1000))
             LNL_LogFatal("ResetPos")
     
     def OnUpdate(self, deltatime):

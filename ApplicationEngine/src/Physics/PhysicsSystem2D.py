@@ -62,11 +62,11 @@ class PhysicsSystem2D:
                 r1 : RigidBody2D = self.rigidBodies[i]
                 r2 : RigidBody2D = self.rigidBodies[j]
 
-                # r1.setVelocity( r1.getVelocity() + (r1.GetStoredImpulse() * r1.getinverseMass()))
-                # r2.setVelocity( r1.getVelocity() + (r1.GetStoredImpulse() * r1.getinverseMass()))
+                r1.setVelocity( r1.getVelocity() + (r1.GetStoredImpulse() * r1.getinverseMass()))
+                r2.setVelocity( r2.getVelocity() + (r2.GetStoredImpulse() * r2.getinverseMass()))
 
-                # r1.StoredImpulse = Vec2()
-                # r2.StoredImpulse = Vec2()
+                r1.StoredImpulse.zero()
+                r2.StoredImpulse.zero()
 
                 c1 : Collider2D | None = r1.getCollider()
                 c2 : Collider2D | None = r2.getCollider()
@@ -78,7 +78,7 @@ class PhysicsSystem2D:
                     self.bodies1.append(r1)
                     self.bodies2.append(r2)
 
-                    percent = 0.6   # usually between 0.2 and 0.8, fraction of penetration to correct per frame.
+                    percent = 0.3   # usually between 0.2 and 0.8, fraction of penetration to correct per frame.
                     slop = 0.1     # small penetration allowance (to avoid jittering).
 
                     total_inverse_mass = r1.getinverseMass() + r2.getinverseMass()
