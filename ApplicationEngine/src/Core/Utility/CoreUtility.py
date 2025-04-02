@@ -46,5 +46,6 @@ def LoadJson(pathToJson : str) -> dict [str, object] | None:
     return JsOut
 
 
-def rgb_to_hex(rgb):
+def rgb_to_hex(rgb : tuple [float, float, float] |  tuple [int, int ,int]):
+    rgb = (int(rgb[0]),int(rgb[1]),int(rgb[2]))
     return '#%02x%02x%02x' % rgb

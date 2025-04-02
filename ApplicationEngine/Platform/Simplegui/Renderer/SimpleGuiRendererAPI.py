@@ -396,7 +396,17 @@ class SimpleGUiRendererAPI(RendererAPI):
     def DrawCircle(self, Position : Vec2, colour : Vec4) -> None: ...
 
 
-
+    def DrawText(self, text : str, position : Vec2,  size : int, colour : Vec3):
+        self._DrawQueue.append(
+            [
+                CommandType.DrawText,
+                text,
+                position.get_p(),
+                size,
+                colour.get_p()
+            ]
+        )
+    
 
     def SetupFbo(self, width, height):
         # glDeleteTextures(1, [self.fbo_texture])
@@ -448,7 +458,7 @@ class SimpleGUiRendererAPI(RendererAPI):
         for layer in RendererAPI._LayerStack:
             layer.OnUpdate(LLEngineTime.DeltaTime())
  
-
+        postQueue = []
 
 
 
@@ -591,6 +601,9 @@ class SimpleGUiRendererAPI(RendererAPI):
 
                 glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
+            elif eType == CommandType.DrawText:
+                postQueue.append(element)
+
         self.updateWrappedImage(canvas._width, canvas._height)
         if self.wrappedImage:
             canvas.draw_image(self.wrappedImage,
@@ -601,6 +614,12 @@ class SimpleGUiRendererAPI(RendererAPI):
             
         else:
             canvas.draw_text("Rendering...", (canvas._width // 2 - 50, canvas._height // 2), 20, "White")
+
+        for element in postQueue:
+            eType = element[0]
+
+            if eType == CommandType.DrawText:
+                canvas.draw_text(element[1],element[2],element[3], rgb_to_hex(element[4]))
 
 
 # from normalised coord system to screenspace

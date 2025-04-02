@@ -7,8 +7,6 @@ import ApplicationEngine.AppEngine as LNLEngine
 ## ============================= App Code =================================
 
 
-from Game.src.GameComponents.Player.PlayerClass import *
-
 import math
 
 
@@ -16,6 +14,7 @@ import math
 from Game.src.Level.Levels import *
 from Game.src.MainMenu.MainMenuScene import *
 from Game.src.MainGame.MainScene import *
+from Game.src.MainGame.IntroScene import *
 # from Game.src.World.World import *
 
 class MovingSquare(LNLEngine.Quad):
@@ -252,8 +251,9 @@ class TestLayer(LNLEngine.Layer):
         self.TestCamera = OrthographicCamera(-5.0, 5.0, -5.0, 5.0)
         self.SceneManager = LNLEngine.Game.Get().GetSceneManager()
 
-        self.SceneManager.AddScene(MainScene())
         self.SceneManager.AddScene(MainMenuScene())
+        self.SceneManager.AddScene(IntroScene())
+        self.SceneManager.AddScene(MainScene())
 
 
         self.SceneManager.SetActiveScene("MainMenu")

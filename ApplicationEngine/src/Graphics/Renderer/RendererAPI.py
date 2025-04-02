@@ -38,6 +38,7 @@ class CommandType(Enum):
     BindTexture     = auto()
     BindShader      = auto()
     CustomCommand   = auto()
+    DrawText        = auto()
 
 class RendererAPI(ABC): ## abstract class only
     
@@ -129,6 +130,9 @@ class RendererAPI(ABC): ## abstract class only
 
     @abstractmethod
     def BindTexture(self, tex_id : int): ...
+
+    @abstractmethod
+    def DrawText(self, text : str, position : Vec2,  size : int, colour : Vec3): ...
     
     @abstractmethod
     def Draw(self, *args): ...

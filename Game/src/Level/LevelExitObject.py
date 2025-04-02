@@ -4,7 +4,7 @@ import ApplicationEngine.AppEngine as LNLEngine
 from ApplicationEngine.include.Maths.Maths import *
 from Game.src.World.World import *
 
-from Game.src.GameComponents.Player.PlayerClass import *
+from Game.src.GameComponents.Entities.PlayerClass import *
 import math
 
 
@@ -27,9 +27,10 @@ class LevelExitObject(LNLEngine.GameObject2D):
         c = self.InitCollider(tex.tex_width, tex.tex_height)
         self.body.setCollider(c)
         LNL_LogEngineInfo("Exit object created")
+
+        self.playerhud : object | None = None
     
-    def __del__(self):
-        LNL_LogEngineInfo("Exit object deleted")
+        # LNL_LogEngineInfo("Exit object deleted")
 
     def InitCollider(self, w, h):
         c1 = LNLEngine.Box2D()
@@ -43,6 +44,8 @@ class LevelExitObject(LNLEngine.GameObject2D):
         self.body.isActor = False
         LNLEngine.PhysicsSystem2D.Get().addRigidbody(self.body, False)
 
+    def SetHud(self, playerhud : object):
+        self.playerhud = playerhud
 
     def SetNextLevelName(self, nextLevel : str):
         self.nextLevelName = nextLevel
@@ -61,6 +64,11 @@ class LevelExitObject(LNLEngine.GameObject2D):
             if event.GetName() == "KeyDown":
                 if event.keycode == LNLEngine.KEY_MAP["up"]:
                     self.changeLevel()
+
+                    if self.playerhud:
+                        self.playerhud.playerDataRef.score += 1000 # type: ignore
+                    
+                    self.overlap = False
                     # event._m_handled = True # no need to pass event further down to other handlers
 
 

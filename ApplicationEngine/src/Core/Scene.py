@@ -101,10 +101,14 @@ class Scene:
 
         for obj in self.objects:
             obj.Update(dt)
+        for obj in self.UIElements:
+            obj.Update(dt)
     
     def PhysicsUpdate(self, tickTime : float):
         self.levelManager.PhysicsUpdate(tickTime)
         for obj in self.objects:
+            obj.PhysicsUpdate(tickTime)
+        for obj in self.UIElements:
             obj.PhysicsUpdate(tickTime)
 
     def Draw(self):

@@ -9,7 +9,16 @@ from Game.src.MainMenu.UI.ButtonClass import *
 class MainMenuScene(LNLEngine.Scene):
     def __init__(self):
         super().__init__("MainMenu")
+        self.ParalaxDistance : float = 20
+        LNLEngine.pygame.mixer.music.set_volume(0.2)
+        LNLEngine.pygame.mixer.music.load("Game/Assets/Audio/MenuAudio.mp3")
+        # LNLEngine.pygame.mixer.music.load("Game/Assets/Audio/MenuAudio.mp3")
+        LNLEngine.pygame.mixer.music.play()
 
+
+
+    def BeginPlay(self):
+        
         self.gameWindow = LNLEngine.Game.Get().GetWindow()
 
         self.ScreenShader = LNLEngine.ScreenShader()
@@ -46,10 +55,10 @@ class MainMenuScene(LNLEngine.Scene):
 
 
         # self.StartButton.AddOnClickkHandler(print, ["THE BUTTOMN WAS PRESS"])
+        # self.StartButton.AddOnClickkHandler(LNLEngine.Game.Get().GetSceneManager().SetActiveScene, ["IntroScene"])
         self.StartButton.AddOnClickkHandler(LNLEngine.Game.Get().GetSceneManager().SetActiveScene, ["MainScene"])
 
 
-        self.ParalaxDistance : float = 20
 
 
 
@@ -60,12 +69,6 @@ class MainMenuScene(LNLEngine.Scene):
         self.basePos = Vec2(0, -self.ParalaxDistance)
         self.MenuTheGuyLayer = LNLEngine.Sprite(tex, self.basePos , self.gameWindow.GetWidth() + 2*self.ParalaxDistance ,  self.gameWindow.GetHeight() + 2*self.ParalaxDistance)
 
-
-
-        LNLEngine.pygame.mixer.music.set_volume(0.2)
-        LNLEngine.pygame.mixer.music.load("Game/Assets/Audio/MenuAudio.mp3")
-        # LNLEngine.pygame.mixer.music.load("Game/Assets/Audio/MenuAudio.mp3")
-        LNLEngine.pygame.mixer.music.play()
 
 
 
@@ -79,7 +82,9 @@ class MainMenuScene(LNLEngine.Scene):
         self.AddObject(self.StartButton)
 
         self.AddObject(self.MenuClearLayer)
-
+        
+        
+        super().BeginPlay()
 
 
 

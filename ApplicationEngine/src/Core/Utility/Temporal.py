@@ -18,7 +18,7 @@ class LLEngineTime:
         def __init__(self, Duration : float, usesScaledTime : bool, endCall : Callable[[list [object]], None], endArgs : list [object], frameCall : Callable[[list [object]], None], frameArgs : list [object], callOnPhysicsThread : bool):
             self.__paused   : bool  = False
             self.__time     : float = 0
-            self.__hasEnd   : bool  = (Duration != -1)
+            self.__hasEnd   : bool  = (Duration >= 0)
             self.__Duration : float = Duration
             
             self.__Finished : bool = False
@@ -75,6 +75,9 @@ class LLEngineTime:
         
         def IsPhysTimer(self):
             return self.__isPhysTimer
+        
+        def GetTime(self):
+            return self.__time
 
 
 
@@ -378,4 +381,10 @@ class LLEngineTime:
         if ID not in LLEngineTime.__Timers.keys():
             return
         LLEngineTime.__Timers[ID].IsPaused()
+
+    @staticmethod    
+    def GetTimerValue(ID : int) -> float:
+        if ID not in LLEngineTime.__Timers.keys():
+            return -1.0 
+        return LLEngineTime.__Timers[ID].GetTime()
 

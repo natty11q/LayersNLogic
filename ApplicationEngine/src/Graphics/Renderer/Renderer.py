@@ -155,6 +155,11 @@ class Renderer:
     @staticmethod
     def BindTexture(tex_id : int):
         RenderCommand.BindTexture(tex_id)
+    
+    @staticmethod
+    def DrawText(text : str, position : Vec2,  size : int, colour : Vec3):
+        RenderCommand.DrawText(text, position, size, colour)
+
     @staticmethod
     def GetAPI():
         return RendererAPI.GetAPI()

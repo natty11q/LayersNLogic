@@ -113,6 +113,10 @@ class RenderCommand():
     def BindTexture(tex_id : int):
         RenderCommand.s_RendererAPI.BindTexture(tex_id)
 
+    @staticmethod
+    def DrawText(text : str, position : Vec2,  size : int, colour : Vec3):
+        RenderCommand.s_RendererAPI.DrawText(text,position,size, colour)
+
 
     @staticmethod
     def Draw(*args):

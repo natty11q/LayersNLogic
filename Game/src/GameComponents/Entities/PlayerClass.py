@@ -12,12 +12,22 @@ import math
 
 from Game.src.GameComponents.Environement.Environment import *
 
+from Game.src.GameComponents.Entities.EntityClass import *
+from Game.src.GameComponents.Entities.EnemyClass import *
 
 
+class PlayerData:
+    def __init__(self):
+        self.score : float = 1000
+        self.lives : int = 3
 
 
-
-
+class PlayerStates(EntityStates):
+    RUNNING     = auto()
+    WALKING     = auto()
+    RUNNING     = auto()
+    SHOOTING    = auto()
+    MELE        = auto()
 
 class PlayerState(Enum):
 
@@ -31,21 +41,16 @@ class PlayerState(Enum):
     jumping     = auto()
     landing     = auto()
 
-class Enemy:
-    def __init__(self, position: Vec2, mass : float = 20 , name : str = ""):
-        ...
-    
-    def Draw(self):
-        ...
 
-class Player(LNLEngine.GameObject2D):
-    def __init__(self, position: Vec2 = Vec2(), mass : float = 70 , name : str = ""):
-        super().__init__(position, mass = mass)
-        self.SetAttribure(CanTravelThroughPortals)
+
+class Player(Entity):
+    def __init__(self, position: Vec2 = Vec2(), mass : float = 70.0 , name : str = "" , playerHud : PlayerHud | None = None):
         self.name = name
-
         self.width = 100
         self.height = 150
+        super().__init__(Vec2(self.width, self.height), position, mass, name)
+
+        self.SetAttribure(CanTravelThroughPortals)
 
         self.speed  = Vec2(900, 0)
         self.jump   = Vec2(0, 1500)
@@ -54,10 +59,15 @@ class Player(LNLEngine.GameObject2D):
 
         self.inGrounded : bool = True
 
+        self.HitStunTimer = 0.0
+        self.MaxHiststun_s = 0.5
+        self.flashtimerMax = 0.5 / 10
+        self.flashtimer = self.flashtimerMax
+
+        self.shouldDrawOnHiststun = True
+
 
         self.lives      : int = 0
-        self.health     : float = 2
-        self.maxHealth  : float = 5
 
 
         tex = LNLEngine.Texture("Game/Assets/Sprites/Larx_Stand.png", True)
@@ -125,28 +135,29 @@ class Player(LNLEngine.GameObject2D):
 
 
         self.playerState : PlayerState = PlayerState.standing
-        
+        self.isDead = False
 
         self.keys = {}
         for kcode in LNLEngine.KEY_MAP:
             self.keys[kcode] = 0
 
-        c1 : LNLEngine.Collider2D = LNLEngine.Box2D()
-        # c1 : LNLEngine.Collider2D = LNLEngine.AABB()
-        # c1 : LNLEngine.Collider2D = LNLEngine.Circle()
-        c1.setSize( Vec2(self.width, self.height) )
-        # c1.setRadius( self.height / 2 )
-        c1.setRigidBody(self.body)
-        self.body.setCollider(c1)
-        self.body.linearDamping = 0.8
-
+        self.playerHud = playerHud
 
     def BeginPlay(self):
         super().BeginPlay()
-            
+    
+
+
+
+    def GetHud(self) -> PlayerHud | None:
+        return self.playerHud
 
     def _OnUpdate(self, deltatime : float):
-        self.Grounded = False
+        self.isGrounded = False
+
+        if self.HitStunTimer > 0:
+            self.HitStunTimer -= deltatime
+            self.flashtimer -= deltatime
 
         self.playerState : PlayerState = PlayerState.standing
         force : Vec2 = Vec2()
@@ -208,6 +219,10 @@ class Player(LNLEngine.GameObject2D):
         self.currentBody.Play()
 
 
+        if self.CurrentHealth <= 0:
+            self.isDead = True
+
+
 
 
         # self.currentBody.setPos(self.body.getPosition() - Vec2(math.sqrt(self.body.getCollider()._radius), math.sqrt(self.body.getCollider()._radius)))# type: ignore
@@ -246,36 +261,68 @@ class Player(LNLEngine.GameObject2D):
 
     def _OnCollision(self, body : LNLEngine.RigidBody2D, otherOwner : LNLEngine.GameObject2D, otherBody: LNLEngine.RigidBody2D, impulse: Vec2, manifold: LNLEngine.CollisionManifold):
         if isinstance(otherOwner , (TileChunk, EnvironmentObject2D) ):
-            self.Grounded = True
+            self.isGrounded = True
             if isinstance(otherOwner , EnvironmentObject2D):
                 if isinstance(body.getCollider(), LNLEngine.Box2D):
                     if body.position.y + 100 < otherBody.position.y: 
                         body.linearVelocity = otherBody.linearVelocity
 
-        if isinstance(otherOwner , Enemy): ...
-            # self.health -= Enemy.attack / Player.defence
+        if isinstance(otherOwner , Enemy):
+            if self.HitStunTimer <= 0:
+                self.CurrentHealth -= otherOwner.attack / self.defence
+                self.HitStunTimer = self.MaxHiststun_s
 
     def Draw(self):
-        self.currentBody.Draw()
+        if self.HitStunTimer > 0:
+            if self.shouldDrawOnHiststun:
+                self.currentBody.Draw()
+                self.flashtimer 
+
+            if self.flashtimer <= 0:
+                self.shouldDrawOnHiststun = not self.shouldDrawOnHiststun
+                self.flashtimer = self.flashtimerMax
+        else:
+            self.currentBody.Draw()
 
 class PlayerHud(LNLEngine.GameObject):
-    def __init__(self, playerRef : Player, scale : int = 1):
+    def __init__(self, playerRef : Player, playerData : PlayerData, scale : int = 1):
         super().__init__()
         healthTexture = Texture("Game/Assets/Sprites/LNL_Health_positive.png", True)
         self.healthSprite = Sprite(healthTexture, Vec2(0,0), WorldGrid.GRID_SIZE / 2, WorldGrid.GRID_SIZE / 2)
         
         damageTexture = Texture("Game/Assets/Sprites/LNL_Health_negative.png", True)
         self.damageSprite = Sprite(damageTexture, Vec2(0,0), WorldGrid.GRID_SIZE / 2, WorldGrid.GRID_SIZE / 2)
+        
+        UIBar = Texture("Game/Assets/Sprites/uibar.png", False)
+        self.UIBarSprite = Sprite(UIBar, Vec2(0,0), 900, WorldGrid.GRID_SIZE * 1.2 )
 
         self.playerRef = playerRef
+        self.playerDataRef = playerData
+
+        # self.timer = LNLEngine.Temporal.LLEngineTime.StartTimerMs()
+        self.startTime = LNLEngine.Temporal.LLEngineTime.Time()
+
+    def _OnUpdate(self, deltatime: float):
+        self.playerDataRef.score -= deltatime * 2.3125467  # arbritrary multiplier to desync from time
+        if self.playerDataRef.score < 0:
+            self.playerDataRef.score = 0
 
     def Draw(self):
         # TODO : modify huds to use a seperate camera so that the position moves with everything
-        for i in range( int(self.playerRef.maxHealth) ):
-            if i < self.playerRef.health:
-                self.healthSprite.SetPos(Vec2(i * (WorldGrid.GRID_SIZE / 2) ,0))
+
+        self.UIBarSprite.Draw()
+
+        for i in range( int(self.playerRef.MaxHealth) ):
+            if i < self.playerRef.CurrentHealth:
+                self.healthSprite.SetPos(Vec2(i * (WorldGrid.GRID_SIZE / 2) , WorldGrid.GRID_SIZE * 1.2))
                 self.healthSprite.Draw()
             else:
-                self.damageSprite.SetPos(Vec2(i * (WorldGrid.GRID_SIZE / 2) ,0))
+                self.damageSprite.SetPos(Vec2(i * (WorldGrid.GRID_SIZE / 2) , WorldGrid.GRID_SIZE * 1.2))
                 self.damageSprite.Draw()
+
+
+        Renderer.DrawText(str(self.playerDataRef.lives), Vec2(170, 45), 24, Vec3(255,255,255))
+        # Renderer.DrawText(str(int(LNLEngine.Temporal.LLEngineTime.GetTimerValue(self.timer))), Vec2(470, 45), 24, Vec3(255,255,255))
+        Renderer.DrawText(str(int(LNLEngine.Temporal.LLEngineTime.Time() - self.startTime)), Vec2(470, 45), 24, Vec3(255,255,255))
+        Renderer.DrawText(str(int(self.playerDataRef.score)), Vec2(730, 45), 24, Vec3(255,255,255))
         return super().Draw()

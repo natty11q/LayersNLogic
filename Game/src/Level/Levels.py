@@ -5,7 +5,8 @@ from ApplicationEngine.include.Maths.Maths import *
 from Game.src.World.World import *
 
 from Game.src.Level.LevelExitObject import *
-from Game.src.GameComponents.Player.PlayerClass import *
+from Game.src.GameComponents.Entities.PlayerClass import *
+from Game.src.GameComponents.Entities.EnemyClass import *
 import math
 
 
@@ -66,6 +67,9 @@ class Level_0(LNLLevel):
 
         self.AddLevelComponent(portal1)
         self.AddLevelComponent(portal2)
+        
+        if self.player:
+            endComponent.SetHud(self.player.GetHud())
         self.AddLevelComponent(endComponent, "ending")
 
 
@@ -73,6 +77,8 @@ class Level_0(LNLLevel):
 
         super().BeginPlay()
         endComponent.SetLevelManager(self.getOwner())
+        if self.player:
+            endComponent.SetHud(self.player.GetHud())
 
 
 
@@ -119,7 +125,8 @@ class Level_1(LNLLevel):
 
         # self.AddLevelComponent(portal1)
         # self.AddLevelComponent(portal2)
-
+        if self.player:
+            endComponent.SetHud(self.player.GetHud())
         self.AddLevelComponent(endComponent, "ending")
         self.AddLevelComponent(box)
 
@@ -167,7 +174,14 @@ class Level_2(LNLLevel):
         box.SetAttribure(CanTravelThroughPortals)
         
         box.body.setCoefficientOfRestitution(0.2)
+
+
+
+        enemy = Tier1Enemy(Vec2(WorldGrid.GRID_SIZE, WorldGrid.GRID_SIZE), Vec2(300, 0))
+
+
         self.AddLevelComponent(Background,"background")
+
         
 
         for tile in tiles:
@@ -176,9 +190,12 @@ class Level_2(LNLLevel):
         self.AddLevelComponent(portal1)
         self.AddLevelComponent(portal2)
 
+        if self.player:
+            endComponent.SetHud(self.player.GetHud())
         self.AddLevelComponent(endComponent, "ending")
         self.AddLevelComponent(box)
 
+        self.AddLevelComponent(enemy)
 
 
 

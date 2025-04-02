@@ -68,23 +68,26 @@ vec4 raymarch(vec3 ro, vec3 rd) {
 }
 
 void main() {
-    // // Convert CurrentPosition to normalized device coordinates.
-    // vec2 uv = (CurrentPosition / Dimensions) * 2.0 - 1.0;
-    // uv.x *= aspectRatio; // Correct for aspect ratio.
+    // Convert CurrentPosition to normalized device coordinates.
+    vec2 uv = (CurrentPosition) * 2.0 - 1.0;
+    uv.x *= aspectRatio; // Correct for aspect ratio.
     
-    // // Set up a basic camera.
-    // // Here we use a fixed XY origin (0,0) and animate the Z component over time.
-    // vec3 ro = vec3(0.0, 0.0, -3.0 + Time * 0.1);
-    // // Create a ray direction from the camera through the pixel.
-    // vec3 rd = normalize(vec3(uv, 1.0));
+    // Set up a basic camera.
+    // Here we use a fixed XY origin (0,0) and animate the Z component over time.
+    vec3 ro = vec3(0.0, 0.0, -3.0 + Time * 0.1);
+    // Create a ray direction from the camera through the pixel.
+    vec3 rd = normalize(vec3(uv, 1.0));
     
-    // // Perform raymarching to compute a volumetric (cloud-like) effect.
-    // vec4 cloudColor = raymarch(ro, rd);
+    // Perform raymarching to compute a volumetric (cloud-like) effect.
+    vec4 cloudColor = raymarch(ro, rd);
     
-    // // Define a simple background sky color.
-    // vec3 skyColor = vec3(0.6, 0.8, 1.0);
-    // // Composite the clouds over the sky.
-    // vec3 finalColor = mix(skyColor, cloudColor.rgb, cloudColor.a);
-    
-    FragColor = vec4(0.2 * (CurrentPosition.y / 2) ,0.3 * (CurrentPosition.y / 2),0.7 + (CurrentPosition.y * .3), 1.0);
+    // Define a simple background sky color.
+    vec3 skyColor = vec3(0.6, 0.8, 1.0);
+    // Composite the clouds over the sky.
+    vec3 finalColor = mix(skyColor, cloudColor.rgb, cloudColor.a);
+
+
+
+    FragColor = vec4(finalColor, 1.0);
+    // FragColor = vec4(0.2 * (CurrentPosition.y / 2) ,0.3 * (CurrentPosition.y / 2),0.7 + (CurrentPosition.y * .3), 1.0);
 }

@@ -5,7 +5,7 @@ from ApplicationEngine.include.Maths.Maths import *
 from Game.src.World.World import *
 
 from Game.src.Level.LevelExitObject import *
-from Game.src.GameComponents.Player.PlayerClass import *
+from Game.src.GameComponents.Entities.PlayerClass import *
 import math
 
 
@@ -41,6 +41,8 @@ class TutorialLevel(LNLEngine.Level):
 
         endComponent = LevelExitObject(Vec2(17 * WorldGrid.GRID_SIZE,6 * WorldGrid.GRID_SIZE), self.getOwner(), "Level-0")
 
+        if self.player:
+            endComponent.SetHud(self.player.GetHud())
         self.AddLevelComponent(Background,"background")
         
         # self.AddLevelComponent(portal1)
