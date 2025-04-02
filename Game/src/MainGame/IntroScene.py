@@ -22,12 +22,12 @@ class IntroScene(LNLEngine.Scene):
         self.SetMainCamera(self.Camera)
 
 
-    def OnEvent(self, e: LNLEngine.Event):
-        if e.GetType() == LNLEngine.LNL_EventType.KeyDown:
-            if e.keycode == LNLEngine.KEY_MAP["space"]:
-                sm = self.GetOwner()
-                if sm:
-                    sm.SetActiveScene("MainScene")
+    def OnEvent(self, e: LNLEngine.Event):...
+        # if e.GetType() == LNLEngine.LNL_EventType.KeyDown:
+        #     if e.keycode == LNLEngine.KEY_MAP["space"]:
+        #         sm = self.GetOwner()
+        #         if sm:
+        #             sm.SetActiveScene("MainScene")
 
 
     def _OnUpdate(self, dt: float):
