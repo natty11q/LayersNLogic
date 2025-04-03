@@ -4,3 +4,10 @@ SimpleGUICS2Pygame
 glfw
 numpy
 # serial
+
+
+tk
+serial
+
+pysimplegui
+SimpleGUICS2Pygame

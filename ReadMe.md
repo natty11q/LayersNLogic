@@ -2,16 +2,25 @@
 
 
 ## Setup
-First off, to setup the application you will want to run the `./install.py` script which will initialise everything for the engine and the game, setting up the python env and installing any requirements.
+~~First off, to setup the application you will want to run the `./install.py` script which will initialise everything for the engine and the game, setting up the python env and installing any requirements.~~
 
-please ensure that you have an internet connection during this so that the program is able to download the required files
+not immpl ^
+
+please ensure that you have an internet connection during this so that the program is able to download the required files (pip install)
+
+`run pip3 install -r requirements.txt`
 
 
 after this is complete the program can be run. either via the command 
-`./.venv/PyEnv/bin/python Game/src/main.py`
-or by running the `./run.py` file
+`python "./Game/src/main.py"`
 
-the final option is to use the mainapp executable (note that this is just to launch the python app and does not contain any compiled code relevant to the runtime of the application)
+or 
+
+`python3 "./Game/src/main.py"` on macos
+
+<!-- or by running the `./run.py` file -->
+
+<!-- the final option is to use the mainapp executable (note that this is just to launch the python app and does not contain any compiled code relevant to the runtime of the application) -->
 
 
 
