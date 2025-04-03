@@ -22,12 +22,18 @@ class IntroScene(LNLEngine.Scene):
         self.SetMainCamera(self.Camera)
 
 
-    def OnEvent(self, e: LNLEngine.Event):...
-        # if e.GetType() == LNLEngine.LNL_EventType.KeyDown:
-        #     if e.keycode == LNLEngine.KEY_MAP["space"]:
-        #         sm = self.GetOwner()
-        #         if sm:
-        #             sm.SetActiveScene("MainScene")
+    def OnEvent(self, e: LNLEngine.Event):
+        sm = self.GetOwner()
+        if sm:
+            if sm.activeScene:
+                if sm.activeScene.name != self.name:
+                    return
+        
+        if e.GetType() == LNLEngine.LNL_EventType.KeyDown:
+            if e.keycode == LNLEngine.KEY_MAP["space"]:
+                sm = self.GetOwner()
+                if sm:
+                    sm.SetActiveScene("MainScene")
 
 
     def _OnUpdate(self, dt: float):
@@ -36,3 +42,7 @@ class IntroScene(LNLEngine.Scene):
 
         self.Draw()
         self.DrawUI()
+
+        LNLEngine.Renderer.DrawText("a demo of what the possibilities are for", Vec2(100, 450), 45, Vec3())
+        LNLEngine.Renderer.DrawText("layers and logic.", Vec2(300, 500), 45, Vec3())
+        LNLEngine.Renderer.DrawText("Press Space to continue", Vec2(200, 550), 45, Vec3())

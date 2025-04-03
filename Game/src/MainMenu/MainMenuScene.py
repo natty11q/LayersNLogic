@@ -55,8 +55,8 @@ class MainMenuScene(LNLEngine.Scene):
 
 
         # self.StartButton.AddOnClickkHandler(print, ["THE BUTTOMN WAS PRESS"])
-        # self.StartButton.AddOnClickkHandler(LNLEngine.Game.Get().GetSceneManager().SetActiveScene, ["IntroScene"])
-        self.StartButton.AddOnClickkHandler(LNLEngine.Game.Get().GetSceneManager().SetActiveScene, ["MainScene"])
+        self.StartButton.AddOnClickkHandler(LNLEngine.Game.Get().GetSceneManager().SetActiveScene, ["IntroScene"])
+        # self.StartButton.AddOnClickkHandler(LNLEngine.Game.Get().GetSceneManager().SetActiveScene, ["MainScene"])
 
 
 

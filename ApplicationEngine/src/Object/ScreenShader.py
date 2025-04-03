@@ -6,6 +6,7 @@ from ApplicationEngine.src.Graphics.Renderer.Renderer import *
 from ApplicationEngine.src.Object.ObjectClass import GameObject
 
 from ApplicationEngine.src.Core.Utility.Temporal import *
+from ApplicationEngine.src.Core.Mouse import *
 
 class ScreenShader(GameObject):
 
@@ -148,6 +149,23 @@ class ScreenShader(GameObject):
         self.Shader.SetUniformVec2("Campos_XY", self.Campos_xy) # temporary Values , TODO : make it get the canvas dimensions
         
         self.Shader.SetUniformFloat("aspectRatios", 900/600) # temporary Values , TODO : make it get the canvas dimensions
+
+
+# uniform vec3 iResolution; // viewport resolution (in pixels)
+# uniform float iTime;      // shader playback time (in seconds)
+# uniform vec4 iMouse;      // mouse pixel coords. xy: current pos (when clicked)
+# uniform int iFrame;       // shader playback frame
+
+
+# for parity with shader toy
+
+        self.Shader.SetUniformVec3("iResolution", Vec3(900, 600, (900/600)))
+        self.Shader.SetUniformFloat("iTime", LLEngineTime.Time())
+        mpos = Mouse.GetPos()
+        mpressed = Mouse.GetPressed()
+        self.Shader.SetUniformVec4("iMouse", Vec4(mpos.x, mpos.y, mpos.x, mpos.y))
+        self.Shader.SetUniformInt("iFrame", LLEngineTime.FrameCount())
+
 
         if self.hasTexture:
             self.Texture.Bind()

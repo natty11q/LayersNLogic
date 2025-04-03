@@ -18,7 +18,9 @@ class SceneType(Enum):
     Game = auto()
 
 
-class SceneManagerBase:
+class SceneManagerBase(ABC):
+    def __init__(self):
+        self.activeScene : Scene | None = None
     def SetActiveScene(self, sceneName : str):
         ...
 
