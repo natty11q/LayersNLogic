@@ -38,3 +38,11 @@ or
 
 # game [Layers and Logic]:
 [Layers And Logic Documentation](./Game/GameDocs.md "Layers And Logic Documentation")
+
+
+
+We encorage you to check out the github:
+
+https://github.com/natty11q/LayersNLogic/edit/main/ReadMe.md
+
+we plan on continuing the project until the full vision is met
