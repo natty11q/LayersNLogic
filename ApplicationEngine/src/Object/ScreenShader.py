@@ -171,5 +171,6 @@ class ScreenShader(GameObject):
             self.Texture.Bind()
             self.Shader.SetUniformInt("diffuse0", 0)
             self.Shader.SetUniformInt("texture0", 0)
+            self.Shader.SetUniformInt("iChannel0", 0)
         
         Renderer.Submit(self.Shader, self.VertexArray)

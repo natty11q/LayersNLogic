@@ -247,7 +247,7 @@ class Player(Entity):
         
             if event.keycode == LNLEngine.KEY_MAP["space"]:
                 # self.body.addForce( -1 * self.jump * self.body.getMass())
-                if self.Grounded:
+                if self.isGrounded:
                     self.body.addImpulse( -1 * self.jump * self.body.getMass())
         if event.GetName() == "KeyUp":
             self.keys[event.keycode] = 0 
@@ -265,7 +265,8 @@ class Player(Entity):
             if isinstance(otherOwner , EnvironmentObject2D):
                 if isinstance(body.getCollider(), LNLEngine.Box2D):
                     if body.position.y + 100 < otherBody.position.y: 
-                        body.linearVelocity = otherBody.linearVelocity
+                        # body.linearVelocity = otherBody.linearVelocity
+                        body.addForce(Vec2(otherBody.forceAccum.x,0))
 
         if isinstance(otherOwner , Enemy):
             if self.HitStunTimer <= 0:

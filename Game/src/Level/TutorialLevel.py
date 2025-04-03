@@ -16,7 +16,10 @@ class TutorialLevel(LNLEngine.Level):
         self.player = player
 
     def BeginPlay(self):
-        Background = LNLEngine.ScreenShader(FragmentShader= "ApplicationEngine/src/Object/Shaders/cloudShader.frag", FragmentShaderIsPath=True)
+        # Background = LNLEngine.ScreenShader(FragmentShader= "ApplicationEngine/src/Object/Shaders/cloudShader.frag", FragmentShaderIsPath=True)
+        tex = Texture("ApplicationEngine/src/Object/Textures/noise1.png")
+        Background = LNLEngine.ScreenShader(FragmentShader="ApplicationEngine/src/Object/Shaders/WaterScene.frag", FragmentShaderIsPath= True, texture= tex)
+
         
         portal1 = Portal(Vec2(500, 400),math.pi/2)
         portal2 = Portal(Vec2(150, 400),math.pi/2)
