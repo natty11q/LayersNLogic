@@ -8,10 +8,13 @@ not immpl ^
 
 please ensure that you have an internet connection during this so that the program is able to download the required files (pip install)
 
-`run pip3 install -r requirements.txt`
+run:
+
+`pip3 install -r requirements.txt`
 
 
-after this is complete the program can be run. either via the command 
+after this is complete the program can be run. either via the command
+
 `python "./Game/src/main.py"`
 
 or 
@@ -23,6 +26,11 @@ or
 <!-- the final option is to use the mainapp executable (note that this is just to launch the python app and does not contain any compiled code relevant to the runtime of the application) -->
 
 
+
+## Suggestions
+
+* Minimum Ram req - 1GB
+* Gpu Reccomended
 
 
 # engine [LogicEngine]:
