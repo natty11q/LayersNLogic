@@ -206,7 +206,7 @@ class Game:
             LNL_LogEngineError(f"Failed to load Scene Data from path : {jsonPath}, path does not exist!")
             return
 
-        startupSceneName : str = jsonData.get("StartupScene", None)
+        startupSceneName : str | None = jsonData.get("StartupScene", None)
         exists = False
         firstSceneName = ""
         for scene in jsonData.get("Scenes", []):
@@ -228,7 +228,7 @@ class Game:
             LNL_LogEngineWarning(f"Scene name :  {startupSceneName} , is not a scene in leveldata, selecting :  {firstSceneName}")
             startupSceneName = firstSceneName
         
-        self._m_SceneManager.SetActiveScene(startupSceneName)
+        self._m_SceneManager.SetActiveScene(startupSceneName) # type: ignore 
 
     def LoadEngineSettings(self, jsonPath : str):
         path = os.path.abspath(jsonPath)
@@ -304,7 +304,7 @@ class Game:
         self._OnEvent(event)
         
         
-
+    # TODO: modify simplegui setup to use mainloop also
     def __MainLoop(self):
         # x = 2400
         

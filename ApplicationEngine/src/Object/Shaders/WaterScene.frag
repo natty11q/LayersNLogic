@@ -187,7 +187,7 @@ vec3 camera(float time) {
     return vec3(500.0 * sin(1.5 + 1.57 * time), 0.0, 1200.0 * time);
 }
 
-void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+vec4 mainImage(in vec2 fragCoord) {
     vec2 xy = -1.0 + 2.0 * fragCoord.xy / iResolution.xy;
     vec2 s = xy * vec2(1.75, 1.0);
 
@@ -259,12 +259,13 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
         col = mix(col, fco, fo);
         col += vec3(0.5, 0.4, 0.3) * fog;
     }
-
+    vec4 fragColor;
     fragColor = vec4(col, 1.0);
+    return fragColor;
 }
 
 out vec4 FragColor;
 
 void main() {
-    mainImage(FragColor, gl_FragCoord.xy);
+    FragColor = mainImage(gl_FragCoord.xy);
 }

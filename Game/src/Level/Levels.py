@@ -87,7 +87,7 @@ class Level_1(LNLLevel):
         super().__init__(name, player)
 
     def BeginPlay(self):
-        Background = LNLEngine.ScreenShader(FragmentShader= "ApplicationEngine/src/Object/Shaders/cloudShader.frag", FragmentShaderIsPath=True)
+        Background = LNLEngine.ScreenShader(FragmentShader= "ApplicationEngine/src/Object/Shaders/OceanScene.frag", FragmentShaderIsPath=True)
         
         # portal1 = Portal(Vec2(500, 400),math.pi/2)
         # portal2 = Portal(Vec2(256, 400),math.pi/2)
