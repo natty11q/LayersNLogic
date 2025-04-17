@@ -1,4 +1,4 @@
-# [Groupname] Project - RHUL 2025
+# Layers and Logic Project - RHUL 2025
 
 
 ## Setup
@@ -8,10 +8,13 @@ not immpl ^
 
 please ensure that you have an internet connection during this so that the program is able to download the required files (pip install)
 
-`run pip3 install -r requirements.txt`
+run:
+
+`pip3 install -r requirements.txt`
 
 
-after this is complete the program can be run. either via the command 
+after this is complete the program can be run. either via the command
+
 `python "./Game/src/main.py"`
 
 or 
@@ -24,9 +27,22 @@ or
 
 
 
+## Suggestions
+
+* Minimum Ram req - 1GB
+* Gpu Reccomended
+
 
 # engine [LogicEngine]:
 [Logic Engine Documentation](./ApplicationEngine/EngineDocs.md "Logic Engine Documentation")
 
 # game [Layers and Logic]:
 [Layers And Logic Documentation](./Game/GameDocs.md "Layers And Logic Documentation")
+
+
+
+We encorage you to check out the github:
+
+https://github.com/natty11q/LayersNLogic/edit/main/ReadMe.md
+
+we plan on continuing the project until the full vision is met
