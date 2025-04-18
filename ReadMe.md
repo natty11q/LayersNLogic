@@ -1,5 +1,6 @@
 # Layers and Logic Project - RHUL 2025
 
+‼️Documentation has been updated‼️
 
 ## Setup
 ~~First off, to setup the application you will want to run the `./install.py` script which will initialise everything for the engine and the game, setting up the python env and installing any requirements.~~
@@ -29,7 +30,7 @@ or
 
 ## Suggestions
 
-* Minimum Ram req - 1GB
+* Minimum Ram req - 2GB
 * Gpu Reccomended
 
 
