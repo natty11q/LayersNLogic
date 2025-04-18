@@ -7,7 +7,7 @@ the application engine acts as an interface between the developers and the **_Si
 
 It extends the functionality of the import and provides more powerful functions for the game such as
 * 3D rendering via model files
-* audio handling (playlits, looping, panning, channel volumes)
+* audio handling (playlist, looping, panning, channel volumes)
 * 3D spacial audio
 * batch handling
 * event system (handling + delegates)
@@ -74,7 +74,7 @@ Assuming a different setup, EG:
 
 ```
 
-you will want your code to be similiar to as follows:
+you will want your code to be similar to as follows:
 
 ```python
 # run.py
@@ -83,7 +83,7 @@ you will want your code to be similiar to as follows:
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 ## ============================= App Code =================================
-import src.Mygame as MyGame
+import src.MyGame as MyGame
 
 def main():
     MyGameInst = LNLEngine.Game.CreateGame(MyGame.MyGameClass)

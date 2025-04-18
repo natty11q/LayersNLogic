@@ -9,7 +9,7 @@ the above is all handled within the engine.
 
 When using the game engine, you will need to create a definition for a game class which will be used to insert the additional logic that makes your game your own.
 
-this is done though inhertence.
+this is done though inherence.
 
 ```python
 
@@ -56,9 +56,9 @@ class MyGameClass(LNLEngine.Game):
 ```
 
 
-this gives you direct access to the winodw however this may cause problems if they are not handled properly as you will need to manually setup the window and run it.
+this gives you direct access to the window however this may cause problems if they are not handled properly as you will need to manually setup the window and run it.
 
-It is reccomended that you handle the window setup from using the Game class's `CreateWindow` funciton however you may want to create your own if you are making your own windowmanager that may need to handle multiple windows for example.
+It is recommended that you handle the window setup from using the Game class's `CreateWindow` function however you may want to create your own if you are making your own windowmanager that may need to handle multiple windows for example.
 
 
 ```python
@@ -115,12 +115,12 @@ if __name__ == "__main__":
 ```
 
 
-The Game class is also where laters are Pushed to the Layerstack
+The Game class is also where layers are Pushed to the Layerstack
 as the engine's main logic should be handled within the layers.
 
 as the game Class has been run, the layers will automatically be updated, passing in deltatime based on the frame time and timescale.
 
-more infomration on the layersystem can be found here:
+more information on the layerSystem can be found here:
 
 [LayerSystem Documentation](./LayerSystem.md "LayerSystem Documentation")
 
@@ -152,9 +152,9 @@ if __name__ == "__main__":
 ```
 
 You should not use the Renderer's implementation of the PushLayer unless you know what you are doing as this version is defined for window
-controlled apis like simplegui only whereas, using a raw Opengl implementation or a vulkan implementation will use the game class's layerstack instead as it is updated in an open main game loop.
+controlled apis like simplegui only whereas, using a raw OpenGL implementation or a vulkan implementation will use the game class's layerstack instead as it is updated in an open main game loop.
 
-the Game class's implementation will work for ANY api so it is highly reccomended you use this implemntation to keep your application api agnostic at no extra cost.
+the Game class's implementation will work for ANY api so it is highly recommended you use this implementation to keep your application api agnostic at no extra cost.
 
 These are the main components of the Game class that you will need to consider when creating a game using Logic Engine.
 
