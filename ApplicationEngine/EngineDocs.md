@@ -24,6 +24,7 @@ By extending their toolset with more complex features, developers are able to wo
 
 To begin using the engine, you'll need to include the LogicEngine in your application.
 
+> [!NOTE]
 > In the future, this will be available as a pip-installable module.  
 > For now, you must manually append the engine's path to `sys.path` to maintain internal reference integrity.
 
