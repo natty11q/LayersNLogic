@@ -107,11 +107,15 @@ class MyGameClass(LNLEngine.Game):
 Become familiar with the major components of Logic Engine, the various tools and you can use, and the most common engine terms.
 
 
-[GameClass Documentation](../Docs/Engine/GameClass.md "GameClass Documentation")
-[LayerSystem Documentation](../Docs/Engine/LayerSystem.md "LayerSystem Documentation")
-[Scenes Documentation](../Docs/Engine/Scenes.md "Scenes Documentation")
-[Levels Documentation](../Docs/Engine/Levels.md "Levels Documentation")
-[Debugging Documentation](../Docs/Engine/Debugging.md "Debugging Documentation")
+* [GameClass Documentation](../Docs/Engine/GameClass.md "GameClass Documentation")
+
+* [LayerSystem Documentation](../Docs/Engine/LayerSystem.md "LayerSystem Documentation")
+
+* [Scenes Documentation](../Docs/Engine/Scenes.md "Scenes Documentation")
+
+* [Levels Documentation](../Docs/Engine/Levels.md "Levels Documentation")
+
+* [Debugging Documentation](../Docs/Engine/Debugging.md "Debugging Documentation")
 
 
 
