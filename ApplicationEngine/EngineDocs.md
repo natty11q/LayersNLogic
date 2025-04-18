@@ -141,18 +141,26 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 import ApplicationEngine.AppEngine as LNLEngine
 ## ============================= App Code =================================
 
+class MyGameLayer(LNLEngine.Layer):
+    def __init__(self, name="TestLayer"):
+        super().__init__(name)
+    
+    def OnEvent(self, event: LNLEngine.Event):...
+    def OnUpdate(self, deltatime : float): ...
+
 class MyGameClass(LNLEngine.Game):
     def __init__(self):
         super().__init__()
+        LNLEngine.Game.CreateGameWindow("MyGame", 900, 600)
         
-        props = LNLEngine.WindowProperties("PortalsDemo", 900, 600)
-        self._window = LNLEngine.Window.CreateWindow(props)
+        self.PushLayer( MyGameLayer() )
+        # you will want to create a new instance unlike with CreateGame
+        # as it is creating a new instance and pushing it directly.
 
 
-    def _OnUpdate(self, deltatime : float):
-        return super()._OnUpdate(deltatime)
-
-
+if __name__ == "__main__":
+    LNLEngine.Game.CreateGame(MyGameClass)
+    LNLEngine.Game.RunGame()
 ```
 
 ## Understanding layers in practice
