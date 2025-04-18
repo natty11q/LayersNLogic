@@ -1,32 +1,29 @@
 # Game Class
 
+The `Game` class is responsible for managing the top-level logic of the engine. This includes tasks such as calculating frame times and calling update functions on layers. All of this is handled internally by the engine.
 
+When using the engine to build your own game, you’ll need to create a custom game class that inherits from `Game`. This allows you to insert game-specific logic.
 
-The Game class is used to handle the Top level logic of the engine
-This is where the commands for calculating frame times and update calls for layers are handled.
+---
 
-the above is all handled within the engine.
+### Inheriting from the Game Class
 
-When using the game engine, you will need to create a definition for a game class which will be used to insert the additional logic that makes your game your own.
-
-this is done though inherence.
+You can define your own game class like this:
 
 ```python
-
 class MyGameClass(LNLEngine.Game):
     def __init__(self):
         super().__init__()
         ...
-
 ```
 
+---
 
-from here, Typically you will want to create your main window.
+### Creating a Main Window
 
-
+Typically, you'll want to create a window as part of your game setup:
 
 ```python
-
 class MyGameClass(LNLEngine.Game):
     def __init__(self):
         super().__init__()
@@ -34,19 +31,15 @@ class MyGameClass(LNLEngine.Game):
     LNLEngine.Game.CreateGameWindow("PortalsDemo", 900, 600)
 ```
 
+This will create a window titled `"MyGame"` with a width of `900` and height of `600`. This window is managed by the `Game` class internally.
 
+---
 
-this will create a window with the title "MyGame" and dimensions of `900` for the width and `600` for the height.
+### Accessing the Window Directly
 
-this will create one main window that is handled by the game class.
-
-If you want to have direct access to the window you can do that by directly accessing the `CreateWindow` function within the Window class of the engine 
-eg:
-
-
+If you need direct access to the window, you can use the `CreateWindow` method from the `Window` class:
 
 ```python
-
 class MyGameClass(LNLEngine.Game):
     def __init__(self):
         super().__init__()
@@ -55,14 +48,13 @@ class MyGameClass(LNLEngine.Game):
         window = LNLEngine.Window.CreateWindow(props)
 ```
 
+This gives you direct control over the window, but keep in mind that you’ll be responsible for its setup and lifecycle. If not handled properly, this can lead to issues. It's generally recommended to use the `Game` class's `CreateWindow` method unless you have a specific need, such as building a custom window manager.
 
-this gives you direct access to the window however this may cause problems if they are not handled properly as you will need to manually setup the window and run it.
+---
 
-It is recommended that you handle the window setup from using the Game class's `CreateWindow` function however you may want to create your own if you are making your own windowmanager that may need to handle multiple windows for example.
-
+### Example: Custom Window Manager
 
 ```python
-
 class MyWindowManager:
     def __init__(self):
         self.Windows : list[LNLEngine.Window] = []
@@ -93,15 +85,13 @@ class MyGameClass(LNLEngine.Game):
         window = LNLEngine.Window.CreateWindow(props)
 ```
 
+---
 
-Make In order To add the game class instance to the engine you must use the `CreateGame` function, passing in the Class itself as the argument.
+### Starting the Game
 
-This will return a game instance that you will use to run the game. 
-
-this will begin the main game loop.
+To create and run the game instance, use the `CreateGame` and `RunGame` methods:
 
 ```python
-
 class MyGameClass(LNLEngine.Game):
     def __init__(self):
         super().__init__()
@@ -110,30 +100,25 @@ class MyGameClass(LNLEngine.Game):
 
 if __name__ == "__main__":
     LNLEngine.Game.CreateGame(MyGameClass)
-    LNLEngine.Game.RunGame() # <- based on a static instance of the game class.
-    # does not require any arguments
+    LNLEngine.Game.RunGame()  # Uses the static game instance. No arguments required.
 ```
 
+---
 
-The Game class is also where layers are Pushed to the Layerstack
-as the engine's main logic should be handled within the layers.
+### Working with Layers
 
-as the game Class has been run, the layers will automatically be updated, passing in deltatime based on the frame time and timescale.
+The `Game` class manages the engine’s `LayerStack`. Layers are automatically updated as the engine runs, with delta time passed in based on the current frame time and timescale.
 
-more information on the layerSystem can be found here:
+More information can be found in the [LayerSystem Documentation](./LayerSystem.md "LayerSystem Documentation").
 
-[LayerSystem Documentation](./LayerSystem.md "LayerSystem Documentation")
-
-
-In order to push a layer to the stack you can simply use the Push Layer function provided by the game class.
+To push a layer to the stack, use the `PushLayer` method:
 
 ```python
-
 class MyGameLayer(LNLEngine.Layer):
     def __init__(self, name="TestLayer"):
         super().__init__(name)
     
-    def OnEvent(self, event: LNLEngine.Event):...
+    def OnEvent(self, event: LNLEngine.Event): ...
     def OnUpdate(self, deltatime : float): ...
 
 class MyGameClass(LNLEngine.Game):
@@ -141,20 +126,19 @@ class MyGameClass(LNLEngine.Game):
         super().__init__()
         LNLEngine.Game.CreateGameWindow("MyGame", 900, 600)
         
-        self.PushLayer( MyGameLayer() )
-        # you will want to create a new instance unlike with CreateGame
-        # as it is creating a new instance and pushing it directly.
-
-
-if __name__ == "__main__":
-    LNLEngine.Game.CreateGame(MyGameClass)
-    LNLEngine.Game.RunGame() 
+        self.PushLayer(MyGameLayer())  # Always create a new instance before pushing.
 ```
 
-You should not use the Renderer's implementation of the PushLayer unless you know what you are doing as this version is defined for window
-controlled apis like simplegui only whereas, using a raw OpenGL implementation or a vulkan implementation will use the game class's layerstack instead as it is updated in an open main game loop.
+---
 
-the Game class's implementation will work for ANY api so it is highly recommended you use this implementation to keep your application api agnostic at no extra cost.
+### API Considerations
 
-These are the main components of the Game class that you will need to consider when creating a game using Logic Engine.
+Avoid using the renderer's `PushLayer` method unless you know exactly what you're doing. That implementation is intended for window-managed APIs like SimpleGUI. If you’re using a lower-level API like OpenGL or Vulkan, the `Game` class's `LayerStack` should be used instead.
 
+Using the `Game` class for layer management ensures that your application remains **API-agnostic**, with no additional complexity.
+
+---
+
+### Summary
+
+These are the core features of the `Game` class that you'll need when building a game using Logic Engine. By inheriting from `Game`, using its built-in window creation and layer stack methods, and leveraging the engine’s main loop, you can create a scalable, maintainable game structure with ease.

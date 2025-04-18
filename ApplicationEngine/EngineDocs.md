@@ -1,38 +1,33 @@
 # Application Engine Documentation
 
-
 ### LogicEngine - RHUL - Nathaniel Frimpong-Santeng
 
-the application engine acts as an interface between the developers and the **_SimpleGUICS2Pygame_** python import.
+The Application Engine acts as an interface between developers and the **_SimpleGUICS2Pygame_** Python import.  
+It extends the capabilities of the library and adds powerful features such as:
 
-It extends the functionality of the import and provides more powerful functions for the game such as
-* 3D rendering via model files
-* audio handling (playlist, looping, panning, channel volumes)
-* 3D spacial audio
-* batch handling
-* event system (handling + delegates)
-* resource management
-* hardware interfacing
-* networking
-* 2D Physics Engine
-* \+ more features
+- 3D rendering via model files  
+- Audio handling (playlist, looping, panning, channel volumes)  
+- 3D spatial audio  
+- Batch rendering  
+- Event system (handling + delegates)  
+- Resource management  
+- Hardware interfacing  
+- Networking  
+- 2D Physics Engine  
+- ...and more
 
+By extending their toolset with more complex features, developers are able to work faster and more efficiently with a broader toolset and greater creative freedom.
 
-This allows for faster more efficient development with more complex features
-providing more creative freedom in the development process by extending the toolset of developers.
-
-
-
+---
 
 # Understanding the Basics
 
+To begin using the engine, you'll need to include the LogicEngine in your application.
 
-To begin using the engine you will need to include Logic engine into your application.
+> In the future, this will be available as a pip-installable module.  
+> For now, you must manually append the engine's path to `sys.path` to maintain internal reference integrity.
 
-In future this will be turned into a module so that it can be used after a single pip install, However for now you will need to also add the path to the engine into sys.path to ensure that the internal references within the engine remain functional.
-
-
-it can be done like this:
+Example setup:
 
 ```python
 # MyGame.py
@@ -41,10 +36,9 @@ it can be done like this:
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 import ApplicationEngine.AppEngine as LNLEngine
-
 ```
-This setup assumes that the engine exists within the application in a setup such as this:
 
+This setup assumes your file structure looks like this:
 
 ```bash
 .
@@ -54,14 +48,14 @@ This setup assumes that the engine exists within the application in a setup such
 │   └── src
 └── Game
     └── src
-        └── MyGame.py <- content is within MyGame.py
+        └── MyGame.py  # <- Your main script
 ```
 
+In this case, `MyGame.py` is the entry point, and the application engine resides two folders above, hence `'../../'`.
 
-in this scenario MyGame.py acts Main and is what is initially run. the Application engine is two folders above, hence the `'../../'` appended to the `sys.path`.
-Assuming a different setup, EG:
+If your structure is different, for example:
 
-``` Bash
+```bash
 .
 ├── ApplicationEngine
 │   ├── AppEngine.py
@@ -71,10 +65,9 @@ Assuming a different setup, EG:
     ├── run.py
     └── src
         └── MyGame.py
-
 ```
 
-you will want your code to be similar to as follows:
+You would set it up like this:
 
 ```python
 # run.py
@@ -91,46 +84,41 @@ def main():
     MyGameInst.Save()
 ```
 
+And in `MyGame.py`:
+
 ```python
 # MyGame.py
+
 ## ============================== setup ===================================
 import ApplicationEngine.AppEngine as LNLEngine
 ## ============================= App Code =================================
 
 class MyGameClass(LNLEngine.Game):
-    # define game content here
+    # Define game content here
     ...
 ```
 
+---
+
 ## Foundational Knowledge
 
-Become familiar with the major components of Logic Engine, the various tools and you can use, and the most common engine terms.
+Before building, it’s helpful to understand the core parts of LogicEngine, the tools available, and common engine concepts:
 
+- [GameClass Documentation](../Docs/Engine/GameClass.md "GameClass Documentation")
+- [LayerSystem Documentation](../Docs/Engine/LayerSystem.md "LayerSystem Documentation")
+- [Scenes Documentation](../Docs/Engine/Scenes.md "Scenes Documentation")
+- [Levels Documentation](../Docs/Engine/Levels.md "Levels Documentation")
+- [Debugging Documentation](../Docs/Engine/Debugging.md "Debugging Documentation")
 
-* [GameClass Documentation](../Docs/Engine/GameClass.md "GameClass Documentation")
+---
 
-* [LayerSystem Documentation](../Docs/Engine/LayerSystem.md "LayerSystem Documentation")
+# Creating a Game
 
-* [Scenes Documentation](../Docs/Engine/Scenes.md "Scenes Documentation")
+Once you've set up the engine, you can create your own game by defining a custom game class.
 
-* [Levels Documentation](../Docs/Engine/Levels.md "Levels Documentation")
+The `Game` class handles top-level logic such as window creation and layer management. Your custom class must inherit from the engine's `Game` class.
 
-* [Debugging Documentation](../Docs/Engine/Debugging.md "Debugging Documentation")
-
-
-
-# Creating A Game
-
-
-To create a game using LogicEngine, after having done the engine setup and including logic engine, you will need to create a game class.
-
-
-The Game class is where the top level logic is handled. such as the window creation and the Layer setup.
-
-
-The Game class Created must inherit from the LogicEngine Game class provided
-
-here is an example of how that will work:
+Example:
 
 ```python
 # MyGame.py
@@ -145,7 +133,7 @@ class MyGameLayer(LNLEngine.Layer):
     def __init__(self, name="TestLayer"):
         super().__init__(name)
     
-    def OnEvent(self, event: LNLEngine.Event):...
+    def OnEvent(self, event: LNLEngine.Event): ...
     def OnUpdate(self, deltatime : float): ...
 
 class MyGameClass(LNLEngine.Game):
@@ -153,15 +141,18 @@ class MyGameClass(LNLEngine.Game):
         super().__init__()
         LNLEngine.Game.CreateGameWindow("MyGame", 900, 600)
         
-        self.PushLayer( MyGameLayer() )
-        # you will want to create a new instance unlike with CreateGame
-        # as it is creating a new instance and pushing it directly.
-
+        self.PushLayer(MyGameLayer())
+        # Note: PushLayer expects a new instance, unlike CreateGame,
+        # which receives a class reference.
 
 if __name__ == "__main__":
     LNLEngine.Game.CreateGame(MyGameClass)
     LNLEngine.Game.RunGame()
 ```
 
-## Understanding layers in practice
+---
+
+## Understanding Layers in Practice
+
+(Additional section content will go here.)
 
