@@ -1,4 +1,6 @@
 # Layers and Logic Project - RHUL 2025
+[MainImage]: Docs/img/Larx_Stand.png "Mainimage"
+![Display image [temporary]][MainImage]
 
 ‼️Documentation has been updated‼️
 
@@ -11,16 +13,23 @@ please ensure that you have an internet connection during this so that the progr
 
 run:
 
-`pip3 install -r requirements.txt`
+```
+pip3 install -r requirements.txt
+```
 
 
 after this is complete the program can be run. either via the command
 
-`python "./Game/src/main.py"`
+```
+python "./Game/src/main.py"
+```
 
 or 
 
-`python3 "./Game/src/main.py"` on macos
+```
+python3 "./Game/src/main.py"
+```
+on macos
 
 <!-- or by running the `./run.py` file -->
 

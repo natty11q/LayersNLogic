@@ -10,8 +10,8 @@ It extends the functionality of the import and provides more powerful functions 
 * audio handling (playlits, looping, panning, channel volumes)
 * 3D spacial audio
 * batch handling
-* event system (handling + deligates)
-* resourse management
+* event system (handling + delegates)
+* resource management
 * hardware interfacing
 * networking
 * 2D Physics Engine
