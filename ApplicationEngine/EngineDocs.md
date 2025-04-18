@@ -111,8 +111,45 @@ Become familiar with the major components of Logic Engine, the various tools and
 [LayerSystem Documentation](../Docs/Engine/LayerSystem.md "LayerSystem Documentation")
 [Scenes Documentation](../Docs/Engine/Scenes.md "Scenes Documentation")
 [Levels Documentation](../Docs/Engine/Levels.md "Levels Documentation")
+[Debugging Documentation](../Docs/Engine/Debugging.md "Debugging Documentation")
 
 
 
 # Creating A Game
+
+
+To create a game using LogicEngine, after having done the engine setup and including logic engine, you will need to create a game class.
+
+
+The Game class is where the top level logic is handled. such as the window creation and the Layer setup.
+
+
+The Game class Created must inherit from the LogicEngine Game class provided
+
+here is an example of how that will work:
+
+```python
+# MyGame.py
+
+## ============================== setup ===================================
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+import ApplicationEngine.AppEngine as LNLEngine
+## ============================= App Code =================================
+
+class MyGameClass(LNLEngine.Game):
+    def __init__(self):
+        super().__init__()
+        
+        props = LNLEngine.WindowProperties("PortalsDemo", 900, 600)
+        self._window = LNLEngine.Window.CreateWindow(props)
+
+
+    def _OnUpdate(self, deltatime : float):
+        return super()._OnUpdate(deltatime)
+
+
+```
+
+## Understanding layers in practice
 

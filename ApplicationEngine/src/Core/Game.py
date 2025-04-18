@@ -155,6 +155,42 @@ class Game:
     def Get() -> Game:
         return Game.__s_Instance
     
+    @staticmethod
+    def RunGame() -> None:
+        Game.__s_Instance.Run()
+    
+    @staticmethod
+    def SaveGame() -> None:
+        Game.__s_Instance.Save()
+    
+
+    @overload
+    @staticmethod
+    def CreateGameWindow(propsOrTitle : WindowProperties) -> None: ...
+
+    @overload
+    @staticmethod
+    def CreateGameWindow(propsOrTitle : str, width: int, height: int) -> None: ...
+
+    @staticmethod
+    def CreateGameWindow(propsOrTitle : WindowProperties | str, width : int | None = None, height : int | None = None) -> None:
+        if isinstance(propsOrTitle , WindowProperties):
+            Game.__s_Instance.CreateWindow(propsOrTitle)
+        else:
+            Game.__s_Instance.CreateWindow(propsOrTitle, width, height) #type: ignore
+    
+
+    def PushLayer(self, layer : Layer):
+        Renderer.PushLayer(layer)
+    def PopLayer(self):
+        Renderer.PopLayer()
+
+    def PushOverlay(self, overlay : Layer):
+        Renderer.PushOverlay(overlay)
+    def PopOverlay(self):
+        Renderer.PopOverlay()
+
+
     def GetWindow(self) -> Window:
         return self._window
     
@@ -281,6 +317,16 @@ class Game:
     #         pass
 
 
+    @overload
+    def CreateWindow(self, propsOrTitle : WindowProperties): ...
+    @overload
+    def CreateWindow(self, propsOrTitle : str, width: int, height: int): ...
+
+    def CreateWindow(self, propsOrTitle : WindowProperties | str, width : int | None = None, height : int | None = None):
+        if isinstance(propsOrTitle , WindowProperties):
+            self._window = Window.CreateWindow(propsOrTitle)
+        else:
+            self._window = Window.CreateWindow( WindowProperties(propsOrTitle, width, height)) # type: ignore
 
 
 

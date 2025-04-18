@@ -37,10 +37,7 @@ class PortalsDemo(LNLEngine.Game):
     def __init__(self):
         super().__init__()
         
-        props = LNLEngine.WindowProperties("PortalsDemo", 900, 600)
-        self._window = LNLEngine.Window.CreateWindow(props)
-        
-
+        LNLEngine.Game.CreateGameWindow("PortalsDemo", 900, 600)
         self.Load("Game/Data/LevelData/DemoLevelData.json")
 
         # LNLEngine.Renderer.PushLayer(MenuLayer())

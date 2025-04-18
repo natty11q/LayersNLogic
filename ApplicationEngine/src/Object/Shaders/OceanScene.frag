@@ -35,10 +35,12 @@ mat3 fromEuler(vec3 ang) {
 	m[2] = vec3(a3.y*a1.x*a2.x+a1.y*a3.x,a1.x*a3.x-a1.y*a3.y*a2.x,a2.y*a3.y);
 	return m;
 }
+
 float hash( vec2 p ) {
 	float h = dot(p,vec2(127.1,311.7));	
     return fract(sin(h)*43758.5453123);
 }
+
 float noise( in vec2 p ) {
     vec2 i = floor( p );
     vec2 f = fract( p );	

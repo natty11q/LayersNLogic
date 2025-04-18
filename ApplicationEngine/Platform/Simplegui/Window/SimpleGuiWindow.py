@@ -106,7 +106,7 @@ class SimpleGUIWindow(Window):
                 # print("keydown" , event.key, event.mod, event.unicode, event.scancode, pygame.key.name(event.key))
             
                 # TODO Find a better Solution to this
-                e.keycode = KEY_MAP.get(pygame.key.name(event.key), KEY_MAP.get(pygame.key.name(event.key).upper(), event.key))
+                e.keycode = KEY_MAP.get(pygame.key.name(event.key), KEY_MAP.get(pygame.key.name(event.key).upper(), event.key)) #type: ignore
                 sendEvent(e)
             
             elif event.type == pygame.KEYUP:
@@ -114,7 +114,7 @@ class SimpleGUIWindow(Window):
                 # print("keydown" , event.key, event.mod, event.unicode, event.scancode, pygame.key.name(event.key))
             
                 # TODO Find a better Solution to this
-                e.keycode = KEY_MAP.get(pygame.key.name(event.key), KEY_MAP.get(pygame.key.name(event.key).upper(), event.key))
+                e.keycode = KEY_MAP.get(pygame.key.name(event.key), KEY_MAP.get(pygame.key.name(event.key).upper(), event.key)) #type: ignore
                 sendEvent(e)
 
     def InputHandler(self, etype: str, values: list)-> None:
