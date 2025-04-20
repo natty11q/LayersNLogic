@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from ApplicationEngine.include.Common import *
 from ApplicationEngine.src.Graphics.Renderer.RenderCommand import *
 from ApplicationEngine.src.Graphics.Renderer.VertexArray import *
@@ -18,24 +20,34 @@ class Renderer:
         def __init__(self):
             self.ViewProjectionMatrix : Mat4 = Mat4()
     
-    _m_sceneData = __SceneData()
+    _s_sceneData : Renderer.__SceneData
     __Objects = []
     
 
     @staticmethod
     def BeginScene(camera : Camera):
-        Renderer._m_sceneData.ViewProjectionMatrix = camera.GetViewMatrix()
+        Renderer._s_sceneData.ViewProjectionMatrix = camera.GetViewMatrix()
    
+    @staticmethod
+    def Init(api : RendererAPI.API | None = None):
+        Renderer._s_sceneData = Renderer.__SceneData()
+        if api is not None:
+            RendererAPI._s_API = api
+    
+    @staticmethod
+    def Shutdown():
+        ...
+
     @staticmethod
     def EndScene():
         pass
     
     @staticmethod
     def Submit(shader : Shader, vertexArray: VertexArray):
-        #modify for defered rendering
+        #modify for deferred rendering
 
         shader.Bind()
-        shader.SetUniformMatrix4("u_ViewProjection",Renderer._m_sceneData.ViewProjectionMatrix)
+        shader.SetUniformMatrix4("u_ViewProjection",Renderer._s_sceneData.ViewProjectionMatrix)
 
         vertexArray.Bind()
         RenderCommand.DrawIndexed(shader, vertexArray)
@@ -49,7 +61,7 @@ class Renderer:
     @staticmethod
     def SubmitImidiate(shader : Shader, vertexArray: VertexArray):
         shader.Bind()
-        shader.SetUniformMatrix4("u_ViewProjection",Renderer._m_sceneData.ViewProjectionMatrix)
+        shader.SetUniformMatrix4("u_ViewProjection",Renderer._s_sceneData.ViewProjectionMatrix)
         
         vertexArray.Bind()
         RenderCommand.DrawIndexed(shader,vertexArray)

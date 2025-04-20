@@ -101,6 +101,7 @@ class MyGameClass(LNLEngine.Game):
 
 ---
 
+<a name="Foundational-Knowledge-anchor-point"></a>
 ## Foundational Knowledge
 
 Before building, it’s helpful to understand the core parts of LogicEngine, the tools available, and common engine concepts:
@@ -112,8 +113,32 @@ Before building, it’s helpful to understand the core parts of LogicEngine, the
 - [Debugging Documentation](../Docs/Engine/Debugging.md "Debugging Documentation")
 
 ---
+## Understanding Logic Engine Renderer
+[grass]: ../Docs/img/grassDemo.png "ShaderToy grass demo"
+> grass demo in ShaderToy, transferred & used in engine
+!["ShaderToy grass demo" [temporary (use custom scene when made)]][grass]
+
+
+
+In order to start rendering to the screen you will need to understand the basics of the renderer.
+
+You can find more information on the renderer here:
+
+- [Renderer Documentation](../Docs/Engine/Renderer.md "Renderer Documentation")
+
+
+
+---
+## Understanding Logic Engine Physics system
+
+> [!NOTE]
+> [!TODO]
+
+---
 
 # Creating a Game
+
+This section will reference content already discussed in the [Foundational Knowledge](#Foundational-Knowledge-anchor-point) section
 
 Once you've set up the engine, you can create your own game by defining a custom game class.
 

@@ -1,5 +1,5 @@
 # Layers and Logic Project - RHUL 2025
-[MainImage]: Docs/img/Larx_Stand.png "Mainimage"
+[MainImage]: Docs/img/coverImg.png "Mainimage"
 ![Display image [temporary]][MainImage]
 
 ‼️Documentation has been updated‼️

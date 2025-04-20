@@ -118,7 +118,7 @@ class Game:
 
 
 
-
+        Renderer.Init(RendererAPI.API.SimpleGui)
         Mouse.Init()
         Keys.Init()
 

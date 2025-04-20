@@ -139,7 +139,7 @@ class RendererAPI(ABC): ## abstract class only
     
     @staticmethod
     def GetAPI() -> API:
-        return RendererAPI.__s_API
+        return RendererAPI._s_API
     
-    # __s_API : API = API.NoAPI
-    __s_API : API = API.SimpleGui
+    _s_API : API = API.NoAPI
+    # __s_API : API = API.SimpleGui

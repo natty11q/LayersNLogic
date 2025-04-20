@@ -133,7 +133,8 @@ class MyGameClass(LNLEngine.Game):
 
 ### API Considerations
 
-Avoid using the renderer's `PushLayer` method unless you know exactly what you're doing. That implementation is intended for window-managed APIs like SimpleGUI. If you’re using a lower-level API like OpenGL or Vulkan, the `Game` class's `LayerStack` should be used instead.
+> [!WARNING]
+> Avoid using the renderer's `PushLayer` method unless you know exactly what you're doing. That implementation is intended for window-managed APIs like SimpleGUI. If you’re using a lower-level API like OpenGL or Vulkan, the `Game` class's `LayerStack` should be used instead.
 
 Using the `Game` class for layer management ensures that your application remains **API-agnostic**, with no additional complexity.
 
