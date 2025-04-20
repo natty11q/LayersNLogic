@@ -50,7 +50,7 @@ on macos
 [Layers And Logic Documentation](./Game/GameDocs.md "Layers And Logic Documentation")
 
 
-> [!TIP]
+> [!NOTE]
 > just for people comming from the raw files
 
 > We encourage you to check out the github:
