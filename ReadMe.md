@@ -50,9 +50,9 @@ on macos
 [Layers And Logic Documentation](./Game/GameDocs.md "Layers And Logic Documentation")
 
 
+> [!TIP]
+> just for people comming from the raw files
 
-We encourage you to check out the github:
-
-https://github.com/natty11q/LayersNLogic/edit/main/ReadMe.md
-
-we plan on continuing the project until the full vision is met
+> We encourage you to check out the github:
+> https://github.com/natty11q/LayersNLogic
+> we plan on continuing the project until the full vision is met
