@@ -4,10 +4,11 @@
 
 ‼️Documentation has been updated‼️
 
-## Setup
-~~First off, to setup the application you will want to run the `./install.py` script which will initialize everything for the engine and the game, setting up the python env and installing any requirements.~~
+> [!WARNING]
+> not implemented yet
+> ## Setup
+> ~~First off, to setup the application you will want to run the `./install.py` script which will initialize everything for the engine and the game, setting up the python env and installing any requirements.~~
 
-not impl ^
 
 please ensure that you have an internet connection during this so that the program is able to download the required files (pip install)
 
